@@ -1,0 +1,102 @@
+
+#login-abo-header{
+    color: #FFFFFF;
+    margin: 0px 10px;
+    background: #122BEA;
+    height: 40px;
+    padding: 5px;
+    border-radius: 5px;
+}
+
+h3{
+    margin: 0px !important;
+}
+
+#login-abo-content{
+    margin: 0px 10px;
+    background: #C2D0FC;
+    height: 620px;
+    padding: 10px;
+}
+
+#login-abo-form{
+    text-align: center;
+    margin: auto;
+    margin-top: 150px;
+    background: #F9F7F7;
+    width: 350px;
+    height: 200px;
+    border-radius: 10px;
+    box-shadow: 0px 5px 8px #222222;
+}
+
+#login-abo-form-header{
+    text-align: center;
+    color: #FFFFFF;
+    background: #122BEA;
+    width: 350px;
+    height: 50px;
+    border-radius: 5px;
+    padding-top: 10px;
+}
+
+#login-abo-form-footer{
+    margin-bottom: 0px;
+    text-align: center;
+    background: #EFEFEF;
+    width: 350px;
+    height: 50px;
+    padding-top: 8px;
+}
+
+#image{
+    margin-bottom: 2px;
+    text-align: center;
+    padding:2px;
+    border:black thin solid;
+    background-color: white;
+    text-align: center;
+    cursor: pointer;
+    height: 100%;
+    width: 100%;
+}
+
+#conPic {
+    height: 100%;
+    width: auto;
+    color: black;
+}
+
+.rounded{
+	border-radius: 5px;
+}
+
+.alert-box {
+    color:#555;
+    border-radius:10px;
+    font-family:Tahoma,Geneva,Arial,sans-serif;font-size:11px;
+    padding:10px 10px 10px 36px;
+    margin:10px;
+}
+
+.alert-box span {
+    font-weight:bold;
+    text-transform:uppercase;
+}
+
+.error {
+    background:#ffecec url('assets/images/icons/icol16/src/cross.png') no-repeat 10px 50%;
+    border:1px solid #f5aca6;
+}
+.success {
+    background:#e9ffd9 url('assets/images/icons/icol16/src/accept.png') no-repeat 10px 50%;
+    border:1px solid #a6ca8a;
+}
+.warning {
+    background:#fff8c4 url('assets/images/icons/icol16/src/error.png') no-repeat 10px 50%;
+    border:1px solid #f2c779;
+}
+.notice {
+    background:#e3f7fc url('assets/images/icons/icol16/src/exclamation.png') no-repeat 10px 50%;
+    border:1px solid #8ed9f6;
+}

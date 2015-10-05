@@ -1,0 +1,15 @@
+.no-margin {
+	margin: 0 !important;
+}
+
+.no-padding {
+	padding: 0 !important;
+}
+
+.row {
+	margin: 0 !important;
+}
+
+.push-right-m2{
+	margin-left: 2px ! important;
+}
