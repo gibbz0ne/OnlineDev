@@ -126,6 +126,7 @@ $include = new includes();
 					{ name: "address"},
 					{ name: "meterNo"},
 					{ name: "cid"},
+					{ name: "appId"},
 					{ name: "mReading"},
 					{ name: "mBrand"},
 					{ name: "mClass"},
@@ -228,10 +229,11 @@ $include = new includes();
 					// container.append('<input id="approveMeter" style = "margin-left: 10px;" type="button" value="Approve Meters" />');
 					// $("#assignMeter").jqxButton({theme: "main-theme", width: 150, disabled: true});
 					// $("#approveMeter").jqxButton({theme: "main-theme", width: 150, disabled: true});
-					$("#install").jqxButton({theme: "main-theme", width: 150, disabled: false});
+					$("#install").jqxButton({theme: "main-theme", width: 150, disabled: true});
 				},
 				ready: function(){
 					$("#consumerList").jqxGrid("hidecolumn", "cid");
+					$("#consumerList").jqxGrid("hidecolumn", "appId");
 				},
 				columns: [
 					  { text: "#", datafield: "ctr1", pinned: true, align: "center", cellsalign: "center", width: 50 },
@@ -249,6 +251,23 @@ $include = new includes();
 					  { text: "Multiplier", datafield: "multiplier", align: "center", cellsalign: "center",width: 100},
 					  { text: "CID", datafield: "cid", align: "center", cellsalign: "center"}
 				  ]
+			});
+			
+			$("#consumerList").on("rowselect", function(event){
+				var cid = event.args.row.cid;
+				var appId = event.args.row.appId;
+				
+				$.ajax({
+					url: "sources/checkProfile.php",
+					type: "post",
+					data: {cid: cid, appId: appId},
+					success: function(data){
+						if(data == 1)
+							$("#install").jqxButton({disabled: true});
+						else
+							$("#install").jqxButton({disabled: true});
+					}
+				});
 			});
 			
 			$("#mrMasterList").jqxGrid({

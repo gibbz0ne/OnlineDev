@@ -45,6 +45,7 @@
 							"consumerName" => $row["lname"]." ".$row["fname"]." ".$row["mname"],
 							"address" => $row["address"]." ".$row["purok"]." ".$row["brgyName"]." ".$row2["munDesc"],
 							"cid" => $row["cid"],
+							"appId" => $row["appId"],
 							"mReading" => $mReading,
 							"mBrand" => $mBrand,
 							"mClass" => $mClass,
