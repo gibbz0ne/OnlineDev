@@ -11,7 +11,11 @@ $query = $db->query("SELECT *FROM tbl_applications WHERE appCAR IS NOT NULL AND 
 if(isset($_POST["car"]) && $_POST["car"] != ""){
 	$appId = $_POST["appId"];
 	$car = $_POST["car"];
-	echo $car;
+	
+	$update = $db->prepare("UPDATE tbl_applications SET appCAR = ? WHERE appId = ?");
+	$update->execute(array($car, $appId));
+	
+	echo "1";
 } else{
 	if($query->rowCount() > 0){
 		foreach($query as $row){
@@ -32,12 +36,12 @@ if(isset($_POST["car"]) && $_POST["car"] != ""){
 		}
 		$update = $db->prepare("UPDATE tbl_applications SET appCAR = ? WHERE appId = ?");
 		$update->execute(array($car1, $appId));
-		echo $car1;
+		echo "1";
 	}
 	else{
 		$update = $db->prepare("UPDATE tbl_applications SET appCAR = ? WHERE appId = ?");
 		$update->execute(array($car1, $appId));
-		echo $car1;
+		echo "1";
 	}
 }
 

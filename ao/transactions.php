@@ -214,6 +214,10 @@ $include = new includes();
 					]
 				});
 				
+				$("#print_car").on("close", function(event){
+					location.reload();
+				});
+				
 				$("#transaction_list").jqxGrid({
 					source: daily_transactions,
 					width: "100%",
@@ -249,6 +253,8 @@ $include = new includes();
 								$("#print_car").jqxWindow("setContent", "<iframe src = 'print_car.php?ref="+appId+"&car="+car+"' width = '99%' height = '98%'></iframe>");
 							} else $("#carModal").jqxWindow("open");
 						});
+						
+						
 						
 						$('#allT').click(function() {
 							daily_transactions.url = 'sources/allTransactions.php';
@@ -353,7 +359,7 @@ $include = new includes();
 						success: function(data){
 							console.log(data);
 							$("#print_car").jqxWindow("open");
-							$("#print_car").jqxWindow("setContent", "<iframe src = 'print_car.php?ref="+appId+"&car="+data+"' width = '99%' height = '98%'></iframe>");
+							$("#print_car").jqxWindow("setContent", "<iframe src = 'print_car.php?ref="+appId+"&car="+$("#carNo").val()+"' width = '99%' height = '98%'></iframe>");
 						}
 					})
 				});

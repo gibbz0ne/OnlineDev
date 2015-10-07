@@ -17,7 +17,7 @@
 		$query = $db->query("SELECT *FROM tbl_transactions WHERE appId = '$appId' AND cid = '$cid' ORDER BY tid DESC LIMIT 1");
 		
 		$row = $query->fetch(PDO::FETCH_ASSOC);
-		if($row["status"] == 2 && $row["action"] == 0)
+		if($row["status"] == 2 && $row["action"] == 0 || $row["status"] == 3)
 			$checker = 1;
 		else
 			$checker = 0;
