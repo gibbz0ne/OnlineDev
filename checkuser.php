@@ -28,6 +28,7 @@ if($query->rowCount() > 0){
     $active_user ="$lname, $fname";
     $branch = $row['Branch'];
 	$mun = $row["Municipality"];
+	$area = ($row["area"] == NULL ? "1" : $row["area"]);
     $RequestorID = $row['id'];
     if($type!='Encoder'){
         $_SESSION['username']=$username;
@@ -39,6 +40,7 @@ if($query->rowCount() > 0){
         $_SESSION['branch']=$branch;
         $_SESSION['userId']=$RequestorID;
 		$_SESSION["mun"] = $mun;
+		$_SESSION["area"] = $area;
         $success=1;
     } else{
         $_SESSION['branch']=$branch;

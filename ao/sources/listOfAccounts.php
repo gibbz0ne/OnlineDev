@@ -3,25 +3,30 @@
 	$conn = new getConnection();
 	$db = $conn->PDO();
 
+	$branch = $_SESSION["branch"];
+	$area = $_SESSION["area"];
 	$customers = Array();
-	$res = $db->query("select * from tbl_consumers a
-				left outer join tbl_consumer_address b on a.cid = b.cid
-				left outer join tbl_barangay c on b.brgyId = c.brgyId
-				left outer join tbl_municipality d on c.munId = d.munId
-				where a.forBilling = true");
-				
-	foreach($res as $row) {
-		$customers[] = array(
-			'acctNo' => $row['sysPro'],
-			'acctAleco' => $row['alecoNo'],
-			'acctName' => $row["fname"].($row["mname"] ? " ".$row["mname"]." " : " ").$row["lname"].($row["ename"] ? " ".$row["ename"]." " : " "),
-			'address' => $row['address'],
-			'brgy' => $row['brgyName'],
-			'branch' => $row['branch'],
-			'pending' => $row['hasPendingSO'],
-			'cid' => $row['cid']
-		  );
+	
+	$query = $db->query("SELECT *FROM tbl_municipality WHERE branch = '$branch' AND area = '$area'");
+	
+	foreach($query as $r){
+		$res = $db->query("SELECT *FROM consumers WHERE Branch = '$branch' AND Municipality = '".$r["munDesc"]."' AND flag = '1'");
+		foreach($res as $row) {
+			$customers[] = array(
+				"acctNo" => $row["AccountNumber"],
+				"acctAleco" => $row["AlecoAccount"],
+				"acctName" => $row["AccountName"],
+				"address" => $row["Address"],
+				"brgy" => $row["Barangay"],
+				"branch" => $row["Branch"],
+				"municipality" => $row["Municipality"],
+				"cType" => $row["CustomerType"],
+				"bapa" => ($row["bapa"] == 0 ? "FALSE" : "TRUE"),
+				"status" => $row["Status"],
+				"meterNo" => $row["MeterNumber"],
+			  );
+		}
 	}
-  
+	
 	echo json_encode($customers);
 ?>

@@ -74,25 +74,20 @@
             </div>
         </div>
         <hr style="width:95%; margin:10px;"/>
-		<div class = "col-sm-12">
-			<table width="100%">
-				<tr>
-					<td valign="top" width="50%">
-						<strong>Type</strong>
-						<p>
-						<?PHP
+		<div class = "row">
+			<div class = "col-sm-6">
+				<div id = "customerType" name = "customerType" class = "form-control input-sm"></div>
+						<!--?PHP
 							foreach($rowCT as $connection) {
 								echo '<div id="c-'.$connection["conId"].'" name="c-'.$connection["conId"].'" class="connection" style="color:#ffffff;">&nbsp;'.$connection["conDesc"].'</div>';
 							}
-						?>
-						</p>
-					</td>
-					<td valign="top">
-						<div id="subCat">
-						</div>
-					</td>
-				</tr>
-			</table>
+						?-->
+			</div>
+			<div class = "col-sm-6">
+						<!--div id="subCat">
+						</div-->
+							<div id = "isBapa" name = "isBapa" class = "form-control input-sm"></div>
+			</div>
 		</div>
 	</div>
     <div style = "margin-top: 10px;" class = "col-sm-6">

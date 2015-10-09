@@ -92,7 +92,6 @@ $include = new includes();
 						{ name: "acctNo"},
 						{ name: "cid"},
 						{ name: "appId"},
-						{ name: "action"},
 						{ name: "service"}
 						
 					],
@@ -343,7 +342,6 @@ $include = new includes();
 						{text: "C.A.R.", dataField: "car", cellsalign: "center", align: "center", width: 150},
 						{text: "Application", dataField: "service", cellsalign: "center", align: "center", width: 150},
 						{text: "Status", dataField: "status", cellsalign: "center", align: "center", width: 150},
-						{text: "Action", dataField: "action", cellsalign: "center", align: "center", width: 150},
 						{text: "Processed Date", dataField: "dateProcessed", cellsalign: "center", align: "center", width: 150},
 						{text: "Remarks", dataField: "remarks", align: "center", width: 150}
 					]
@@ -610,10 +608,6 @@ $include = new includes();
 				});
 				
 				$("#acceptApp").click(function(event){
-					// var uploader = document.getElementById("uploader").files[0]
-					// var tmppath = URL.createObjectURL(uploader);
-
-					$('#processing').jqxWindow('open');
 					$.ajax({
 						type: "post",
 						url: "functions/addApplication.php",
@@ -621,21 +615,10 @@ $include = new includes();
 						contentType: false,
 						data: new FormData($("#testForm")[0]),
 						success: function(data){
-							if(!data) {
-								$('#processing').jqxWindow('close');
-								$("#confirmApplication").jqxWindow("close");
-								// setTimeout(function(){
-									// alert("Account number already taken.");
-								// },1000);
-								alert(data);
-							}
-							else {
+							if(data){
 								$("#confirmApplication").jqxWindow("close");
 								$("#newConsumerForm").jqxWindow("close");
-								setTimeout(function(){
-									$('#processing').jqxWindow('close');
 									window.location.href = "transactions.php";
-								},1000);
 							}
 						}
 					});

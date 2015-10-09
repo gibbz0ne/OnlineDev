@@ -39,7 +39,7 @@ $include = new includes();
 				resizable:true,
 				orientation: "horizontal",
 				panels: [{ size:"55%",collapsible:false  }, 
-				{ size: "45%",collapsible: false }] 
+				{ size: "45%",collapsible: true }] 
 			});
 			
 			$.ajax({
@@ -66,16 +66,20 @@ $include = new includes();
 					{ name: "address" },
 					{ name: "brgy" },
 					{ name: "branch"},
-					{ name: "pending"},
-					{ name: "cid"}
+					{ name: "municipality"},
+					{ name: "cType"},
+					{ name: "bapa"},
+					{ name: "status"},
+					{ name: "meterNo"}
 				],
+				// pagesize: 40,
 				url: "sources/listOfAccounts.php"
 			}
 			var dataAdapter = new $.jqx.dataAdapter(acctSource);
 			
-			// $("#acct-list").on("contextmenu", function () {
-				// return false;
-			// });
+			$("#acct-list").on("contextmenu", function () {
+				return false;
+			});
 
 			// $("#acct-list").on("rowclick", function (event) {
 				// if (event.args.rightclick) {
@@ -96,13 +100,21 @@ $include = new includes();
 				showtoolbar: true,
 				altrows: true,
 				// pageable: true,
+				filterable: true, 
+				columnsresize: true,
+				selectionmode: "multiplerows",
 				columns: [
 					{text: "Account Number", dataField: "acctNo", width: 200},
 					{text: "Aleco Account", dataField: "acctAleco", width: 160},
-					{text: "Account Name", dataField: "acctName", width: 300},
-					{text: "Address", dataField: "address", width: 200},
-					{text: "Barangay", dataField: "brgy", width: 300},
-					{text: "Branch", dataField: "branch"}
+					{text: "Account Name", dataField: "acctName", width: 250},
+					{text: "Address", dataField: "address", width: 250},
+					{text: "Barangay", dataField: "brgy", width: 200},
+					{text: "Municipality", dataField: "municipality", width: 150},
+					{text: "Branch", dataField: "branch", width: 100},
+					{text: "Customer Type", dataField: "cType", width: 150},
+					{text: "BAPA", dataField: "bapa", width: 100},
+					{text: "Status", dataField: "status", width: 100},
+					{text: "Meter Number", dataField: "meterNo", width: 200},
 				],
 				rendertoolbar: function(toolbar){
 					var me = this;
@@ -453,6 +465,14 @@ $include = new includes();
 				"SEPARATED"
 			];
 			
+			var cType = [
+				"R",
+				"C",
+				"H",
+				"F",
+				"E"
+			];
+						
 			$("#confirmApplication").jqxWindow({
 				height: 150, width:  300, showCloseButton: false, draggable: false, resizable: false, isModal: true, autoOpen: false, modalOpacity: 0.50,theme:'main-theme'
 			});
@@ -481,57 +501,58 @@ $include = new includes();
 
 						$('#primary, #phone').on('keydown', function(e){-1!==$.inArray(e.keyCode,[46,8,9,27,13,110,190])||/65|67|86|88/.test(e.keyCode)&&(!0===e.ctrlKey||!0===e.metaKey)||35<=e.keyCode&&40>=e.keyCode||(e.shiftKey||48>e.keyCode||57<e.keyCode)&&(96>e.keyCode||105<e.keyCode)&&e.preventDefault()});
 
-						$(".connection").jqxRadioButton({
-							checked: false,
-							theme: "custom-abo-admin",
-							groupName: "rbType"
-						}).on("change", function(event) {
-							var lvSub = '';
+						// $(".connection").jqxRadioButton({
+							// checked: false,
+							// theme: "custom-abo-admin",
+							// groupName: "rbType"
+						// }).on("change", function(event) {
+							// var lvSub = '';
 							
-							if(event.args.checked) {
-								var rbID = event.target.id.split("-");
-								$("#subCat").html("Loading...");
+							// if(event.args.checked) {
+								// var rbID = event.target.id.split("-");
+								// $("#subCat").html("Loading...");
 								
-								$.ajax({
-									url: "sources/subLV.php",
-									type: "post",
-									dataType: "json",
-									async: true,
-									data: {conID:rbID[1]},
-									success: function(outLV){
-										for(var i = 0; i < outLV.length; i++) {
-											if(i == 0 && outLV.length > 0) {
-												lvSub += '<strong>Select from below list:</strong><p>';
-											}
+								// $.ajax({
+									// url: "sources/subLV.php",
+									// type: "post",
+									// dataType: "json",
+									// async: true,
+									// data: {conID:rbID[1]},
+									// success: function(outLV){
+										// for(var i = 0; i < outLV.length; i++) {
+											// if(i == 0 && outLV.length > 0) {
+												// lvSub += '<strong>Select from below list:</strong><p>';
+											// }
 											
-											lvSub += '<div style="color: white;" id="s-'+outLV[i].subId+'" name="s-'+outLV[i].subId+'" class="lvSub">&nbsp;'+outLV[i].subDesc+'</div>';
+											// lvSub += '<div style="color: white;" id="s-'+outLV[i].subId+'" name="s-'+outLV[i].subId+'" class="lvSub">&nbsp;'+outLV[i].subDesc+'</div>';
 											
-											if(i == (outLV.length - 1)) {
-												lvSub += '</p>';
-											}
-										}
-										$("#subCat").html(lvSub);
+											// if(i == (outLV.length - 1)) {
+												// lvSub += '</p>';
+											// }
+										// }
+										// $("#subCat").html(lvSub);
 										
-										if(lvSub != '') {
-											$(".lvSub").jqxRadioButton({
-												checked: false,
-												theme: "custom-abo-admin",
-												groupName: "rbSType"
-											});
-											$("#s-1").jqxRadioButton({checked: true});
-										}
+										// if(lvSub != '') {
+											// $(".lvSub").jqxRadioButton({
+												// checked: false,
+												// theme: "custom-abo-admin",
+												// groupName: "rbSType"
+											// });
+											// $("#s-1").jqxRadioButton({checked: true});
+										// }
 										
-									}
-								});
-							}
-							else {
-								$("#subCat").html("");
-							}
+									// }
+								// });
+							// }
+							// else {
+								// $("#subCat").html("");
+							// }
 							
-						});
-						$("#c-1").jqxRadioButton({checked: true});
+						// });
+						// $("#c-1").jqxRadioButton({checked: true});
 						
 						$("#municipality").jqxDropDownList({ 
+							autoDropDownHeight: true,
 							selectedIndex: 0, width: "91%", height: 20, 
 							source:munAdapter, displayMember: 'munDesc', valueMember: 'munId', theme:'main-theme'
 						}).unbind("change").on("change", function(event){
@@ -549,7 +570,7 @@ $include = new includes();
 							var d = new $.jqx.dataAdapter(sBrgy);
 							$("#brgy").jqxDropDownList({ 
 									selectedIndex: 0, width: "82%", height: 20, 
-									source:d, displayMember: 'brgyName', valueMember: 'bid', theme:'main-theme'
+									source:d, displayMember: 'brgyName', valueMember: 'brgyName', theme:'main-theme'
 							});
 						});
 						
@@ -571,6 +592,16 @@ $include = new includes();
 							source:brgyAdapter, displayMember: 'brgyName', valueMember: 'bid', theme:'main-theme'
 						});
 						
+						$("#customerType").jqxDropDownList({
+							autoDropDownHeight: 200, selectedIndex: 0, width: "91%", height: 16, 
+							source: cType, theme:'main-theme'
+						});
+						
+						$("#isBapa").jqxDropDownList({
+							autoDropDownHeight: 200, selectedIndex: 0, width: "91%", height: 16, 
+							source: ["NON-BAPA", "BAPA"], theme:'main-theme'
+						});
+
 						$("#civilStatus").jqxDropDownList({
 							autoDropDownHeight: 200, selectedIndex: 0, width: "91%", height: 20, 
 							source: cStatusList, theme:'main-theme'
@@ -626,10 +657,6 @@ $include = new includes();
 			});
 			
 			$("#acceptApp").click(function(event){
-				// var uploader = document.getElementById("uploader").files[0]
-				// var tmppath = URL.createObjectURL(uploader);
-
-				$('#processing').jqxWindow('open');
 				$.ajax({
 					type: "post",
 					url: "functions/addApplication.php",
@@ -637,25 +664,12 @@ $include = new includes();
 					contentType: false,
 					data: new FormData($("#testForm")[0]),
 					success: function(data){
-						// $('#processing').jqxWindow('close');
-						// $("#confirmApplication").jqxWindow("close");
-						// $("#newConsumerForm").jqxWindow("close");
-
-						if(!data) {
-							$('#processing').jqxWindow('close');
-							$("#confirmApplication").jqxWindow("close");
-							setTimeout(function(){
-								alert("Account number already taken.");
-							},1000);
-						}
-						else {
-							$("#confirmApplication").jqxWindow("close");
-							$("#newConsumerForm").jqxWindow("close");
-							setTimeout(function(){
-								$('#processing').jqxWindow('close');
-								window.location.href = "transactions.php";
-							},1000);
-						}
+						alert(data)
+						// if(data){
+							// $("#confirmApplication").jqxWindow("close");
+							// $("#newConsumerForm").jqxWindow("close");
+								// window.location.href = "transactions.php";
+						// }
 					}
 				});
 			});
