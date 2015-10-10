@@ -40,13 +40,6 @@ $include = new includes();
 			</div>
 			<div>
 				<div id = "inspection_list"></div>
-				<div id="inspectionMenu">
-					<ul>
-						<li id="approve"><img src="../assets/images/icons/icol16/src/accept.png"> APPROVE
-						</li>
-						<li id = "change"><img src = "../assets/images/icons/icol16/src/arrow_refresh.png"> CHANGE APPLICATION</li>
-					</ul>
-				</div>
 			</div>
 			<div id = "confirmInspection">
 				<div><img src = "../assets/images/icons/icol16/src/application.png"> Confirm Inspection</div>

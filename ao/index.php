@@ -664,12 +664,12 @@ $include = new includes();
 					contentType: false,
 					data: new FormData($("#testForm")[0]),
 					success: function(data){
-						alert(data)
-						// if(data){
-							// $("#confirmApplication").jqxWindow("close");
-							// $("#newConsumerForm").jqxWindow("close");
-								// window.location.href = "transactions.php";
-						// }
+						// alert(data)
+						if(data){
+							$("#confirmApplication").jqxWindow("close");
+							$("#newConsumerForm").jqxWindow("close");
+								window.location.href = "transactions.php";
+						}
 					}
 				});
 			});

@@ -39,23 +39,23 @@
 						{ size: "10%",collapsible: false }]
 				});
 
-				var consumers = {
+				var acctSource = {
 					datatype: "json",
-					datafields: [
-						{name: "status"},
-						{name: "acctNo"},
-						{name: "consumerName"},
-						{name: "address"},
-						{name: "municipality"},
-						{name: "area"},
-						{name: "type"},
-						{name: "car"},
-						{name: "cid"},
-						{name: "appId"},
-						{name: "tid"}
+					dataFields: [
+						{ name: "acctNo" },
+						{ name: "acctAleco" },
+						{ name: "acctName" },
+						{ name: "address" },
+						{ name: "brgy" },
+						{ name: "branch"},
+						{ name: "municipality"},
+						{ name: "cType"},
+						{ name: "bapa"},
+						{ name: "status"},
+						{ name: "meterNo"}
 					],
-					url: "sources/accounts.php",
-					async: false
+					pagesize: 100,
+					url: "sources/accounts.php"
 				}
 				
 				// setInterval(function(){
@@ -63,7 +63,7 @@
 					// $('#consumerList').jqxGrid({source:dataAdapter});
 				// },3000);
 				
-				var consumer_data = new $.jqx.dataAdapter(consumers);
+				// var consumer_data = new $.jqx.dataAdapter(consumers);
 
 				$("#consumerList").on("contextmenu", function(){
 					return false;
@@ -74,12 +74,13 @@
 				});
 				
 				$("#consumerList").jqxGrid({
-					source: consumer_data,
+					source: acctSource,
 					height: "100%",
 					width: "100%",
 					theme: "main-theme",
 					pageable: true,
-					showtoolbar: true,
+					// showtoolbar: true,
+					filterable: true,
 					rendertoolbar: function(toolbar){
 						var me = this;
 						var container = $("<div style='margin: 5px;'></div>");
@@ -136,17 +137,18 @@
 							}
 						});
 					},
-					ready: function(){
-						$('#consumerList').jqxGrid('hidecolumn', 'cid');
-					},
 					columns: [
-						{text: "Primary Account No.", pinned: true, align: "center", cellsalign: "center", datafield: "acctNo", width: 150},
-						{text: "Consumer Name", pinned: true, align: "center", datafield: "consumerName", width: 300},
-						{text: "Address", align: "center", datafield: "address", width: 350},
-						{text: "Municipality", align: "center", cellsalign: "center", datafield: "municipality", width: 150},
-						{text: "Area", align: "center", cellsalign: "center", datafield: "area", width: 100},
-						{text: "Type", align: "center", datafield: "type", width: 100},
-						{text: "C.A.R", align: "center", datafield: "car"}
+						{text: "Account Number", dataField: "acctNo", width: 200},
+						{text: "Aleco Account", dataField: "acctAleco", width: 160},
+						{text: "Account Name", dataField: "acctName", width: 250},
+						{text: "Address", dataField: "address", width: 250},
+						{text: "Barangay", dataField: "brgy", width: 200},
+						{text: "Municipality", dataField: "municipality", width: 150},
+						{text: "Branch", dataField: "branch", width: 100},
+						{text: "Customer Type", dataField: "cType", width: 150},
+						{text: "BAPA", dataField: "bapa", width: 100},
+						{text: "Status", dataField: "status", width: 100},
+						{text: "Meter Number", dataField: "meterNo", width: 200},
 					]
 				});
 				

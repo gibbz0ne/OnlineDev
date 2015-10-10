@@ -89,7 +89,7 @@
 			$transactions->execute(array($appId, $cid, 1, $id, date("Y-m-d")." ".date("H:i:s")));
 			
 			//insert app_type
-			$insert = $db->prepare("INSERT INTO tbl_app_type (appId, typeIdsds) 
+			$insert = $db->prepare("INSERT INTO tbl_app_type (appId, typeId) 
 											 VALUES(?, ?)");
 			$insert->execute(array($appId, 1));
 			
@@ -99,11 +99,11 @@
 			$insert->execute(array($appId, 1));
 		
 			$db->commit();
+			echo true;
 		}catch(PDOException $e){
 			$db->rollBack();
 			echo $e;
 		}
 		
-		// echo true;
 	}
 ?>

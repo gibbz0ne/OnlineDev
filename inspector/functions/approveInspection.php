@@ -30,13 +30,12 @@
 		$status = 2;
 		
 
-		$res = $db->query("select sysPro from tbl_consumers where cid = $cid");
+		$res = $db->query("SELECT AccountNumber FROM consumers WHERE Entry_Number = $cid");
 		$rowT = $res->fetchAll(PDO::FETCH_ASSOC);
 
-		if($rowT[0]["sysPro"]) {
+		if($rowT[0]["AccountNumber"]) {
 			$status = 3;
 		}
-		
 		$query = $db->query("SELECT *FROM tbl_inspection ORDER BY inspectionId DESC limit 1");
 		
 		if($query->rowCount() > 0){
@@ -82,7 +81,7 @@
 			$update->execute($update_data);
 
 			$insert = $db->prepare("INSERT INTO tbl_transactions 
-									(appId, cid, status, processedBy, dateProcessed)
+									(appId, Entry_Number, status, processedBy, dateProcessed)
 									VALUES
 									(?, ?, ?, ?, ?)");
 			$insert->execute($trans_data);
@@ -92,11 +91,6 @@
 		} catch(PDOException $e){
 			$db->rollBack();
 			echo "A problem occurred Please contact the System Admin!".$e;
-			// echo $e;
 		}
-		// $insert = $db->prepare("INSERT INTO tbl_inspection (inspectionId, appId, cid, protection, pRating, sType, wireSize, length, servicePole, inspectedBy, iRemarks, dateInspected)
-								// VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-		// $insert->execute(array($i, $appId, $cid, $pType, $rating, $etype, $wSize, $length, $servicePole, $inspector, $iRemarks, $date));
-
 	}
 ?>

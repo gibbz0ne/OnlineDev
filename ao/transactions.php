@@ -208,7 +208,6 @@ $include = new includes();
 						{text: "C.A.R.", dataField: "car", cellsalign: "center", align: "center", width: 150},
 						{text: "Application", dataField: "service", cellsalign: "center", align: "center", width: 150},
 						{text: "Status", dataField: "status", cellsalign: "center", align: "center", width: 150},
-						{text: "Action", dataField: "action", cellsalign: "center", align: "center", width: 150},
 						{text: "Remarks", dataField: "remarks", align: "center", width: 150}
 					]
 				});
@@ -489,55 +488,6 @@ $include = new includes();
 
 							$('#primary, #phone').on('keydown', function(e){-1!==$.inArray(e.keyCode,[46,8,9,27,13,110,190])||/65|67|86|88/.test(e.keyCode)&&(!0===e.ctrlKey||!0===e.metaKey)||35<=e.keyCode&&40>=e.keyCode||(e.shiftKey||48>e.keyCode||57<e.keyCode)&&(96>e.keyCode||105<e.keyCode)&&e.preventDefault()});
 							
-							$(".connection").jqxRadioButton({
-								checked: false,
-								theme: "custom-abo-admin",
-								groupName: "rbType"
-							}).on("change", function(event) {
-								var lvSub = '';
-								
-								if(event.args.checked) {
-									var rbID = event.target.id.split("-");
-									$("#subCat").html("Loading...");
-									
-									$.ajax({
-										url: "sources/subLV.php",
-										type: "post",
-										dataType: "json",
-										async: true,
-										data: {conID:rbID[1]},
-										success: function(outLV){
-											for(var i = 0; i < outLV.length; i++) {
-												if(i == 0 && outLV.length > 0) {
-													lvSub += '<strong>Select from below list:</strong><p>';
-												}
-												
-												lvSub += '<div style="color: white;" id="s-'+outLV[i].subId+'" name="s-'+outLV[i].subId+'" class="lvSub">&nbsp;'+outLV[i].subDesc+'</div>';
-												
-												if(i == (outLV.length - 1)) {
-													lvSub += '</p>';
-												}
-											}
-											$("#subCat").html(lvSub);
-											
-											if(lvSub != '') {
-												$(".lvSub").jqxRadioButton({
-													checked: false,
-													theme: "custom-abo-admin",
-													groupName: "rbSType"
-												});
-												$("#s-1").jqxRadioButton({checked: true});
-											}
-											
-										}
-									});
-								}
-								else {
-									$("#subCat").html("");
-								}
-							});
-							$("#c-1").jqxRadioButton({checked: true});
-							
 							$("#municipality").jqxDropDownList({ 
 								selectedIndex: 0, width: "91%", height: 20, 
 								source:munAdapter, displayMember: 'munDesc', valueMember: 'munId', theme:'main-theme'
@@ -581,6 +531,16 @@ $include = new includes();
 							$("#civilStatus").jqxDropDownList({
 								autoDropDownHeight: 200, selectedIndex: 0, width: "91%", height: 20, 
 								source: cStatusList, theme:'main-theme'
+							});
+							
+							$("#customerType").jqxDropDownList({
+								autoDropDownHeight: 200, selectedIndex: 0, width: "91%", height: 16, 
+								source: ["R", "C", "H", "F", "E"], theme:'main-theme'
+							});
+							
+							$("#isBapa").jqxDropDownList({
+								autoDropDownHeight: 200, selectedIndex: 0, width: "91%", height: 16, 
+								source: ["NON-BAPA", "BAPA"], theme:'main-theme'
 							});
 							
 							// $("#acceptApp").jqxButton({width: "100%", theme: "main-theme"});

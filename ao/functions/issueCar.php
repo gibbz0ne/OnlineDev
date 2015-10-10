@@ -34,13 +34,13 @@ if(isset($_POST["car"]) && $_POST["car"] != ""){
 				}
 			}
 		}
-		$update = $db->prepare("UPDATE tbl_applications SET appCAR = ? WHERE appId = ?");
-		$update->execute(array($car1, $appId));
+		$update = $db->prepare("UPDATE tbl_applications SET appCAR = ?, dateCAR = ? WHERE appId = ?");
+		$update->execute(array($car1, date("Y-m-d H:i:s"), $appId));
 		echo "1";
 	}
 	else{
-		$update = $db->prepare("UPDATE tbl_applications SET appCAR = ? WHERE appId = ?");
-		$update->execute(array($car1, $appId));
+		$update = $db->prepare("UPDATE tbl_applications SET appCAR = ?, dateCAR =? WHERE appId = ?");
+		$update->execute(array($car1, date("Y-m-d H:i:s"), $appId));
 		echo "1";
 	}
 }

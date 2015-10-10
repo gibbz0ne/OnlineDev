@@ -187,6 +187,8 @@
 								$("#consumerList").jqxGrid({source:consumer_data});
 								$("#confirm input").val("");
 								$("#confirm").jqxWindow("close");
+							} else{
+								alert(data);
 							}
 						}
 					});

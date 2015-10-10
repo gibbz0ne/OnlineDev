@@ -3,10 +3,10 @@
 	
 	$con = new getConnection();
 	$db = $con->PDO();
-	
+	$branch = $_SESSION["branch"];
 	$list = array();
 	
-	$query = $db->query("SELECT *FROM tbl_substation JOIN tbl_feeder USING(subId)");
+	$query = $db->query("SELECT *FROM tbl_substation JOIN tbl_feeder USING(subId) WHERE branch = '$branch'");
 	
 	if($query->rowCount() > 0){
 		$checker = "";

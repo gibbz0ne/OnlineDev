@@ -5,64 +5,56 @@
 	
 	if($_POST["form"] == "NC") {
 		$trans = $_POST["trans"];
-		
-		$res = $db->query("select * from tbl_transactions a left outer join
-							tbl_applications b on a.appId = b.appId left outer join
-							tbl_app_type c on b.appId = c.appId left outer join
-							tbl_consumers d on b.cId = d.cId left outer join
-							tbl_consumer_address e on d.cId = e.cId left outer join
-							tbl_consumer_connection h on d.cId = h.cId left outer join
-							tbl_municipality f on e.munId = f.munId left outer join
-							tbl_barangay g on e.brgyId = g.brgyId
-							where a.tid = $trans");
+		$res = $db->query("SELECT *FROM tbl_transactions a 
+							LEFT OUTER JOIN tbl_applications b ON a.appId = b.appId 
+							LEFT OUTER JOIN tbl_app_type c ON b.appId = c.appId 
+							LEFT OUTER JOIN consumers d ON b.Entry_Number = d.Entry_Number 
+							LEFT OUTER JOIN tbl_consumer_connection h ON d.Entry_Number = h.cid
+							WHERE a.tid = $trans");
 		$row = $res->fetchAll(PDO::FETCH_ASSOC);
 		
 		$type = $row[0]["typeId"];
-		$acct = $row[0]["sysPro"];
+		$acct = $row[0]["AccountNumber"];
 	}
 	else {
 		$type = $_POST["con"];
 		$acct = $_POST["acct"];
 
 		
-		$res = $db->query("select * from tbl_consumers a
-				left outer join tbl_consumer_address b on a.cid = b.cid
-				left outer join tbl_barangay c on b.brgyId = c.brgyId
-				left outer join tbl_municipality d on c.munId = d.munId
-				where a.sysPro = $acct");
+		$res = $db->query("SELECT *FROM consumers WHERE AccountNumber = $acct");
 		$row = $res->fetchAll(PDO::FETCH_ASSOC);
 	}
 	
-	$name = $row[0]["fname"].($row[0]["mname"] ? " ".$row[0]["mname"]." " : " ").$row[0]["lname"];
-	$address = ($row[0]["address"] ? $row[0]["address"]." " : "").$row[0]["purok"]." ".$row[0]["brgyName"]." ".$row[0]["munDesc"];
-	$accountNum = $row[0]['sysPro'];
+	$name = $row[0]["AccountName"];
+	$address = $row[0]["Address"];
+	$accountNum = $row[0]['AccountNumber'];
 	
-	$res = $db->query("select * from tbl_type where typeId = $type");
+	$res = $db->query("SELECT *FROM tbl_type WHERE typeId = $type");
 	$rowT = $res->fetchAll(PDO::FETCH_ASSOC);
 	
-	$res = $db->query("select * from tbl_service where typeId = $type");
+	$res = $db->query("SELECT *FROM tbl_service WHERE typeId = $type");
 	$rowS = $res->fetchAll(PDO::FETCH_ASSOC);
 	
-	$res = $db->query("select * from tbl_type_undertake a left outer join
-						tbl_undertake b on a.undertakeId = b.undertakeId
-						where typeId = $type");
+	$res = $db->query("SELECT *FROM tbl_type_undertake a LEFT OUTER JOIN
+						tbl_undertake b ON a.undertakeId = b.undertakeId
+						WHERE typeId = $type");
 	$rowU = $res->fetchAll(PDO::FETCH_ASSOC);
 	
-	$res = $db->query("select * from tbl_type_fee a left outer join
-						tbl_fee b on a.feeId = b.feeId
-						where typeId = $type");
+	$res = $db->query("SELECT *FROM tbl_type_fee a LEFT OUTER JOIN
+						tbl_fee b ON a.feeId = b.feeId
+						WHERE typeId = $type");
 	$rowF = $res->fetchAll(PDO::FETCH_ASSOC);
 	
-	$res = $db->query("select * from tbl_type_reason a left outer join
-						tbl_reasons b on a.reasonId = b.reasonId
-						where typeId = $type");
+	$res = $db->query("SELECT *FROM tbl_type_reason a LEFT OUTER JOIN
+						tbl_reasons b ON a.reasonId = b.reasonId
+						WHERE typeId = $type");
 	$rowR = $res->fetchAll(PDO::FETCH_ASSOC);
 	
-	$res = $db->query("select c.conDesc, d.subDesc from tbl_consumers a
-						left outer join tbl_consumer_connection b on a.cId = b.cId
-						left outer join tbl_connection_type c on b.conId = c.conId
-						left outer join tbl_connection_sub d on b.subId = d.subId
-						where a.sysPro = $acct");
+	$res = $db->query("select c.conDesc, d.subDesc from consumers a
+						LEFT OUTER JOIN tbl_consumer_connection b ON a.Entry_Number = b.cid
+						LEFT OUTER JOIN tbl_connection_type c ON b.conId = c.conId
+						LEFT OUTER JOIN tbl_connection_sub d ON b.subId = d.subId
+						WHERE a.AccountNumber = $acct");
 	$rowCT = $res->fetchAll(PDO::FETCH_ASSOC);
 ?>
 

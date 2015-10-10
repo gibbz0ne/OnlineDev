@@ -3,18 +3,7 @@ $(document).ready(function(){
 	var q1 = q2 = q3 = q4 = q5 = q6 = 1;
 	var ownerName = ownerAddress = prevOccupant = "";
 	$("#jqxMenu").jqxMenu({width: window.innerWidth-5, height: "30px", theme: "main-theme", autoOpen:false});
-	var consumer_inspectionMenu = $("#inspectionMenu").jqxMenu({ width: 226, height: 86, autoOpenPopup: false, mode: "popup",theme: "main-theme"});
 	
-	$("#inspection_list").on("rowclick", function (event) {
-		if (event.args.rightclick) {
-			var selected_account = $("#inspection_list").jqxGrid("selectrow", event.args.rowindex);
-			$("#inspection_list").jqxGrid("focus");
-			var scrollTop = $(window).scrollTop();
-			var scrollLeft = $(window).scrollLeft();
-			consumer_inspectionMenu.jqxMenu("open", parseInt(event.args.originalEvent.clientX) + 5 + scrollLeft, parseInt(event.args.originalEvent.clientY) + 5 + scrollTop);
-			return false;
-		}
-	});
 	$("#inspection_list").on("contextmenu", function () {
 		return false;
 	});
@@ -153,6 +142,7 @@ $(document).ready(function(){
 		altrows: true,
 		selectionmode: "singlerow",
 		pageable: true,
+		filterable: true,
 		rendertoolbar: function(toolbar){
 			var me = this;
 			var container = $("<div style='margin: 5px;'></div>");
@@ -166,6 +156,7 @@ $(document).ready(function(){
 			container.append(span);
 			container.append(input);
 			container.append(dropdownlist2);
+			container.append('<input id="inspect" type="button" style = "margin-left: 10px;" value="INSPECT" />');
 
 			container.append(searchButton);
 			container.append(branch_sep);
@@ -177,15 +168,15 @@ $(document).ready(function(){
 				theme: "main-theme", 
 				width: 200, 
 				height: 25, 
-				source: [
-					"Consumer Name", "Address","Account Number"
-				]
+				source: [ "Consumer Name", "Address","Account Number"]
 			});
-									
-			if (theme != "") {
-				input.addClass("jqx-widget-content-" + theme);
-				input.addClass("jqx-rc-all-" + theme);
-			}
+
+			$("#inspect").jqxButton({disabled: true, width: 100, theme: "main-theme"});
+				
+			$("#inspect").on("click", function(){
+				$("#confirmInspection").jqxWindow("open");
+			});
+			
 			$("#search").click(function(){
 				$("#inspection_list").jqxGrid('clearfilters');
 				var searchColumnIndex = $("#dropdownlist").jqxDropDownList('selectedIndex');
@@ -259,6 +250,10 @@ $(document).ready(function(){
 			{text: "SO", dataField: "so",  align: "center", width: 150},
 			{text: "Status", dataField: "status", cellsalign: "center", align: "center", width: 150}
 		]
+	});
+	
+	$("#inspection_list").on("rowselect", function(){
+		$("#inspect").jqxButton({disabled: false});
 	});
 	
 	$("#inspection_list2").jqxGrid({
@@ -401,17 +396,14 @@ $(document).ready(function(){
 			var container = $("<div style='margin: 5px;'></div>");
 			var span = $("<span style='float: left; margin-top: 5px; margin-right: 4px;'>Search : </span>");
 			var input = $("<input class='jqx-input jqx-widget-content jqx-rc-all' id='searchField2' type='text' style='height: 23px; float: left; width: 223px;' />");
-		   // var refresh = $("<input style="margin-left: 5px;" id="clear" type="button" value="Clear" />");
 			var searchButton = $("<div style='float: left; margin-left: 5px;' id='search2'><img style='position: relative; margin-top: 2px;' src='../assets/images/search_lg.png'/><span style='margin-left: 4px; position: relative; top: -3px;'></span></div>");
 			var dropdownlist2 = $("<div style='float: left; margin-left: 5px;' id='dropdownlist2'></div>");
-			var branch_sep = $("<div style='float: left; margin-left: 5px;' id='branch_sep'></div>");
 			toolbar.append(container);
 			container.append(span);
 			container.append(input);
 			container.append(dropdownlist2);
 
 			container.append(searchButton);
-			container.append(branch_sep);
 
 			$("#search2").jqxButton({theme: "main-theme",height:18,width:24});
 			$("#dropdownlist2").jqxDropDownList({
@@ -521,10 +513,6 @@ $(document).ready(function(){
 		height: 500, width: 900, maxWidth: 900, showCloseButton: true, draggable: false, resizable: false, isModal: true, autoOpen: false, modalOpacity: 0.50,theme: "main-theme"
 	});
 	
-	$("#approve").click(function(){
-		$("#confirmInspection").jqxWindow("open");
-	});
-	
 	$("#cancel").click(function(){
 		$("#rejectApp").jqxWindow("open");
 	});
@@ -540,6 +528,7 @@ $(document).ready(function(){
 		$("#submit").unbind("click").bind("click", function(){
 			var rowindex = $("#inspection_list").jqxGrid("getselectedrowindex");
 			var data = $("#inspection_list").jqxGrid("getrowdata", rowindex);
+			console.log(data);
 			var selected = $("#pType").jqxDropDownList("getSelectedItem");
 			var selStation = $("#substation").jqxDropDownList("getSelectedItem");
 			var selFeeder = $("#feeder").jqxDropDownList("getSelectedItem");
@@ -564,7 +553,6 @@ $(document).ready(function(){
 						}, 2000);
 					} else{
 						alert(data);
-						console.log(data);
 					}
 				}
 			});
@@ -605,8 +593,8 @@ $(document).ready(function(){
 	
 	var mainPData = new $.jqx.dataAdapter(mainP);
 	$("#pType").jqxDropDownList({
-		source: mainPData, selectedIndex: 0, autoDropDownHeight: 200, height: 20, 
-		displayMember: "protectionDesc", valueMember: "protectionId", width: "92.3%"
+		source: mainPData, selectedIndex: 0, autoDropDownHeight: true, height: 20, 
+		displayMember: "protectionDesc", valueMember: "protectionId", width: "92.3%", theme: "main-theme"
 	});
 	
 	$("#reports").on("click", function(event){

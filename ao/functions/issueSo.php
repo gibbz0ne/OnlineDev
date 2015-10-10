@@ -15,9 +15,9 @@
 	else {
 		$type = $_GET["type"];
 		
-		$res = $db->query("SELECT cid FROM tbl_consumers");
+		$res = $db->query("SELECT Entry_Number FROM consumers");
 		$row = $res->fetchAll(PDO::FETCH_ASSOC);
-		$cid = $row[0]["cid"];
+		$cid = $row[0]["Entry_number"];
 	
 		$query = $db->query("SELECT *FROM tbl_applications ORDER BY appId DESC LIMIT 1");
 		if($query->rowCount() > 0){
@@ -42,15 +42,15 @@
 			}
 		}
 		
-		$applications = $db->prepare("INSERT INTO tbl_applications (appId, cid, appDate)
+		$applications = $db->prepare("INSERT INTO tbl_applications (appId, Entry_Number, appDate)
 							 VALUES (?, ?, ?)");
 		$applications->execute(array($appId, $cid, date("Y-m-d H:i:s")));
 		
-		$transactions = $db->prepare("INSERT INTO tbl_transactions(appId, cid, status, processedBy, dateProcessed)
+		$transactions = $db->prepare("INSERT INTO tbl_transactions(appId, Entry_Number, status, processedBy, dateProcessed)
 									VALUES (?, ?, ?, ?, ?)");
 		$transactions->execute(array($appId, $cid, 1, $id, date("Y-m-d H:i:s")));
 		
-		$res = $db->query("SELECT * FROM tbl_transactions WHERE appId = $appId and cid = $cid");
+		$res = $db->query("SELECT * FROM tbl_transactions WHERE appId = $appId and Entry_Number = $cid");
 		$row = $res->fetchAll(PDO::FETCH_ASSOC);
 		$trans = $row[0]["tid"];
 		
@@ -83,23 +83,23 @@
 		}
 	}
 	
-	$res = $db->query("SELECT * FROM tbl_transactions a left OUTER JOIN
-						tbl_applications b on a.appId = b.appId left OUTER JOIN
-						tbl_app_type c on b.appId = c.appId left OUTER JOIN
-						tbl_type d on c.typeId = d.typeId
+	$res = $db->query("SELECT * FROM tbl_transactions a LEFT OUTER JOIN
+						tbl_applications b ON a.appId = b.appId LEFT OUTER JOIN
+						tbl_app_type c ON b.appId = c.appId LEFT OUTER JOIN
+						tbl_type d ON c.typeId = d.typeId
 						WHERE a.tid = $trans");
 	$row = $res->fetchAll(PDO::FETCH_ASSOC);
 	
 	$type = $row[0]["typeId"];
 	$app = $row[0]["appId"];
-	$cid = $row[0]["cid"];
+	$cid = $row[0]["Entry_Number"];
 	$soPre = $row[0]["typeCode"];
 	$soCtr = ($_GET["txtControl"] != "" ? $_GET["txtControl"] : 0);
 	
 
 	if($soCtr == 0) {
 		$res = $db->query("SELECT sonum FROM tbl_so WHERE substr(sonum, 1, 1) = '$soPre'
-							order by sonum desc limit 1");
+							ORDER BY sonum DESC limit 1");
 		
 		if($rowSonum = $res->fetchAll(PDO::FETCH_ASSOC)) {
 			$soCtr = (int)substr($rowSonum[0]["sonum"], 1);
@@ -113,7 +113,7 @@
 	$insert = $db->prepare("INSERT INTO tbl_so (sonum, soRemarks, cId, appId) VALUES(?, ?, ?, ?)");
 	$insert->execute(array($sonumber, ($_GET["taRemarks"] ? $_GET["taRemarks"] : null), $cid, $app));
 	
-	$update = $db->prepare("UPDATE tbl_applications SET appSOnum = ? WHERE cid = ? AND appId = ?");
+	$update = $db->prepare("UPDATE tbl_applications SET appSOnum = ? WHERE Entry_Number = ? AND appId = ?");
 	$update->execute(array($sonumber, $cid, $app));
 	
 	$res = $db->query("SELECT * FROM tbl_so WHERE sonum = '$sonumber'");
@@ -156,12 +156,12 @@
 	$update = $db->prepare("UPDATE tbl_transactions SET action = ?, approvedBy = ?, dateApproved = ? WHERE tid = ?");
 	$update->execute(array(1, $id, date("Y-m-d H:i:s"), $trans));
 
-	$insert = $db->prepare("INSERT INTO tbl_transactions (appId, cid, status, processedBy, dateProcessed)
+	$insert = $db->prepare("INSERT INTO tbl_transactions (appId, Entry_Number, status, processedBy, dateProcessed)
 						VALUES(?, ?, ?, ?, ?)");
 	$insert->execute(array($app, $cid, 4, $processed, date("Y-m-d H:i:s")));
 
-	$insert = $db->prepare("update tbl_consumers set hasPendingSO = true WHERE cid = $cid");
-	$insert->execute();
+	// $insert = $db->prepare("update tbl_consumers set hasPendingSO = true WHERE Entry_Number = $cid");
+	// $insert->execute();
 	
 	echo "1";
 ?>
