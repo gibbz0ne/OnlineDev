@@ -179,7 +179,7 @@
 					</td>
 					<td>
 						<!--<div id="txtDatePaid" name="txtDatePaid" class=""></div>-->
-						<input id="txtDatePaid" name="txtDatePaid" class="jqx-input jqx-widget-content jqx-rc-all" type="text"></input>
+						<div id="txtDatePaid" name="txtDatePaid" class="jqx-input jqx-widget-content jqx-rc-all"></div>
 					</td>
 				</tr>
 				<tr>

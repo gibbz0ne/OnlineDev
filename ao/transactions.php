@@ -44,7 +44,6 @@ $include = new includes();
 				});
 				
 				$("#jqxMenu").jqxMenu({ width: window.innerWidth-5, height: "30px", theme:"main-theme", autoOpen:false});
-				
 				$("#mainSplitter").jqxSplitter({
 					width: window.innerWidth-5, 
 					height:window.innerHeight-40,
@@ -410,7 +409,8 @@ $include = new includes();
 								
 								$(".undertake").jqxCheckBox({checked: true, theme: "custom-abo-admin"});
 								$(".service").jqxCheckBox({theme: "custom-abo-admin"});
-								
+								$("#txtDatePaid").jqxDateTimeInput({theme: "main-theme", width: "76%", formatString: 'yyyy-MM-dd'});
+
 								$("#issue").jqxButton({
 									width: '150'
 								}).unbind("click").bind("click", function(event) {
