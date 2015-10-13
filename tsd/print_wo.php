@@ -14,13 +14,12 @@ $pdf->AddPage();
 
 //$pdf->Image('../assets/images/logo.jpg',30,15,25);
 if(isset($_GET["ref"])){
-	foreach($db->query("SELECT *FROM tbl_work_order WHERE wo = '$woNo'") as $row)
+	foreach($db->query("SELECT *FROM tbl_work_order a
+						LEFT OUTER JOIN tbl_applications b ON a.appId = b.appId
+						LEFT OUTER JOIN consumers c ON b.Entry_Number = c.Entry_Number 
+						WHERE a.wo = '$woNo'") as $row)
 		$d = explode(" ", $row["woDate"]);
 		$date = date("M, d Y", strtotime($d[0]));
-
-	foreach($db->query("SELECT * FROM tbl_applications JOIN tbl_consumers USING(cid) JOIN tbl_consumer_address USING(cid) JOIN tbl_barangay USING(brgyId) WHERE appId = '".$row["appId"]."'") as $row2)
-		if($row2["mname"] != "") $row2["mname"] = $row2["mname"][0].".";
-	foreach($db->query("SELECT *FROM tbl_municipality WHERE munId = '".$row2["munId"]."'") as $row3)
 
 	$pdf->Ln(10);
 	$pdf->SetX(10);
@@ -46,12 +45,12 @@ if(isset($_GET["ref"])){
 	$pdf->SetX(10);
 	$pdf->Ln();
 	$pdf->Cell(40, 6, "LOCATION:", 1, 0, "L");
-	$pdf->Cell(100, 6, $row2["address"]." ".$row2["purok"]." ".$row2["brgyName"]." ".$row3["munDesc"], 1, 0, "L");
+	$pdf->Cell(100, 6, iconv('UTF-8', 'windows-1252', $row["Address"]), 1, 0, "L");
 	$pdf->Cell(30, 12, "WAREHOUSE NO:", 1, 0, "L");
 	$pdf->Cell(26, 12, "###", 1, 0, "L");
 	$pdf->Ln(6);
 	$pdf->Cell(40, 6, "ACCOUNT NAME/NO:", 1, 0, "L");
-	$pdf->Cell(100, 6, $row2["lname"].", ".$row2["fname"]." ".$row2["mname"]." / ".$row2["acctNo"], 1, 0, "L");
+	$pdf->Cell(100, 6, iconv('UTF-8', 'windows-1252', $row["AccountName"])." / ".$row["AccountNumber"], 1, 0, "L");
 	$pdf->Ln();
 	$pdf->Cell(40, 6, "TASK DESCRIPTION:", 1, 0, "L");
 	$pdf->Cell(100, 6, "", 0, 0, "L");
@@ -117,12 +116,12 @@ if(isset($_GET["ref"])){
 	$pdf->SetX(10);
 	$pdf->Ln();
 	$pdf->Cell(40, 6, "LOCATION:", 1, 0, "L");
-	$pdf->Cell(100, 6, $row2["address"]." ".$row2["purok"]." ".$row2["brgyName"]." ".$row3["munDesc"], 1, 0, "L");
+	$pdf->Cell(100, 6, iconv('UTF-8', 'windows-1252', $row["Address"]), 1, 0, "L");
 	$pdf->Cell(30, 12, "WAREHOUSE NO:", 1, 0, "L");
 	$pdf->Cell(26, 12, "###", 1, 0, "L");
 	$pdf->Ln(6);
 	$pdf->Cell(40, 6, "ACCOUNT NAME/NO:", 1, 0, "L");
-	$pdf->Cell(100, 6, $row2["lname"].", ".$row2["fname"]." ".$row2["mname"]." / ".$row2["acctNo"], 1, 0, "L");
+	$pdf->Cell(100, 6, iconv('UTF-8', 'windows-1252', $row["AccountName"])." / ".$row["AccountNumber"], 1, 0, "L");
 	$pdf->Ln();
 	$pdf->Cell(40, 6, "Actual Activity:", 1, 0, "L");
 	$pdf->Cell(100, 6, "", 0, 0, "L");

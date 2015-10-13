@@ -29,6 +29,7 @@
 					$d1 = explode(" ", $row2["dateProcessed"]);
 					// if($d[0] == $date || $d1[0] == $date){
 						$list[] = array("consumerName" => $row["AccountName"],
+									"mname" => $row["MiddleName"],
 									"address" => $row["Address"],
 									"status" => $status,
 									"so" => $row["appSOnum"],

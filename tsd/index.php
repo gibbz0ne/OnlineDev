@@ -398,7 +398,7 @@
 					$.ajax({
 						url: "sources/MRSubmission.php",
 						type: "post",
-						data: {data2, data3, purpose: $("#purpose").val() },
+						data: {data2, data3, purpose: $("#purpose").val(), mrNum: $("#mrNum").val() },
 						success: function(result){
 							$("#result").html(result);
 							$("#confirmApp").jqxWindow("open");
@@ -415,7 +415,7 @@
 					$.ajax({
 						url: "functions/issueMr.php",
 						type: "post",
-						data: {data2, data3, purpose: $("#purpose").val()},
+						data: {data2, data3, purpose: $("#purpose").val(), mrNum: $("#mrNum").val()},
 						success: function(data){
 							if(data){
 								$("#mrModal").jqxWindow("close");
@@ -676,8 +676,10 @@
 			<div><img src = "../assets/images/icons/icol16/src/hammer_screwdriver.png"> Material Requisition</div>
 			<div>
 				<div class = "col-sm-5">
-					PURPOSE
-					<input type = "text" id = "purpose" placeholder = "PURPOSE" class = "form-control"><br/>
+					PURPOSE:
+					<input type = "text" id = "purpose" placeholder = "PURPOSE" class = "form-control">
+					MR NUMBER:
+					<input type = "text" id = "mrNum" placeholder = "MR Number" class = "form-control"><br/>
 				</div>
 				<div id = "materialGrid"></div><br/>
 				<div class = "row">

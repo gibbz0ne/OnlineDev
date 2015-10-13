@@ -47,6 +47,7 @@
 						{name: "status"},
 						{name: "acctNo"},
 						{name: "consumerName"},
+						{name: "mname"},
 						{name: "address"},
 						{name: "municipality"},
 						{name: "area"},
@@ -145,6 +146,7 @@
 					columns: [
 						{text: "Primary Account No.", pinned: true, align: "center", cellsalign: "center", datafield: "acctNo", width: 150},
 						{text: "Consumer Name", pinned: true, align: "center", datafield: "consumerName", width: 300},
+						{text: "Middle Name", pinned: true, align: "center", datafield: "mname", width: 300},
 						{text: "Address", align: "center", datafield: "address", width: 350},
 						{text: "Municipality", align: "center", cellsalign: "center", datafield: "municipality", width: 150},
 						{text: "Area", align: "center", cellsalign: "center", datafield: "area", width: 100},

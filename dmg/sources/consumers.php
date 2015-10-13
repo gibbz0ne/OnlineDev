@@ -12,7 +12,7 @@
 							LEFT OUTER JOIN tbl_consumer_connection d ON a.Entry_Number = d.cid 
 							LEFT OUTER JOIN tbl_connection_type e ON d.conId = e.conId 
 							LEFT OUTER JOIN tbl_connection_sub f ON d.subId = f.subId 
-							WHERE c.status = 2 AND c.action = 0 
+							WHERE c.status = 3 AND c.action = 0 
 							ORDER BY c.tid DESC");
 						   
 	foreach($query2 as $row){
@@ -22,6 +22,7 @@
 			"status" => $status,
 			"acctNo" => $row["AccountNumber"],
 			"consumerName" => $row["AccountName"],
+			"mname" => $row["MiddleName"],
 			"address" => $row["Address"],
 			"municipality" => $row["Municipality"],
 			"area" => $row["Branch"],

@@ -9,14 +9,12 @@
 							LEFT OUTER JOIN tbl_applications b ON a.Entry_Number = b.Entry_Number 
 							LEFT OUTER JOIN tbl_transactions c ON b.appId = c.appId 
 							LEFT OUTER JOIN tbl_status d ON c.status = d.statId 
-							WHERE appSOnum is NULL AND c.status = 3 AND c.action = 0 AND c.processedBy = $id
+							WHERE appSOnum is NULL AND c.status = 2 AND c.action = 0 AND c.processedBy = $id
 							ORDER BY appDate Desc");
 	
 	$list = Array();
 	if($query->rowCount() > 0){
 		foreach($query as $row){
-			
-
 				$status = $row["statName"];
 				
 				if($row["action"] == 1 && $row["status"] == 1){
@@ -38,6 +36,7 @@
 				}
 				
 				$list[] = array("consumerName" => str_replace("ñ", "Ñ", $row["AccountName"]),
+								"mname" => $row["MiddleName"],
 								"address" => $row["Address"],
 								"status" => $status,
 								"so" => $row["appSOnum"],

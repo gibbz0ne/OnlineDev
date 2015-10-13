@@ -11,7 +11,7 @@
 	if($branch == "B1")
 		$ext = "WOE".date("y")."-T";
 	if($branch == "B2")
-		$ext = "WOM";
+		$ext = "WOM".date("y");
 	
 	if($_POST["workNo"] == ""){
 		$query = $db->query("SELECT *FROM tbl_work_order WHERE wo LIKE '%$y%' ORDER BY wo DESC LIMIT 1");
@@ -42,37 +42,36 @@
 			$wom = "APEC-".$ext."-".$_POST["workNo"];
 	}
 
-	echo $wom;
-	// if(isset($_POST["appId"])){
-		// $appId = $_POST["appId"];
-		// $scope = strtoupper($_POST["scope"]);
-		// $cid = $_POST["cid"];
-		// $tid = $_POST["tid"];
+	if(isset($_POST["appId"])){
+		$appId = $_POST["appId"];
+		$scope = strtoupper($_POST["scope"]);
+		$cid = $_POST["cid"];
+		$tid = $_POST["tid"];
 		
-		// $processed = 0;
-		// $q = $db->query("SELECT *FROM tbl_transactions where tid = $tid");
-		// foreach ($q as $r) {
-			// $processed = $r["processedBy"];
-		// }
+		$processed = 0;
+		$q = $db->query("SELECT *FROM tbl_transactions where tid = $tid");
+		foreach ($q as $r) {
+			$processed = $r["processedBy"];
+		}
 		
-		// try{
-			// $db->beginTransaction();
+		try{
+			$db->beginTransaction();
 			
-			// $insert = $db->prepare("INSERT INTO tbl_work_order (wo, appId, cid, woDate, scope) VALUES (?, ?, ?, ?, ?)");
-			// $insert->execute(array($wom, $appId, $cid, date("Y-m-d")." ".date("H:i:s"), $scope));
+			$insert = $db->prepare("INSERT INTO tbl_work_order (wo, appId, cid, woDate, scope) VALUES (?, ?, ?, ?, ?)");
+			$insert->execute(array($wom, $appId, $cid, date("Y-m-d")." ".date("H:i:s"), $scope));
 			
-			// $update = $db->prepare("UPDATE tbl_transactions SET action = ?, approvedBy = ?, dateApproved = ? WHERE tid = ?");
-			// $update->execute(array(1, $uid, date("Y-m-d H:i:s"), $tid));
+			$update = $db->prepare("UPDATE tbl_transactions SET action = ?, approvedBy = ?, dateApproved = ? WHERE tid = ?");
+			$update->execute(array(1, $uid, date("Y-m-d H:i:s"), $tid));
 
-			// $insert = $db->prepare("INSERT INTO tbl_transactions (appId, cid, status, processedBy, dateProcessed)
-								// VALUES(?, ?, ?, ?, ?)");
-			// $insert->execute(array($appId, $cid, 5, $processed, date("Y-m-d H:i:s")));
+			$insert = $db->prepare("INSERT INTO tbl_transactions (appId, Entry_Number, status, processedBy, dateProcessed)
+								VALUES(?, ?, ?, ?, ?)");
+			$insert->execute(array($appId, $cid, 5, $processed, date("Y-m-d H:i:s")));
 			
-			// $db->commit();
-			// echo "1";
-		// } catch(PDOException $e){
-			// $db->rollBack();
-			// echo $e;
-		// }
-	// }
+			$db->commit();
+			echo "1";
+		} catch(PDOException $e){
+			$db->rollBack();
+			echo $e;
+		}
+	}
 ?>

@@ -33,6 +33,7 @@
 		$appId = date("Ymd")."001";
 		$cid = 1;
 		$brgy = $_POST["brgy"];
+		$middle = $mname;
 		$mname = ($mname == "" ? "" : " ".$mname[0].".");
 		$hno = ($hno == "" ? "" : $hno);
 		$purok = ($purok == "" ? "" : $purok);
@@ -76,9 +77,9 @@
 		try{
 			$db->beginTransaction();
 			
-			$insertC = $db->prepare("INSERT INTO consumers (Entry_Number, AccountName, Address, Barangay, Branch, Municipality, CustomerType, bapa)
-									 VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-			$insertC->execute(array($cid, $lname." ".$fname.$mname, $hno." ".$purok." ".$brgy." ".$municipality, $brgy, $branch, $municipality, $customerType, $isBapa));
+			$insertC = $db->prepare("INSERT INTO consumers (Entry_Number, AccountName, MiddleName, Address, Barangay, Branch, Municipality, CustomerType, bapa)
+									 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+			$insertC->execute(array($cid, $lname." ".$fname.$mname, $middle, $hno." ".$purok." ".$brgy." ".$municipality, $brgy, $branch, $municipality, $customerType, $isBapa));
 			
 			$app = $db->prepare("INSERT INTO tbl_applications (appId, Entry_Number, appDate)
 								 VALUES (?, ?, ?)");

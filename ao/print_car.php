@@ -54,7 +54,7 @@ if($query2->rowCount() > 0){
 		$date = DateTime::createFromFormat("Y-m-d", $d[0]);
 
 		$req_date = $date->format("F d, Y");
-		$consumer = $row["AccountName"];
+		$consumer = iconv('UTF-8', 'windows-1252', $row["AccountName"]);
 		$address = $row["Address"];
 		$address = str_replace("ñ", "Ñ", $address);
 		$address = iconv('UTF-8', 'windows-1252', $address);

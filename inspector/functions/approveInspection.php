@@ -8,12 +8,12 @@
 
 	if(isset($_POST["pType"])){
 		$pType = $_POST["pType"];
-		$rating = $_POST["rating"];
+		$rating = strtoupper($_POST["rating"]);
 		$etype = $_POST["etype"];
-		$eSize = $_POST["eSize"];
-		$wSize = $_POST["wSize"];
-		$servicePole = $_POST["servicePole"];
-		$length = $_POST["length"];
+		$eSize = strtoupper($_POST["eSize"]);
+		$wSize = strtoupper($_POST["wSize"]);
+		$servicePole = strtoupper($_POST["servicePole"]);
+		$length = strtoupper($_POST["length"]);
 		$totalVa = $_POST["totalVa"];
 		$meter = strtoupper($_POST["meter"]);
 		$mClass = $_POST["mClass"];

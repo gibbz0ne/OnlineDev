@@ -3,25 +3,37 @@
     $con = new getConnection();
     $db = $con->PDO();
 	$y = date("y");
-	$query = $db->query("SELECT *FROM tbl_mr WHERE mrNo LIKE '%$y%' ORDER BY mrNo DESC LIMIT 1");
-
-	if($query->rowCount() > 0){
-		foreach($query as $row){
-			$mrNo = explode("-", $row["mrNo"]);
-			$series = intval($mrNo[3]+1);
-
-			if(strlen($series) == 1){
-				$mrNo = "MR-M-".$y."-000".$series;
-			} else if(strlen($series) == 2){
-				$mrNo = "MR-M-".$y."-00".$series;
-			} else if(strlen($series) == 3){
-				$mrNo = "MR-M-".$y."-0".$series;
-			} else{
-				$mrNo = "MR-M-".$y."-".$series;
-			}
-		}
+	
+	if(isset($_POST["mrNum"]) && $_POST["mrNum"] != ""){
+		if(strlen($_POST["mrNum"]) == 1)
+			$mrNo = "MR-M-000".$_POST["mrNum"];
+		else if(strlen($_POST["mrNum"]) == 2)
+			$mrNo = "MR-M-00".$_POST["mrNum"];
+		else if(strlen($_POST["mrNum"]) == 3)
+			$mrNo = "MR-M-0".$_POST["mrNum"];
+		else
+			$mrNo = "MR-M-".$_POST["mrNum"];
 	} else{
-		$mrNo = "MR-M-".$y."-0001";
+		$query = $db->query("SELECT *FROM tbl_mr WHERE mrNo LIKE '%$y%' ORDER BY mrNo DESC LIMIT 1");
+
+		if($query->rowCount() > 0){
+			foreach($query as $row){
+				$mrNo = explode("-", $row["mrNo"]);
+				$series = intval($mrNo[3]+1);
+
+				if(strlen($series) == 1){
+					$mrNo = "MR-M-".$y."-000".$series;
+				} else if(strlen($series) == 2){
+					$mrNo = "MR-M-".$y."-00".$series;
+				} else if(strlen($series) == 3){
+					$mrNo = "MR-M-".$y."-0".$series;
+				} else{
+					$mrNo = "MR-M-".$y."-".$series;
+				}
+			}
+		} else{
+			$mrNo = "MR-M-".$y."-0001";
+		}
 	}
 	
 	$woList = '<table class = "table table-condensed table-striped table-bordered">

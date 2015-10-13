@@ -15,6 +15,8 @@
 		
 		$type = $row[0]["typeId"];
 		$acct = $row[0]["AccountNumber"];
+		$cid = $row[0]["Entry_Number"];
+		
 	}
 	else {
 		$type = $_POST["con"];
@@ -50,12 +52,13 @@
 						WHERE typeId = $type");
 	$rowR = $res->fetchAll(PDO::FETCH_ASSOC);
 	
-	$res = $db->query("select c.conDesc, d.subDesc from consumers a
-						LEFT OUTER JOIN tbl_consumer_connection b ON a.Entry_Number = b.cid
-						LEFT OUTER JOIN tbl_connection_type c ON b.conId = c.conId
-						LEFT OUTER JOIN tbl_connection_sub d ON b.subId = d.subId
-						WHERE a.AccountNumber = $acct");
-	$rowCT = $res->fetchAll(PDO::FETCH_ASSOC);
+	// $res = $db->query("select c.conDesc, d.subDesc from consumers a
+						// LEFT OUTER JOIN tbl_consumer_connection b ON a.Entry_Number = b.cid
+						// LEFT OUTER JOIN tbl_connection_type c ON b.conId = c.conId
+						// LEFT OUTER JOIN tbl_connection_sub d ON b.subId = d.subId
+						// WHERE a.Entry_Number = $cid");
+						// WHERE a.AccountNumber = $acct");
+	// $rowCT = $res->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
 <form id="frmSO">
@@ -66,6 +69,7 @@
 					<tr>
 						<td colspan="4" align="center">
 							<h4 style="font-weight:bold;">Service Order for <?PHP echo $rowT[0]["typeDesc"]; ?></h4>
+							<?PHP echo $rowT[0]["typeDesc"]; ?>
 						</td>
 					</tr>
 				</thead>
@@ -91,7 +95,8 @@
 					</tr>
 					<tr>
 						<td>Type:</td>
-						<td colspan="3"><div style="width:100%; border-bottom:thin solid;"><strong><?PHP echo $rowCT[0]["conDesc"].($rowCT[0]["subDesc"] ? " - ".$rowCT[0]["subDesc"] : ""); ?></strong></div></td>
+						<td colspan="3"><div style="width:100%; border-bottom:thin solid;"><strong><?PHP echo $row[0]["CustomerType"]; ?></strong></div></td>
+						<!--td colspan="3"><div style="width:100%; border-bottom:thin solid;"><strong><!?PHP echo $rowCT[0]["conDesc"].($rowCT[0]["subDesc"] ? " - ".$rowCT[0]["subDesc"] : ""); ?></strong></div></td-->
 					</tr>
 				</tbody>
 			</table>

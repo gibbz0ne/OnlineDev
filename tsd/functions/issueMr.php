@@ -6,23 +6,36 @@
 	$userId = $_SESSION["userId"];
 	$query = $db->query("SELECT *FROM tbl_mr WHERE mrNo LIKE '%$y%' ORDER BY mrNo DESC LIMIT 1");
 
-	if($query->rowCount() > 0){
-		foreach($query as $row){
-			$mrNo = explode("-", $row["mrNo"]);
-			$series = intval($mrNo[3]+1);
-
-			if(strlen($series) == 1){
-				$mrNo = "MR-M-".$y."-000".$series;
-			} else if(strlen($series) == 2){
-				$mrNo = "MR-M-".$y."-00".$series;
-			} else if(strlen($series) == 3){
-				$mrNo = "MR-M-".$y."-0".$series;
-			} else{
-				$mrNo = "MR-M-".$y."-".$series;
-			}
-		}
+	if(isset($_POST["mrNum"]) && $_POST["mrNum"] != ""){
+		if(strlen($_POST["mrNum"]) == 1)
+			$mrNo = "MR-M-000".$_POST["mrNum"];
+		else if(strlen($_POST["mrNum"]) == 2)
+			$mrNo = "MR-M-00".$_POST["mrNum"];
+		else if(strlen($_POST["mrNum"]) == 3)
+			$mrNo = "MR-M-0".$_POST["mrNum"];
+		else
+			$mrNo = "MR-M-".$_POST["mrNum"];
 	} else{
-		$mrNo = "MR-M-".$y."-0001";
+		$query = $db->query("SELECT *FROM tbl_mr WHERE mrNo LIKE '%$y%' ORDER BY mrNo DESC LIMIT 1");
+
+		if($query->rowCount() > 0){
+			foreach($query as $row){
+				$mrNo = explode("-", $row["mrNo"]);
+				$series = intval($mrNo[3]+1);
+
+				if(strlen($series) == 1){
+					$mrNo = "MR-M-".$y."-000".$series;
+				} else if(strlen($series) == 2){
+					$mrNo = "MR-M-".$y."-00".$series;
+				} else if(strlen($series) == 3){
+					$mrNo = "MR-M-".$y."-0".$series;
+				} else{
+					$mrNo = "MR-M-".$y."-".$series;
+				}
+			}
+		} else{
+			$mrNo = "MR-M-".$y."-0001";
+		}
 	}
 
     $con = new getConnection();
@@ -58,11 +71,9 @@
         for($i = 0; $i < count($data); $i++){
 			if($ctr%7 == 0 && $i != 0){
                 array_push($mArray, $data[$i]);
-                	// echo $mArray[5];
                 foreach($db->query("SELECT *FROM tbl_consumers JOIN tbl_applications USING (cid) WHERE sysPro = '".$mArray[5]."'") as $row){
                 	$appId = $row["appId"];
 					$cid = $row["cid"];
-					//echo $data[5]." -> $appId\n";
 
 					$trans = $mArray[6];
 					
@@ -82,18 +93,13 @@
 					$mr_wo = $db->prepare("INSERT INTO tbl_mr_wo (mrNo, appId, wo) VALUES	(?, ?, ?)");
 					$mr_wo->execute(array($mrNo, $appId, $mArray[1]));
 				}
-				// print_r($mArray);
                 $mArray = array();
 			}
-			/*else if($ctr%7 == 0 && $i != 0) {
-				$ctr = 0;
-			}*/
             else
                 array_push($mArray, $data[$i]);
 			$ctr++;
         }
 		
-		//$transaction = $db->prepare("INSERT INTO tbl_transactions ()")
         echo $mrNo;
     }
 ?>

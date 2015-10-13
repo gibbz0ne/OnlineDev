@@ -15,17 +15,15 @@
 		$appId = $_POST["appId"];
 		$cid = $_POST["cid"];
 		
-		$query = $db->query("SELECT *FROM tbl_applications JOIN tbl_consumers USING (cid) JOIN tbl_consumer_address USING (cid) JOIN tbl_barangay USING (brgyId) WHERE tbl_applications.appId = '$appId' AND cid = '$cid'");
+		$query = $db->query("SELECT *FROM consumers a
+							 LEFT OUTER JOIN tbl_applications b ON a.Entry_Number = b.Entry_Number
+							 WHERE b.appId = '$appId' AND a.Entry_Number = '$cid'");
 		
 		if($query->rowCount() > 0){
 			foreach($query as $row)
-			foreach($db->query("SELECT *FROM tbl_municipality WHERE munId = '".$row["munId"]."'") as $row2)
-			
-			if($row["mname"] != "")
-				$row["mname"] = $row["mname"][0].".";
-			$address = $row["address"]." ".$row["purok"]." ".$row["brgyName"]." ".$row2["munDesc"];
-			$name = $row["lname"].", ".$row["fname"]." ".$row["mname"];
-			$no = $row["sysPro"];
+				$address = $row["Address"];
+				$name = $row["AccountName"];
+				$no = $row["AccountNumber"];
 		}
 		
 		$y = date("Y");

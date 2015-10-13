@@ -58,6 +58,7 @@ $include = new includes();
 					datatype: "json",
 					dataFields: [
 						{ name: "consumerName" },
+						{ name: "mname" },
 						{ name: "address" },
 						{ name: "status" },
 						{ name: "so" },
@@ -80,7 +81,7 @@ $include = new includes();
 					datatype: "json",
 					dataFields: [
 						{ name: "consumerName" },
-						{ name: "bName"},
+						{ name: "mname"},
 						{ name: "address" },
 						{ name: "status" },
 						{ name: "so" },
@@ -114,44 +115,65 @@ $include = new includes();
 						var span = $("<span style='float: left; margin-top: 5px; margin-right: 4px;'>Search : </span>");
 						var input = $("<input class='jqx-input jqx-widget-content jqx-rc-all' id='searchField' type='text' style='height: 23px; float: left; width: 223px;' />");
 						var searchButton = $("<div style='float: left; margin-left: 5px;' id='search'><img style='position: relative; margin-top: 2px;' src='../assets/images/search_lg.png'/><span style='margin-left: 4px; position: relative; top: -3px;'></span></div>");
-						var dropdownlist2 = $("<div style='float: left; margin-left: 5px;' id='dropdownlist'></div>");
 						container.append(span);
 						toolbar.append(container);
 						container.append(span);
 						container.append(input);
-						container.append(dropdownlist2);
 						container.append(searchButton);
+						container.append("<button id = 'soButton' style = 'margin-left: 10px;'>Service Order</button>");
 						
-						
-						$("#search").jqxButton({theme:"main-theme",height:18,width:24});
-						$("#dropdownlist").jqxDropDownList({ 
-							autoDropDownHeight: true,
-							selectedIndex: 0,
-							theme:"main-theme", 
-							width: 200, 
-							height: 25, 
-							source: [
-								"Consumer Name", "Address"
-							]
+						$("#soButton").jqxButton({theme: "main-theme", disabled: true});
+
+						$("#soButton").click(function(){
+							$("#soForm").jqxWindow("open");
+
+							$.ajax({
+								url: "sources/soForm.php",
+								type: "post",
+								async: true,
+								data: {trans:data.trans, form:"NC"},
+								success: function(out){
+									$("#soFormContent").html(out);
+
+									$('#txtControl').on('keydown', function(e){-1!==$.inArray(e.keyCode,[46,8,9,27,13,110,190])||/65|67|86|88/.test(e.keyCode)&&(!0===e.ctrlKey||!0===e.metaKey)||35<=e.keyCode&&40>=e.keyCode||(e.shiftKey||48>e.keyCode||57<e.keyCode)&&(96>e.keyCode||105<e.keyCode)&&e.preventDefault()});
+									
+									$(".undertake").jqxCheckBox({checked: true, theme: "custom-abo-admin"});
+									$(".service").jqxCheckBox({theme: "custom-abo-admin"});
+									$("#txtDatePaid").jqxDateTimeInput({theme: "main-theme", width: "76%", formatString: 'yyyy-MM-dd'});
+
+									$("#issue").jqxButton({
+										width: '150'
+									}).unbind("click").bind("click", function(event) {
+										$.ajax({
+											url: "functions/issueSo.php",
+											async: true,
+											data: $("#frmSO").serialize()+"&trans="+data.trans,
+											success: function(outIssue){
+												$("#soForm").jqxWindow("close");
+												$('#processing').jqxWindow('open');
+												setTimeout(function(){
+													$('#processing').jqxWindow('close');
+													location.reload();
+												},3000);
+											}
+										});
+									});
+									
+									if($("#divReason").html().trim().length > 0) {
+										$(".reason").jqxRadioButton({
+											checked: false,
+											theme: "main-theme",
+											groupName: "rbReason"
+										});
+									}
+								}
+							});
 						});
-												
-						if (theme != "") {
-							input.addClass("jqx-widget-content-" + theme);
-							input.addClass("jqx-rc-all-" + theme);
-						}
+
+						$("#search").jqxButton({theme:"main-theme",height:18,width:24});
 						$("#search").click(function(){
 							$("#noso_list").jqxGrid('clearfilters');
-							var searchColumnIndex = $("#dropdownlist").jqxDropDownList('selectedIndex');
-							var datafield = "";
-							switch (searchColumnIndex) {
-								case 0:
-									datafield = "consumerName";
-									break;
-								case 1:
-									datafield = "address";
-									break;
-								
-							}
+							var datafield = "consumerName";
 
 							var searchText = $("#searchField").val();
 							var filtergroup = new $.jqx.filter();
@@ -170,16 +192,7 @@ $include = new includes();
 								
 							if (key == 13 || key == 9) {
 								$("#noso_list").jqxGrid('clearfilters');
-								var searchColumnIndex = $("#dropdownlist").jqxDropDownList('selectedIndex');
-								var datafield = "";
-								switch (searchColumnIndex) {
-									case 0:
-										datafield = "consumerName";
-										break;
-									case 1:
-										datafield = "address";
-										break;
-								}
+								var datafield = "consumerName";
 								var searchText = $("#searchField").val();
 								var filtergroup = new $.jqx.filter();
 								var filter_or_operator = 1;
@@ -333,7 +346,7 @@ $include = new includes();
 					columns: [
 						{text: "Account Number", dataField: "acctNo", cellsalign: "center", align: "center", pinned: true, width: 150},
 						{text: "Consumer Name", dataField: "consumerName", align: "center", pinned: true, width: 250},
-						{text: "Business Name", dataField: "bName", align: "center", pinned: true, width: 250},
+						{text: "Middle Name", dataField: "mname", align: "center", pinned: true, width: 250},
 						{text: "Address", dataField: "address", align: "center", width: 290},
 						{text: "Application Date", dataField: "dateApp", cellsalign: "center", align: "center", width: 150},
 						{text: "S.O.", dataField: "so", cellsalign: "center", align: "center", width: 100},
@@ -387,67 +400,14 @@ $include = new includes();
 					})
 				});
 				
-				$('#noso_list').on('rowdoubleclick', function (event) {
-					var rowindex = $(this).jqxGrid('getselectedrowindex');
-					var data = $(this).jqxGrid('getrowdata',rowindex);
-					var so = data.so;
-					var appId = data.appId;
-					var cid = data.cid;
-					
-					if(data.acctNo) {
-						$("#soForm").jqxWindow("open");
-
-						$.ajax({
-							url: "sources/soForm.php",
-							type: "post",
-							async: true,
-							data: {trans:data.trans, form:"NC"},
-							success: function(out){
-								$("#soFormContent").html(out);
-
-								$('#txtControl').on('keydown', function(e){-1!==$.inArray(e.keyCode,[46,8,9,27,13,110,190])||/65|67|86|88/.test(e.keyCode)&&(!0===e.ctrlKey||!0===e.metaKey)||35<=e.keyCode&&40>=e.keyCode||(e.shiftKey||48>e.keyCode||57<e.keyCode)&&(96>e.keyCode||105<e.keyCode)&&e.preventDefault()});
-								
-								$(".undertake").jqxCheckBox({checked: true, theme: "custom-abo-admin"});
-								$(".service").jqxCheckBox({theme: "custom-abo-admin"});
-								$("#txtDatePaid").jqxDateTimeInput({theme: "main-theme", width: "76%", formatString: 'yyyy-MM-dd'});
-
-								$("#issue").jqxButton({
-									width: '150'
-								}).unbind("click").bind("click", function(event) {
-									$.ajax({
-										url: "functions/issueSo.php",
-										async: true,
-										data: $("#frmSO").serialize()+"&trans="+data.trans,
-										success: function(outIssue){
-											// $("#soForm").jqxWindow("close");
-											// $('#processing').jqxWindow('close');
-
-											// alert(outIssue);
-											// return;
-
-											$("#soForm").jqxWindow("close");
-											$('#processing').jqxWindow('open');
-											setTimeout(function(){
-												$('#processing').jqxWindow('close');
-												location.reload();
-											},3000);
-										}
-									});
-								});
-								
-								if($("#divReason").html().trim().length > 0) {
-									$(".reason").jqxRadioButton({
-										checked: false,
-										theme: "custom-abo-admin",
-										groupName: "rbReason"
-									});
-								}
-							}
-						});
-					}
-					else {
-						alert("Primary account number not yet assigned.");
-					}
+				
+				$('#noso_list').on('rowselect', function (event) {
+					var args = event.args;
+					// row's bound index.
+					var rowBoundIndex = args.rowindex;
+					// row's data. The row's data object or null(when all rows are being selected or unselected with a single action). If you have a datafield called "firstName", to access the row's firstName, use var firstName = rowData.firstName;
+					data = args.row;
+					$("#soButton").jqxButton({disabled: false});
 				});
 				
 				$("#bd").on("keyup", function(event){
@@ -489,7 +449,7 @@ $include = new includes();
 							$('#primary, #phone').on('keydown', function(e){-1!==$.inArray(e.keyCode,[46,8,9,27,13,110,190])||/65|67|86|88/.test(e.keyCode)&&(!0===e.ctrlKey||!0===e.metaKey)||35<=e.keyCode&&40>=e.keyCode||(e.shiftKey||48>e.keyCode||57<e.keyCode)&&(96>e.keyCode||105<e.keyCode)&&e.preventDefault()});
 							
 							$("#municipality").jqxDropDownList({ 
-								selectedIndex: 0, width: "91%", height: 20, 
+								autoDropDownHeight: true, selectedIndex: 0, width: "91%", height: 20, 
 								source:munAdapter, displayMember: 'munDesc', valueMember: 'munId', theme:'main-theme'
 							}).unbind("change").on("change", function(event){
 								var mun = $("#municipality").jqxDropDownList("getSelectedItem");
@@ -529,17 +489,17 @@ $include = new includes();
 							});
 							
 							$("#civilStatus").jqxDropDownList({
-								autoDropDownHeight: 200, selectedIndex: 0, width: "91%", height: 20, 
+								autoDropDownHeight: true, selectedIndex: 0, width: "91%", height: 20, 
 								source: cStatusList, theme:'main-theme'
 							});
 							
 							$("#customerType").jqxDropDownList({
-								autoDropDownHeight: 200, selectedIndex: 0, width: "91%", height: 16, 
+								autoDropDownHeight: true, selectedIndex: 0, width: "91%", height: 16, 
 								source: ["R", "C", "H", "F", "E"], theme:'main-theme'
 							});
 							
 							$("#isBapa").jqxDropDownList({
-								autoDropDownHeight: 200, selectedIndex: 0, width: "91%", height: 16, 
+								autoDropDownHeight: true, selectedIndex: 0, width: "91%", height: 16, 
 								source: ["NON-BAPA", "BAPA"], theme:'main-theme'
 							});
 							

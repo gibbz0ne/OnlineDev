@@ -4,21 +4,16 @@
 	$con = new getConnection();
 	$db = $con->PDO();
 	
-	$query = $db->query("SELECT *FROM tbl_work_order JOIN tbl_consumers USING(cid) JOIN tbl_consumer_address USING(cid) JOIN tbl_barangay USING (brgyId) ORDER BY wo DESC");
+	$query = $db->query("SELECT *FROM consumers a RIGHT OUTER JOIN tbl_work_order b ON a.Entry_Number = b.cid");
 	$list = array();
 	
 	if($query->rowCount() > 0){
 		$ctr = 1;
 		foreach($query as $row){
-			foreach($db->query("SELECT *FROM tbl_municipality WHERE munId = '".$row["munId"]."'") as $row2);
-			$mname = "";
-			if($mname != "")
-				$mname = $row["mname"][0].".";
-				
-			$name = $row["fname"]." ".$row["lname"]." ".$mname;
-			$address = $row["address"]." ".$row["purok"]." ".$row["brgyName"]." ".$row2["munDesc"];
+			$name = $row["AccountName"];
+			$address = $row["Address"];
 			$wo = $row["wo"];
-			$acctNo = $row["sysPro"];
+			$acctNo = $row["AccountNumber"];
 			$woDate = $row["woDate"];
 			
 			$list[] = array("ctr" => $ctr,

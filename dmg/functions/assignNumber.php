@@ -34,7 +34,7 @@
 
 				$insert = $db->prepare("INSERT INTO tbl_transactions (appId, Entry_Number, status, processedBy, dateProcessed)
 									VALUES(?, ?, ?, ?, ?)");
-				$insert->execute(array($appId, $cid, 3, $processed, date("Y-m-d H:i:s")));
+				$insert->execute(array($appId, $cid, 4, $processed, date("Y-m-d H:i:s")));
 				$db->commit();
 				echo "1"; 
 			} catch(PDOException $e){
