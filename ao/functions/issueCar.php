@@ -4,7 +4,7 @@ $con = new getConnection();
 $db = $con->PDO();
 $b = $_SESSION["branch"];
 
-$car1 = "$b-".date("Ym")."-001";
+$car1 = "$b-".date("mY")."-001";
 $appId = $_POST["appId"];
 $query = $db->query("SELECT *FROM tbl_applications WHERE appCAR IS NOT NULL AND appCAR like '%$b%' ORDER BY appCAR DESC limit 1");
 
@@ -12,16 +12,17 @@ if(isset($_POST["car"]) && $_POST["car"] != ""){
 	$appId = $_POST["appId"];
 	$car = $_POST["car"];
 	
-	// $update = $db->prepare("UPDATE tbl_applications SET appCAR = ? WHERE appId = ?");
-	// $update->execute(array($car, $appId));
-	echo $appId;
-	echo "1";
+	$update = $db->prepare("UPDATE tbl_applications SET appCAR = ? WHERE appId = ?");
+	$update->execute(array($car, $appId));
+	echo $car1;
 } else{
 	if($query->rowCount() > 0){
 		foreach($query as $row){
 			$car = $row["appCAR"];
 			$d = explode("-", $car);
+			// echo $d[1];
 			if(date("mY") == $d[1]){
+				
 				$d[2]++;
 				if($d[2] < 10){
 					$car1 = $d[0]."-".$d[1]."-"."00".$d[2];
@@ -34,16 +35,14 @@ if(isset($_POST["car"]) && $_POST["car"] != ""){
 				}
 			}
 		}
-		// $update = $db->prepare("UPDATE tbl_applications SET appCAR = ?, dateCAR = ? WHERE appId = ?");
-		// $update->execute(array($car1, date("Y-m-d H:i:s"), $appId));
-		echo $appId;
-		echo "1";
+		$update = $db->prepare("UPDATE tbl_applications SET appCAR = ?, dateCAR = ? WHERE appId = ?");
+		$update->execute(array($car1, date("Y-m-d H:i:s"), $appId));
+		echo $car1;
 	}
 	else{
-		// $update = $db->prepare("UPDATE tbl_applications SET appCAR = ?, dateCAR =? WHERE appId = ?");
-		// $update->execute(array($car1, date("Y-m-d H:i:s"), $appId));
-		echo $appId;
-		echo "1";
+		$update = $db->prepare("UPDATE tbl_applications SET appCAR = ?, dateCAR =? WHERE appId = ?");
+		$update->execute(array($car1, date("Y-m-d H:i:s"), $appId));
+		echo $car1;
 	}
 }
 

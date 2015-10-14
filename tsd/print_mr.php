@@ -122,24 +122,23 @@ if(isset($_GET["ref"])){
 	$pdf->Cell(29, 7, "ACCOUNT #", 1, 0, "C");
 	$pdf->Ln(7);
 	$pdf->SetFont('Arial','',8);
-	$query2 =$db->query("SELECT * FROM tbl_mr_wo join tbl_work_order using(wo) join tbl_consumers using(cid) join tbl_consumer_address using (cid) join tbl_barangay using (brgyId) where mrNo = '$mrNo'");
+	$query2 =$db->query("SELECT * FROM tbl_mr_wo a 
+							LEFT OUTER JOIN tbl_work_order b ON a.wo = b.wo 
+							LEFT OUTER JOIN consumers c ON b.cid = c.Entry_Number 
+							LEFT OUTER JOIN tbl_applications d ON c.Entry_Number = d.Entry_Number
+							WHERE a.mrNo = '$mrNo'");
 
 	if($query2->rowCount() > 0){
 		$ctr = 1;
 		if($totalRows>$query2->rowCount()){
 			foreach($query2 as $row){
-				foreach($db->query("SELECT *FROM tbl_municipality WHERE munId = '".$row["munId"]."'") as $row2)
-				foreach($db->query("SELECT *FROM tbl_applications WHERE cid = '".$row["cid"]."'") as $row3)
-				$mname = $row["mname"];
-				if($row["mname"] != "")
-					$mname = $row["mname"][0].".";
-
+				
 				$pdf->Cell(7, 5, $ctr, 1, 0, "C");
 				$pdf->Cell(32, 5, $row["wo"], 1, 0, "C");
-				$pdf->Cell(15, 5, $row3["appSOnum"], 1, 0, "C");
-				$pdf->Cell(55, 5, $row["fname"]." ".$mname." ".$row["lname"], 1, 0, "C");
-				$pdf->Cell(60, 5, $row["address"]." ".$row["purok"]." ".$row["brgyName"]." ".$row2["munDesc"], 1, 0, "C");
-				$pdf->Cell(29, 5, $row["sysPro"], 1, 0, "C");
+				$pdf->Cell(15, 5, $row["appSOnum"], 1, 0, "C");
+				$pdf->Cell(55, 5, $row["AccountName"], 1, 0, "C");
+				$pdf->Cell(60, 5, $row["Address"], 1, 0, "C");
+				$pdf->Cell(29, 5, $row["AccountNumber"], 1, 0, "C");
 				$pdf->Ln(5);
 				$ctr++;
 			}

@@ -14,7 +14,14 @@ $appId = $_GET["ref"];
 echo $branch;
 $assignedId = "";
 $query = $db->query("SELECT *FROM tbl_applications WHERE appCAR IS NOT NULL ORDER BY appCAR DESC LIMIT 1");
-$query2 = $db->query("SELECT *FROM consumers JOIN tbl_applications USING (Entry_Number) WHERE tbl_applications.appId = '$appId'");
+$query2 = $db->query("SELECT *FROM consumers a 
+					LEFT OUTER JOIN tbl_applications b ON a.Entry_Number = b.Entry_Number
+					LEFT OUTER JOIN tbl_so c ON b.appId = c.appId
+					LEFT OUTER JOIN tbl_inspection d ON b.appId = d.appId
+					LEFT OUTER JOIN tbl_inspection_meter e ON d.inspectionId = e.inspectionId
+					LEFT OUTER JOIN tbl_substation f ON e.subId = f.subId
+					LEFT OUTER JOIN tbl_feeder g ON e.feedId = g.feedId
+					WHERE b.appId = '$appId'");
 if($query->rowCount() > 0){
 	foreach($query as $row){
 		$my = explode("-", $row["appCAR"]);
@@ -59,8 +66,10 @@ if($query2->rowCount() > 0){
 		$address = str_replace("ñ", "Ñ", $address);
 		$address = iconv('UTF-8', 'windows-1252', $address);
 		$type = $row["serviceId"];
-		$consumerType = $row["consumerType"];
-		$so = $row["SO"];
+		$consumerType = $row["CustomerType"];
+		$so = $row["soNum"];
+		$substation = $row["subDescription"];
+		$feeder = $row["feederName"];
 		if($type == 1)
 			$type = "New Connection";
 		// echo $req_date;
@@ -166,7 +175,7 @@ $pdf->Image('../assets/images/logo.jpg',30,15,25);
 	$pdf->Cell(35, 6, "ERC Seal No.: ", 0, 0, "R");
 	$pdf->Cell(23, 6, "", 0, 0, "C");
 	$pdf->Cell(33, 6, "Substation", 0, 0, "R");
-	$pdf->Cell(30, 6, "", 0, 0, "R");
+	$pdf->Cell(30, 6, $substation, 0, 0, "C");
 	$pdf->SetX(10);
 	$pdf->Ln();
 	$pdf->Cell(40, 6, "Ampere/s: ", 0, 0, "R");
@@ -174,7 +183,7 @@ $pdf->Image('../assets/images/logo.jpg',30,15,25);
 	$pdf->Cell(35, 6, "Terminal Seal No.: ", 0, 0, "R");
 	$pdf->Cell(23, 6, "", 0, 0, "C");
 	$pdf->Cell(33, 6, "Feeder Line:", 0, 0, "R");
-	$pdf->Cell(30, 6, "", 0, 0, "R");
+	$pdf->Cell(30, 6, $feeder, 0, 0, "C");
 	$pdf->Ln();
 	$pdf->SetX(80);
 	$pdf->Cell(35, 6, "APEC Seal No.: ", 0, 0, "R");

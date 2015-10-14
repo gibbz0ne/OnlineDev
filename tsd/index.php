@@ -130,6 +130,7 @@
 							success: function (data) {
 								$("#materialGrid").jqxGrid('setcellvalue', rowid, 'item_description', data.description);
 								$("#materialGrid").jqxGrid('setcellvalue', rowid, 'stock_code', data.materialCode);
+								$("#materialGrid").jqxGrid('setcellvalue', rowid, 'unit', data.unit);
 							}
 						});
 					}

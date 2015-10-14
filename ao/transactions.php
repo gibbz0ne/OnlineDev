@@ -150,11 +150,19 @@ $include = new includes();
 											data: $("#frmSO").serialize()+"&trans="+data.trans,
 											success: function(outIssue){
 												$("#soForm").jqxWindow("close");
-												$('#processing').jqxWindow('open');
-												setTimeout(function(){
-													$('#processing').jqxWindow('close');
-													location.reload();
-												},3000);
+												// $('#processing').jqxWindow('open');
+												daily_transactions.url = 'sources/dailyTransactions.php';
+												var allTransactions = new $.jqx.dataAdapter(daily_transactions);
+												$('#transaction_list').jqxGrid({source:allTransactions});
+												
+												trans_list.url = "sources/noSOlist.php";
+												var serviceOrders = new $.jqx.dataAdapter(trans_list);
+												$("#noso_list").jqxGrid({source:trans_list});
+
+												// setTimeout(function(){
+													// $('#processing').jqxWindow('close');
+													// location.reload();
+												// },3000);
 											}
 										});
 									});
@@ -225,7 +233,16 @@ $include = new includes();
 				});
 				
 				$("#print_car").on("close", function(event){
-					location.reload();
+					$("#carModal").jqxWindow("close");
+					daily_transactions.url = 'sources/dailyTransactions.php';
+					var allTransactions = new $.jqx.dataAdapter(daily_transactions);
+					$('#transaction_list').jqxGrid({source:allTransactions});
+					
+					trans_list.url = "sources/noSOlist.php";
+					var serviceOrders = new $.jqx.dataAdapter(trans_list);
+					$("#noso_list").jqxGrid({source:trans_list});
+					var rowindex = $('#transaction_list').jqxGrid('getselectedrowindex');
+					$('#transaction_list').jqxGrid('unselectrow', rowindex);
 				});
 				
 				$("#transaction_list").jqxGrid({
@@ -366,9 +383,8 @@ $include = new includes();
 						type: "post",
 						data: {appId: appId, car: $("#carNo").val()},
 						success: function(data){
-							console.log(data);
 							$("#print_car").jqxWindow("open");
-							$("#print_car").jqxWindow("setContent", "<iframe src = 'print_car.php?ref="+appId+"&car="+$("#carNo").val()+"' width = '99%' height = '98%'></iframe>");
+							$("#print_car").jqxWindow("setContent", "<iframe src = 'print_car.php?ref="+appId+"&car="+data+"' width = '99%' height = '98%'></iframe>");
 						}
 					})
 				});
@@ -538,7 +554,13 @@ $include = new includes();
 							if(data){
 								$("#confirmApplication").jqxWindow("close");
 								$("#newConsumerForm").jqxWindow("close");
-									window.location.href = "transactions.php";
+								
+								daily_transactions.url = 'sources/dailyTransactions.php';
+							
+								var allTransactions = new $.jqx.dataAdapter(daily_transactions);
+								$('#transaction_list').jqxGrid({source:allTransactions});
+
+									// window.location.href = "transactions.php";
 							}
 						}
 					});

@@ -12,11 +12,13 @@
 		if($query->rowCount() > 0){
 			foreach($query as $row){
 				echo json_encode(array("description" => $row["materialDesc"],
-									   "materialCode" => $row["materialCode"]));
+									   "materialCode" => $row["materialCode"],
+									   "unit" => $row["unit"]));
 			}
 		}
 		else
 			echo json_encode(array("description" => "",
-									"materialCode" => ""));
+									"materialCode" => "",
+									"unit" => ""));
 	}
 ?>

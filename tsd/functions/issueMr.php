@@ -4,8 +4,8 @@
     $db = $con->PDO();
 	$y = date("y");
 	$userId = $_SESSION["userId"];
-	$query = $db->query("SELECT *FROM tbl_mr WHERE mrNo LIKE '%$y%' ORDER BY mrNo DESC LIMIT 1");
 
+	$mrNo = "MR-M-".$y."-0001";
 	if(isset($_POST["mrNum"]) && $_POST["mrNum"] != ""){
 		if(strlen($_POST["mrNum"]) == 1)
 			$mrNo = "MR-M-000".$_POST["mrNum"];
@@ -33,13 +33,8 @@
 					$mrNo = "MR-M-".$y."-".$series;
 				}
 			}
-		} else{
-			$mrNo = "MR-M-".$y."-0001";
 		}
 	}
-
-    $con = new getConnection();
-    $db = $con->PDO();
 
     if(isset($_POST["data3"])){
         $data = $_POST["data2"];
@@ -66,14 +61,12 @@
 			$ctr2++;
         }
 
-        //$dataCount = count($data);
-
         for($i = 0; $i < count($data); $i++){
 			if($ctr%7 == 0 && $i != 0){
                 array_push($mArray, $data[$i]);
-                foreach($db->query("SELECT *FROM tbl_consumers JOIN tbl_applications USING (cid) WHERE sysPro = '".$mArray[5]."'") as $row){
+                foreach($db->query("SELECT *FROM consumers JOIN tbl_applications USING (Entry_Number) WHERE AccountNumber = '".$mArray[5]."'") as $row){
                 	$appId = $row["appId"];
-					$cid = $row["cid"];
+					$cid = $row["Entry_Number"];
 
 					$trans = $mArray[6];
 					
@@ -86,7 +79,7 @@
 					$update = $db->prepare("UPDATE tbl_transactions SET action = ?, approvedBy = ?, dateApproved = ? WHERE tid = ?");
 					$update->execute(array(1, $userId, date("Y-m-d H:i:s"), $trans));
 
-					$insert = $db->prepare("INSERT INTO tbl_transactions (appId, cid, status, processedBy, dateProcessed)
+					$insert = $db->prepare("INSERT INTO tbl_transactions (appId, Entry_Number, status, processedBy, dateProcessed)
 										VALUES(?, ?, ?, ?, ?)");
 					$insert->execute(array($appId, $cid, 6, $processed, date("Y-m-d H:i:s")));
 					
@@ -99,7 +92,6 @@
                 array_push($mArray, $data[$i]);
 			$ctr++;
         }
-		
-        echo $mrNo;
     }
+	echo $mrNo;
 ?>
