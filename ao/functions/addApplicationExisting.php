@@ -8,7 +8,7 @@
 	$id = $_SESSION["userId"];
 	$type = $_POST["type"];
 	$cid = $_POST["cid"];
-
+	$appId = date("Ymd")."001";
 	$query = $db->query("SELECT *FROM tbl_applications ORDER BY appId DESC LIMIT 1");
 
 	if($query->rowCount() > 0){
@@ -32,7 +32,8 @@
 			} 
 		}
 	} 
-	$app = $db->prepare("INSERT INTO tbl_applications (appId, cid, appDate)
+	
+	$app = $db->prepare("INSERT INTO tbl_applications (appId, Entry_Number, appDate)
 						 VALUES (?, ?, ?)");
 	$app->execute(array($appId, $cid, date("Y-m-d H:i:s")));
 
@@ -42,11 +43,11 @@
 	$insert->execute(array($appId, $type));
 	
 	//insert app_service
-	// $insert = $db->prepare("INSERT INTO tbl_app_service (appId, serviceId) 
-	// 						VALUES(?, ?)");
-	// $insert->execute(array($appId, 1));
+	$insert = $db->prepare("INSERT INTO tbl_app_service (appId, serviceId) 
+							VALUES(?, ?)");
+	$insert->execute(array($appId, $type));
 
-	$transactions = $db->prepare("INSERT INTO tbl_transactions(appId, cid, status, processedBy, dateProcessed)
+	$transactions = $db->prepare("INSERT INTO tbl_transactions(appId, Entry_Number, status, processedBy, dateProcessed)
 								VALUES (?, ?, ?, ?, ?)");
 	$transactions->execute(array($appId, $cid, 1, $id, date("Y-m-d")." ".date("H:i:s")));
 

@@ -15,7 +15,7 @@
 		$mTerminal = $_POST["mTerminal"];
 		$multiplier = $_POST["multiplier"];
 		
-		foreach($db->query("SELECT *FROM tbl_applications WHERE cid = '$cid'") as $row)
+		foreach($db->query("SELECT *FROM tbl_applications WHERE Entry_Number = '$cid'") as $row)
 			$appId = $row["appId"];
 		
 		$query = $db->query("SELECT *FROM tbl_meter_profile WHERE cid = '$cid' AND appId = '$appId'");

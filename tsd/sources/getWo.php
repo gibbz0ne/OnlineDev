@@ -22,13 +22,12 @@
 		if($query->rowCount() > 0){
 			foreach($query as $row){
 				$wo = $row["wo"];
-				foreach($db->query("SELECT *FROM tbl_applications JOIN tbl_consumers USING (cid) WHERE appId = '".$row["appId"]."'") as $row2){
+				foreach($db->query("SELECT *FROM tbl_applications a
+									LEFT OUTER JOIN consumers b ON a.Entry_Number = b.Entry_Number
+									WHERE a.appId = '".$row["appId"]."'") as $row2){
 					
-					if($row2["mname"] != "")
-						$row2["mname"] = $row2["mname"][0]." ";
-					
-					$name = $row2["fname"]." ".$row2["lname"]." ".$row2["mname"];
-					$acctNo = $row2["acctNo"];
+					$name = $row2["AccountName"];
+					$acctNo = $row2["AccountNumber"];
 				}
 				$table .= "<tr>
 							<td>$ctr</td>

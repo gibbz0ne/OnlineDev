@@ -263,7 +263,7 @@ $include = new includes();
 					data: {cid: cid, appId: appId},
 					success: function(data){
 						if(data == 1)
-							$("#install").jqxButton({disabled: true});
+							$("#install").jqxButton({disabled: false});
 						else
 							$("#install").jqxButton({disabled: true});
 					}

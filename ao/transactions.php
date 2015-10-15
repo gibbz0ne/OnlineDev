@@ -144,6 +144,7 @@ $include = new includes();
 									$("#issue").jqxButton({
 										width: '150'
 									}).unbind("click").bind("click", function(event) {
+										console.log(data);
 										$.ajax({
 											url: "functions/issueSo.php",
 											async: true,

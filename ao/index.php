@@ -60,6 +60,7 @@ $include = new includes();
 			var acctSource = {
 				datatype: "json",
 				dataFields: [
+					{ name: "cid"},
 					{ name: "acctNo" },
 					{ name: "acctAleco" },
 					{ name: "acctName" },
@@ -102,7 +103,7 @@ $include = new includes();
 				// pageable: true,
 				filterable: true, 
 				columnsresize: true,
-				selectionmode: "multiplerows",
+				selectionmode: "singlerow",
 				columns: [
 					{text: "Account Number", dataField: "acctNo", width: 200},
 					{text: "Aleco Account", dataField: "acctAleco", width: 160},

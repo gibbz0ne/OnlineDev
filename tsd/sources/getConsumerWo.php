@@ -9,17 +9,16 @@
 	if(isset($_GET["mr"])){
 		$mr = $_GET["mr"];
 		$ctr = 1;
-		$query = $db->query("SELECT *FROM tbl_mr_wo JOIN tbl_applications USING (appId) JOIN tbl_consumers USING (cid) JOIN tbl_consumer_address USING(cid) JOIN tbl_barangay USING (brgyId) WHERE mrNo = '$mr'");
+		$query = $db->query("SELECT *FROM tbl_mr_wo a
+							 LEFT OUTER JOIN tbl_applications b ON a.appId = b.appId
+							 LEFT OUTER JOIN consumers c ON b.Entry_Number = c.Entry_Number
+							 WHERE a.mrNo = '$mr'");
 		
 		foreach($query as $row){
 			// echo $row["munId"];
 			$appId = $row["appId"];
-			foreach($db->query("SELECT *FROM tbl_barangay JOIN tbl_municipality USING (munId) WHERE munId = '".$row["munId"]."'") as $row2)
-			
-			if($row["mname"] != "")
-				$row["mname"][0].".";
 			$mReading = $mBrand = $mClass = $mSerial = $mERC = $mLabSeal = $mTerminal = $multiplier = "";
-			$meterProfile = $db->query("SELECT *FROM tbl_meter_profile WHERE cid = '".$row["cid"]."' AND appId = '".$row["appId"]."'");
+			$meterProfile = $db->query("SELECT *FROM tbl_meter_profile WHERE cid = '".$row["Entry_Number"]."' AND appId = '".$row["appId"]."'");
 			
 			
 			foreach($db->query("SELECT *FROM tbl_transactions WHERE appId = '$appId' ORDER BY tid DESC LIMIT 1") as $row3){
@@ -41,10 +40,10 @@
 						$list[] = array(
 							"ctr1" => $ctr,
 							"status" => $status,
-							"acctNo" => $row["sysPro"],
-							"consumerName" => $row["lname"]." ".$row["fname"]." ".$row["mname"],
-							"address" => $row["address"]." ".$row["purok"]." ".$row["brgyName"]." ".$row2["munDesc"],
-							"cid" => $row["cid"],
+							"acctNo" => $row["AccountNumber"],
+							"consumerName" => $row["AccountName"],
+							"address" => $row["Address"],
+							"cid" => $row["Entry_Number"],
 							"appId" => $row["appId"],
 							"mReading" => $mReading,
 							"mBrand" => $mBrand,
@@ -66,8 +65,9 @@
 	if(isset($_POST["cid"])){
 		$cid = $_POST["cid"];
 		$ctr = 1;
-		foreach($db->query("SELECT *FROM tbl_applications JOIN tbl_consumers USING (cid) JOIN tbl_consumer_address USING (cid) JOIN tbl_barangay USING (brgyId) WHERE cid = '$cid'") as $row){
-			foreach($db->query("SELECT *FROM tbl_municipality WHERE munId = '".$row["munId"]."'") as $row2)
+		foreach($db->query("SELECT *FROM tbl_applications a
+							LEFT OUTER JOIN consumers b ON a.Entry_Number = b.Entry_Number 
+							WHERE a.Entry_Number = '$cid'") as $row){
 
 			$mReading = $mBrand = $mClass = $mSerial = $mERC = $mLabSeal = $mTerminal = $multiplier = "";
 			foreach($db->query("SELECT *FROM tbl_meter_profile WHERE cid = '$cid' AND appId = '".$row["appId"]."'") as $r){
@@ -81,16 +81,11 @@
 				$multiplier = $r["multiplier"];
 			}
 			
-			if($row["mname"] != "")
-				$row["mname"][0].".";
-			// echo "Primary Account No: ".$row["acctNo"]."<br>";
-			// echo "Consumer Name: ".$row["lname"]." ".$row["fname"]." ".$row["mname"]."<br>";
-			// echo "Addresss: ".$row["address"]." ".$row["purok"]." ".$row["brgyName"]." ".$row2["munDesc"];
 			$list = array(
-				"acctNo" => $row["sysPro"],
-				"consumerName" => $row["lname"]." ".$row["fname"]." ".$row["mname"],
-				"address" => $row["address"]." ".$row["purok"]." ".$row["brgyName"]." ".$row2["munDesc"],
-				"cid" => $row["cid"],
+				"acctNo" => $row["AccountNumber"],
+				"consumerName" => $row["AccountName"],
+				"address" => $row["Address"],
+				"cid" => $row["Entry_Number"],
 				"mReading" => $mReading,
 				"mBrand" => $mBrand,
 				"mClass" => $mClass,

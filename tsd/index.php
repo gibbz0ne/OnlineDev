@@ -429,7 +429,14 @@
 				});
 				
 				$("#print_window").on("close", function(){
-					location.reload();
+					$("#mrModal").jqxWindow("close");
+					$("#confirmApp").jqxWindow("close");
+					$("#mrListModal").jqxWindow("close");
+					$("#woListModal").jqxWindow("close");
+					
+					consumers.url = "sources/consumers.php";
+					var consumersData = new $.jqx.dataAdapter(consumers);
+					$("#consumerList").jqxGrid({source: consumersData});
 				});
 				
 				var initrowdetails = function (index, parentElement, gridElement, datarecord) {

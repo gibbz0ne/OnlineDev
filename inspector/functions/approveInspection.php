@@ -33,9 +33,9 @@
 		$res = $db->query("SELECT AccountNumber FROM consumers WHERE Entry_Number = $cid");
 		$rowT = $res->fetchAll(PDO::FETCH_ASSOC);
 
-		if($rowT[0]["AccountNumber"]) {
-			$status = 3;
-		}
+		// if($rowT[0]["AccountNumber"]) {
+			// $status = 3;
+		// }
 		$query = $db->query("SELECT *FROM tbl_inspection ORDER BY inspectionId DESC limit 1");
 		
 		if($query->rowCount() > 0){

@@ -93,13 +93,18 @@
 	
 	try{
 		$db->beginTransaction();
-		$res = $db->query("SELECT * FROM tbl_transactions a LEFT OUTER JOIN
-							tbl_applications b ON a.appId = b.appId LEFT OUTER JOIN
-							tbl_app_type c ON b.appId = c.appId LEFT OUTER JOIN
-							tbl_type d ON c.typeId = d.typeId
+		$res = $db->query("SELECT * FROM tbl_transactions a 
+							LEFT OUTER JOIN	tbl_applications b ON a.appId = b.appId 
+							LEFT OUTER JOIN tbl_app_type c ON b.appId = c.appId 
+							LEFT OUTER JOIN	tbl_type d ON c.typeId = d.typeId  
+							LEFT OUTER JOIN consumers e ON a.Entry_Number = e.Entry_Number
 							WHERE a.tid = $trans");
 		$row = $res->fetchAll(PDO::FETCH_ASSOC);
 		
+		$status = 3;
+		if($row[0]["AccountNumber"])
+			$status = 4;
+			
 		$type = $row[0]["typeId"];
 		$app = $row[0]["appId"];
 		$cid = $row[0]["Entry_Number"];
@@ -131,6 +136,34 @@
 		$soID = $row[0]["soId"];
 		
 		$out = "";
+		
+		//=======================================================
+		$res = $db->query("SELECT * FROM tbl_service WHERE typeId = $type");
+		$rowService = $res->fetchAll(PDO::FETCH_ASSOC);
+		
+		// if(count($rowService) == 1) {
+			// $res = $db->query("SELECT * FROM tbl_app_service ");
+			// $insert = $db->prepare("INSERT INTO tbl_app_service VALUES(?, ?)");
+			// $insert->execute(array($app, $rowService[0]["serviceId"]));
+		// }
+		// else 
+		if(count($rowService) > 1) {
+			$res = $db->query("SELECT * FROM tbl_service WHERE typeId = $type");
+			foreach($res as $rowService) {
+				if($_GET["s-".$rowService["serviceId"]] == "true") {
+					$insert = $db->prepare("INSERT INTO tbl_app_service VALUES(?, ?)");
+					$insert->execute(array($app, $rowService["serviceId"]));
+				} else{
+					$delete = $db->prepare("DELETE FROM tbl_app_service WHERE appId = ? AND serviceId = ?");
+					$delete->execute(array($app, $rowService["serviceId"]));
+				}
+			}
+		}
+		
+		foreach($res as $row) {
+			$insert = $db->prepare("INSERT INTO tbl_so_fee VALUES(?, ?, ?)");
+			$insert->execute(array($soID, $row["tfId"], $_GET["txtFee-".$row["tfId"]]));
+		}
 		
 		//=======================================================
 		$res = $db->query("SELECT * FROM tbl_type_fee WHERE typeId = $type");
@@ -168,7 +201,7 @@
 
 		$insert = $db->prepare("INSERT INTO tbl_transactions (appId, Entry_Number, status, processedBy, dateProcessed)
 							VALUES(?, ?, ?, ?, ?)");
-		$insert->execute(array($app, $cid, 3, $processed, date("Y-m-d H:i:s")));
+		$insert->execute(array($app, $cid, $status, $processed, date("Y-m-d H:i:s")));
 
 		// $insert = $db->prepare("update tbl_consumers set hasPendingSO = true WHERE Entry_Number = $cid");
 		// $insert->execute();

@@ -114,7 +114,7 @@ $include = new includes();
 				async: false
 			}
 
-				var woAdapter = new $.jqx.dataAdapter(woSource);
+			var woAdapter = new $.jqx.dataAdapter(woSource);
 			
 			var consumerList = {
 				datatype: "json",
@@ -407,7 +407,6 @@ $include = new includes();
 			$("#assignMeter").on("click", function(event){
 				var row = $("#consumerList").jqxGrid("getselectedrowindex");
 				var data = $("#consumerList").jqxGrid("getrowdata", row);
-				
 				$.ajax({
 					url: "sources/getConsumerWo.php",
 					type: "post",

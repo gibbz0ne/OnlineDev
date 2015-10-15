@@ -16,6 +16,7 @@
 		$res = $db->query("SELECT *FROM consumers WHERE Branch = '$branch' AND Municipality = '".$r["munDesc"]."' AND flag = '1'");
 		foreach($res as $row) {
 			$customers[] = array(
+				"cid" => $row["Entry_Number"],
 				"acctNo" => $row["AccountNumber"],
 				"acctAleco" => $row["AlecoAccount"],
 				"acctName" => $row["AccountName"],
