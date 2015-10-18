@@ -43,7 +43,7 @@ $include = new includes();
 					return false;
 				});
 				
-				$("#jqxMenu").jqxMenu({ width: window.innerWidth-5, height: "30px", theme:"main-theme", autoOpen:false});
+				$("#jqxMenu").jqxMenu({ width: window.innerWidth-5, height: "30px", theme:"main-theme", autoOpen: true});
 				$("#mainSplitter").jqxSplitter({
 					width: window.innerWidth-5, 
 					height:window.innerHeight-40,
@@ -52,6 +52,16 @@ $include = new includes();
 					orientation: "horizontal",
 					panels: [{ size:"45%",collapsible:false  }, 
 					{ size: "55%",collapsible:true }]
+				});
+				
+				$("#accountSplitter").jqxSplitter({
+					width: "100%", 
+					height: "99%",
+					theme:"main-theme",
+					resizable:true,
+					orientation: "vertical",
+					panels: [{ size:"25%",collapsible:false  }, 
+					{ size: "75%",collapsible:true }]
 				});
 				
 				var trans_list = {
@@ -376,6 +386,27 @@ $include = new includes();
 					]
 				});
 				
+				$("#accountGrid").jqxGrid({
+					width: "100%",
+					height: "100%",
+					theme: "main-theme",
+					showtoolbar: true,
+					altrows: true,
+					selectionmode: "singlerow",
+					columnsresize: true,
+					pageable: true,
+					rendertoolbar: function(toolbar){
+						var container = $("<div style='margin: 5px;'></div>");
+						container.append('<input id="editAcct" type="button" value="Edit" />');
+						container.append('<input id="deleteAcct" type="button" value="Delete" />');
+						toolbar.append(container);
+					},
+					columns: [
+						{text: "Name", dataField: "aName", align: "center", cellsalign: "center", width: "50%"},
+						{text: "Position", dataField: "aPosition", align: "center", cellsalign: "center", width: "50%"}
+					]
+				});
+				
 				$("#ok").jqxButton({theme: "main-theme", width: 100})
 				
 				$("#confirmCar").click(function(){
@@ -581,7 +612,15 @@ $include = new includes();
 					});
 				});
 				
-				//jqxDropDownList
+				$("#addAccount").click(function(){
+					$("#accountModal").jqxWindow("open");
+				});
+				
+				$('#accountModal').jqxValidator({
+					rules: [
+						{ input: '#fullName', message: 'Name is required', action: 'keyup, blur', rule: 'required' },
+					]
+				});
 				
 				//jqxwindows
 				$("#unable").jqxWindow({
@@ -619,7 +658,11 @@ $include = new includes();
 				});
 				
 				$("#carModal").jqxWindow({
-					height: 150, width:  450, cancelButton: $('#cancel'), showCloseButton: true, draggable: false, resizable: false, isModal: true, autoOpen: false, modalOpacity: 0.50,theme:'custom-abo-ao'
+					height: 150, width:  450, cancelButton: $('#cancel'), showCloseButton: true, draggable: false, resizable: false, isModal: true, autoOpen: false, modalOpacity: 0.50,theme:'main-theme'
+				});
+				
+				$("#accountModal").jqxWindow({
+					maxWidth: 1000, maxHeight: 550, height: 550, width: 1000, cancelButton: $('#cancelAccount'), showCloseButton: true, draggable: false, resizable: false, isModal: true, autoOpen: false, modalOpacity: 0.50,theme:'main-theme'
 				});
 				
 				$("#newConsumerForm").jqxWindow({
@@ -666,6 +709,13 @@ $include = new includes();
 					<li><img  src="../assets/images/icons/icol16/src/house.png" alt=""/><a href = "index.php"> Home</a></li>
 					<li><img  src="../assets/images/icons/icol16/src/zone_money.png" alt="" /><a href = "javascript:location.reload()"> Transactions</a></li>
 					<li id = "newConsumer"><img  src="../assets/images/icons/icol16/src/group.png" alt=""/>New Consumer</li>
+					<li><img src = "../assets/images/icons/icol16/src/user.png">
+						Accounts
+						<ul>
+							<li id = "addAccount"><img src = "../assets/images/icons/icol16/src/add.png"> Add Account</li>
+							<li id = "signatories"><img src = "../assets/images/icons/icol16/src/pencil.png"> Signatories</li>
+						</ul>
+					</li>
 					<li id = "logout"><img src = "../assets/images/icons/icol16/src/lock.png"> Logout</li>
 				</ul>
 			</div>
@@ -675,37 +725,6 @@ $include = new includes();
 				</div>
 				<div class="splitter-panel">
 					<div id = "noso_list"></div>
-					<div id="options">
-						<ul>
-							<!--li id="issueSo"><img src="../assets/images/icons/icol16/src/page.png"> Issue Service Order</li-->
-							<li id="car1"><img src="../assets/images/icons/icol16/src/page_2.png"> C.A.R.</li>
-						</ul>
-					</div>
-					<div id="options1">
-						<ul>
-							<li id="so"><img src="../assets/images/icons/icol16/src/page.png"> Service Order</li>
-							<li id="car2"><img src="../assets/images/icons/icol16/src/page_2.png"> C.A.R.</li>
-						</ul>
-					</div>
-					<div id="options2">
-						<ul>
-							<li id="so1"><img src="../assets/images/icons/icol16/src/page.png"> Service Order</li>
-							<li id="car2"><img src="../assets/images/icons/icol16/src/page_2.png"> C.A.R.</li>
-							<li id="mi"><img src="../assets/images/icons/icol16/src/meter.png"> Meter Installation</li>
-						</ul>
-					</div>
-					<div id="options3">
-						<ul>
-							<!--li id="so2"><img src="../assets/images/icons/icol16/src/page.png"> Service Order</li-->
-							<li id="issueCar2"><img src="../assets/images/icons/icol16/src/page_2.png"> Issue C.A.R.</li>
-						</ul>
-					</div>
-					<div id="options4">
-						<ul>
-							<li id="so2"><img src="../assets/images/icons/icol16/src/page.png"> Service Order</li>
-							<li id="issueCar3"><img src="../assets/images/icons/icol16/src/page_2.png"> Issue C.A.R.</li>
-						</ul>
-					</div>
 				</div>
 			</div>
 				
@@ -820,6 +839,29 @@ $include = new includes();
 					</div>
 					<div class = "col-sm-6">
 						<button id = "cancel" class = "btn btn-danger btn-block">Cancel</button>
+					</div>
+				</div>
+			</div>
+			<div id="accountModal">
+				<div><img src="../assets/images/icons/icol16/src/accept.png" style="margin-bottom:-5px;"><b><span style="margin-top:-24; margin-left:3px">Add Account</span></b></div>
+				<div >
+					<div id = "accountSplitter">
+						<div class="splitter-panel">
+							<h5>Full Name</h5>
+							<input type = "text" id = "fullName" placeholder = "Full Name" class = "form-control" maxlength="15">
+							<h5>Position</h5>
+							<input type = "text" id = "position" placeholder = "Position" class = "form-control">
+							<br>
+							<div class = "col-sm-6">
+								<button id = "confirmAccount" class = "btn btn-success btn-block">Confirm</button>
+							</div>
+							<div class = "col-sm-6">
+								<button id = "cancelAccount" class = "btn btn-danger btn-block">Cancel</button>
+							</div>
+						</div>
+						<div class="splitter-panel">
+							<div id = "accountGrid"></div>
+						</div>
 					</div>
 				</div>
 			</div>
