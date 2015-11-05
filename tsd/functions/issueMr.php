@@ -8,13 +8,13 @@
 	$mrNo = "MR-M-".$y."-0001";
 	if(isset($_POST["mrNum"]) && $_POST["mrNum"] != ""){
 		if(strlen($_POST["mrNum"]) == 1)
-			$mrNo = "MR-M-000".$_POST["mrNum"];
+			$mrNo = "MR-M-".$y."-000".$_POST["mrNum"];
 		else if(strlen($_POST["mrNum"]) == 2)
-			$mrNo = "MR-M-00".$_POST["mrNum"];
+			$mrNo = "MR-M-".$y."-00".$_POST["mrNum"];
 		else if(strlen($_POST["mrNum"]) == 3)
-			$mrNo = "MR-M-0".$_POST["mrNum"];
+			$mrNo = "MR-M-".$y."-0".$_POST["mrNum"];
 		else
-			$mrNo = "MR-M-".$_POST["mrNum"];
+			$mrNo = "MR-M-".$y."-".$_POST["mrNum"];
 	} else{
 		$query = $db->query("SELECT *FROM tbl_mr WHERE mrNo LIKE '%$y%' ORDER BY mrNo DESC LIMIT 1");
 
@@ -43,12 +43,13 @@
 		$ctr = $ctr2 = $ctr3 = 1;
 
         $mr = $db->prepare("INSERT INTO tbl_mr (mrNo, mrDate, mrPurpose, isSend) VALUES (?, ?, ?, ?)");
-        $mr->execute(array($mrNo, date("Y-m-d")." ".date("H:i:s"), $purpose, 1));
+        $mr->execute(array($mrNo, date("Y-m-d")." ".date("H:i:s"), strtoupper($purpose), 1));
 		$mArray = array();
 		for($i = 0; $i<count($materials); $i++){
 			if($ctr2%5 == 0 && $i != 0){
 				array_push($mArray, $materials[$i]);
-				
+				// echo $mArray[2]." - <br>";
+				// print_r($mArray);
 				foreach($db->query("SELECT *FROM tbl_materials WHERE materialDesc = '".$mArray[2]."'") as $row);
 					$entry_id = $row["entry_id"];
 				
@@ -64,6 +65,7 @@
         for($i = 0; $i < count($data); $i++){
 			if($ctr%7 == 0 && $i != 0){
                 array_push($mArray, $data[$i]);
+				// print_r($mArray);
                 foreach($db->query("SELECT *FROM consumers JOIN tbl_applications USING (Entry_Number) WHERE AccountNumber = '".$mArray[5]."'") as $row){
                 	$appId = $row["appId"];
 					$cid = $row["Entry_Number"];

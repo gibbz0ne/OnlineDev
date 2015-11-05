@@ -16,9 +16,9 @@
 		try{
 			$db->beginTransaction();
 			
-			// $insert = $db->prepare("INSERT INTO tbl_users (First_name, Mid_name, Last_name, Username, Password, Branch, Status, Type) 
-									// VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-			// $insert->execute(array($fname, $mname, $lname, $uname, $password, $branch, 1, $group));
+			$insert = $db->prepare("INSERT INTO tbl_users (First_name, Mid_name, Last_name, Username, Password, Branch, Status, Type) 
+									VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+			$insert->execute(array($fname, $mname, $lname, $uname, $password, $branch, 1, $group));
 			
 			$db->commit();
 			echo "1";

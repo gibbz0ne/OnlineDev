@@ -49,6 +49,7 @@
 		$consumer = $db->query("SELECT * FROM consumers ORDER BY Entry_Number DESC LIMIT 1");
 		foreach($consumer as $row){
 			$cid = $row["Entry_Number"]+1;
+			echo $cid;
 		}
 		
 		$query = $db->query("SELECT *FROM tbl_applications ORDER BY appId DESC LIMIT 1");

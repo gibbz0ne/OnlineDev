@@ -6,12 +6,12 @@
 
 	$uid = $_SESSION["userId"];
 	$branch = $_SESSION["branch"];
-	$y = date("Y");
+	$y = date("y");
 	$ext = $wom = "";
 	if($branch == "B1")
 		$ext = "WOE".date("y")."-T";
 	if($branch == "B2")
-		$ext = "WOM".date("y");
+		$ext = "WOM-MAIN-".date("y");
 	
 	if($_POST["workNo"] == ""){
 		$query = $db->query("SELECT *FROM tbl_work_order WHERE wo LIKE '%$y%' ORDER BY wo DESC LIMIT 1");

@@ -422,6 +422,7 @@
 								$("#mrModal").jqxWindow("close");
 								$("#confirmApp").jqxWindow("close");
 								$("#print_window").jqxWindow("open");
+								
 								$("#print_window").jqxWindow('setContent', '<iframe src="print_mr.php?ref='+data+'" width="99%" height="98%"></iframe>');
 							}
 						}
@@ -437,6 +438,10 @@
 					consumers.url = "sources/consumers.php";
 					var consumersData = new $.jqx.dataAdapter(consumers);
 					$("#consumerList").jqxGrid({source: consumersData});
+					
+					workOrder.url = "sources/workOrderList.php";
+					var workOrders = new $.jqx.dataAdapter(workOrder);
+					$("#woList").jqxGrid({source: workOrders});
 				});
 				
 				var initrowdetails = function (index, parentElement, gridElement, datarecord) {
@@ -572,10 +577,10 @@
 						data: {appId: appId, scope: $("#scope").val(), cid: cid, tid: tid, workNo: $("#workNo").val()},
 						success: function(data){
 							if(data == 1){
-								$("#processing").jqxWindow("open");
-								setTimeout(function(){
-									location.reload();
-								}, 1000);
+								workOrder.url = "sources/workOrderList.php";
+								var workOrders = new $.jqx.dataAdapter(workOrder);
+								$("woModal").jqxWindow("close");
+								$("#woList").jqxGrid({source: workOrders});
 							}
 						}
 					});								

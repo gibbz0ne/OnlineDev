@@ -8,7 +8,7 @@ $db = $con->PDO();
 
 $mrNo = $_GET["ref"];
 $pdf=new FPDF('P','mm','Letter');
-$pdf->SetFont('Arial','B',10);
+$pdf->SetFont('Arial','B',9);
 $pdf->AddPage();
 
 
@@ -52,7 +52,7 @@ if(isset($_GET["ref"])){
 	$pdf->SetX(18);
 	$pdf->Cell(10, 5, "Please furnish the following materials / supplies for the purpose stated below.", 0);
 	$pdf->Ln(10);
-	$pdf->SetFont('Arial','B',10);
+	$pdf->SetFont('Arial','B',9);
 	$pdf->Cell(11, 7, "ITEM", 1, 0, "C");
 	$pdf->Cell(30, 7, "STOCK CODE #", 1, 0, "C");
 	$pdf->Cell(122, 7, "DESCRIPTION", 1, 0, "C");
@@ -64,17 +64,17 @@ if(isset($_GET["ref"])){
 
 	$totalRows = 10;
 	$query =$db->query("SELECT *FROM tbl_mr join tbl_mr_content using(mrNo) join tbl_materials using(entry_id) WHERE mrNo = '$mrNo'");
-	$pdf->SetFont('Arial','',8);
+	$pdf->SetFont('Arial','',6);
 	if($query->rowCount() > 0){
 		$ctr = 1;
 		if($totalRows>$query->rowCount()){
 			foreach($query as $row){
-				$pdf->Cell(11, 5, $ctr, 1, 0, "C");
-				$pdf->Cell(30, 5, $row["materialCode"], 1, 0, "C");
-				$pdf->Cell(122, 5, $row["materialDesc"], 1, 0, "C");
-				$pdf->Cell(15, 5, $row["mrQuantity"], 1, 0, "C");
-				$pdf->Cell(20, 5, $row["unit"], 1, 0, "C");
-				$pdf->Ln(5);
+				$pdf->Cell(11, 4, $ctr, 1, 0, "C");
+				$pdf->Cell(30, 4, $row["materialCode"], 1, 0, "C");
+				$pdf->Cell(122, 4, $row["materialDesc"], 1, 0, "C");
+				$pdf->Cell(15, 4, $row["mrQuantity"], 1, 0, "C");
+				$pdf->Cell(20, 4, $row["unit"], 1, 0, "C");
+				$pdf->Ln();
 
 				$ctr++;
 			}

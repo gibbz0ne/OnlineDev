@@ -29,7 +29,9 @@ $include = new includes();
 		
 		<script>
 			$(document).ready(function(){
+				var toEdit;
 				var toPrint;
+				var accountId;
 				var appId = cid = car = so = "";
 				$("#transaction_list").on("contextmenu", function () {
 					return false;
@@ -53,17 +55,7 @@ $include = new includes();
 					panels: [{ size:"45%",collapsible:false  }, 
 					{ size: "55%",collapsible:true }]
 				});
-				
-				$("#accountSplitter").jqxSplitter({
-					width: "100%", 
-					height: "99%",
-					theme:"main-theme",
-					resizable:true,
-					orientation: "vertical",
-					panels: [{ size:"25%",collapsible:false  }, 
-					{ size: "75%",collapsible:true }]
-				});
-				
+								
 				var trans_list = {
 					datatype: "json",
 					dataFields: [
@@ -109,6 +101,45 @@ $include = new includes();
 				};
 				
 				var dataAdapter = new $.jqx.dataAdapter(trans_list);
+				
+				var accounts = {
+					datatype: "json",
+					dataFields: [
+						{name: "aName"},
+						{name: "aPosition"},
+						{name: "accountId"}
+					],
+					url: "sources/accounts.php"
+				};
+				
+				var acctAdapter = new $.jqx.dataAdapter(accounts)
+				
+				$("#acct1").jqxDropDownList({autoDropDownHeight: true, selectedIndex: 0, width: "91%", height: 20, 
+								source: acctAdapter, displayMember: "aName", valueMember: "accountId"});
+				$("#acct2").jqxDropDownList({autoDropDownHeight: true, selectedIndex: 0, width: "91%", height: 20, 
+								source: acctAdapter, displayMember: "aName", valueMember: "accountId"});
+				$("#acct3").jqxDropDownList({autoDropDownHeight: true, selectedIndex: 0, width: "91%", height: 20, 
+								source: acctAdapter, displayMember: "aName", valueMember: "accountId"});
+				$("#acct4").jqxDropDownList({autoDropDownHeight: true, selectedIndex: 0, width: "91%", height: 20, 
+								source: acctAdapter, displayMember: "aName", valueMember: "accountId"});
+								
+				$("#assignAccount").click(function(){
+					var acct1 = $("#acct1").jqxDropDownList("getSelectedItem");
+					var acct2 = $("#acct2").jqxDropDownList("getSelectedItem");
+					var acct3 = $("#acct3").jqxDropDownList("getSelectedItem");
+					var acct4 = $("#acct4").jqxDropDownList("getSelectedItem");
+					$.ajax({
+						url: "functions/assignAccount.php",
+						type: "post",
+						data: {acct1: acct1.value, acct2: acct2.value, acct3: acct3.value, acct4: acct4.value},
+						success: function(data){
+							signatories.url = "sources/getSignatories.php";
+							var acct = new $.jqx.dataAdapter(signatories);
+							$("#signatory").jqxWindow("close");
+							$("#signGrid").jqxGrid({source: acct});
+						}
+					})
+				});
 				
 				$("#noso_list").jqxGrid({
 					source: trans_list,
@@ -387,6 +418,7 @@ $include = new includes();
 				});
 				
 				$("#accountGrid").jqxGrid({
+					source: accounts,
 					width: "100%",
 					height: "100%",
 					theme: "main-theme",
@@ -397,15 +429,135 @@ $include = new includes();
 					pageable: true,
 					rendertoolbar: function(toolbar){
 						var container = $("<div style='margin: 5px;'></div>");
-						container.append('<input id="editAcct" type="button" value="Edit" />');
-						container.append('<input id="deleteAcct" type="button" value="Delete" />');
+						container.append('<button id="addAcct" type="button"> Add </button>');
+						container.append('<button id="editAcct" type="button"> Edit </button>');
+						container.append('<button id="deleteAcct" type="button"> Delete </button>');
 						toolbar.append(container);
+						
+						
+						$("#addAcct").jqxButton({width: 80, theme: "main-theme"});
+						$("#editAcct").jqxButton({width: 80, theme: "main-theme", disabled: true});
+						$("#deleteAcct").jqxButton({width: 80, theme: "main-theme"});
+						
+						
+						$("#accountGrid").on("rowselect", function(event){
+							accountId = event.args.row.accountId;
+							$("#editAcct").jqxButton({disabled: false});
+						});
+						
+						$("#addAcct").click(function(){
+							$("#addAcctModal").jqxWindow("open");
+							toEdit = 0;
+							console.log(toEdit);
+						});
+						
+						$("#deleteAcct").click(function(){
+							$.ajax({
+								url: "functions/deleteAccount.php",
+								type: "post",
+								data: {accountId: accountId},
+								success: function(data){
+									accounts.url = "sources/accounts.php";
+									var accountAdapter = new $.jqx.dataAdapter(accounts);
+									
+									$("#accountGrid").jqxGrid({source: accountAdapter});
+								}
+							})
+						});
+						
+						$("#editAcct").click(function(){
+							toEdit = 1;
+							$.ajax({
+								url: "sources/getAccount.php",
+								type: "post",
+								dataType: "json",
+								data: {accountId: accountId},
+								success: function(data){
+									$("#addAcctModal").jqxWindow("open");
+									$("#addAcctModal input")[0].value = data.fname;
+									$("#addAcctModal input")[1].value = data.mname;
+									$("#addAcctModal input")[2].value = data.lname;
+									$("#addAcctModal input")[3].value = data.position;
+								}
+							});
+						});
+					},
+					ready: function(){
+						$("#accountGrid").jqxGrid("hidecolumn", "accountId");
 					},
 					columns: [
 						{text: "Name", dataField: "aName", align: "center", cellsalign: "center", width: "50%"},
-						{text: "Position", dataField: "aPosition", align: "center", cellsalign: "center", width: "50%"}
+						{text: "Position", dataField: "aPosition", align: "center", cellsalign: "center", width: "50%"},
+						{text: "Account ID", dataField: "accountId", align: "center", cellsalign: "center", width: "50%"}
 					]
 				});
+				
+				var signatories = {
+					datatype: "json",
+					dataFields: [
+						{name: "sign"},
+						{name: "name"},
+						{name: "position"}
+					],
+					url: "sources/getSignatories.php"
+				};
+				
+				$("#signGrid").jqxGrid({
+					source: signatories,
+					width: "100%",
+					height: "100%",
+					theme: "main-theme",
+					showtoolbar: true,
+					altrows: true,
+					selectionmode: "singlerow",
+					columnsresize: true,
+					rendertoolbar: function(toolbar){
+						var container = $("<div style='margin: 5px;'></div>");
+						container.append('<button id="updateSignatories" type="button"> Update </button>');
+						toolbar.append(container);
+						
+						$("#updateSignatories").jqxButton({width: 80, theme: "main-theme"});
+						
+						$("#updateSignatories").click(function(){
+							$("#signatory").jqxWindow("open")
+						});
+					},
+					columns: [
+						{text: "", dataField: "sign", align: "center", cellsalign: "center", width: "30%"},
+						{text: "Name", dataField: "name", align: "center", cellsalign: "center", width: "35%"},
+						{text: "Position", dataField: "position", align: "center", cellsalign: "center", width: "35%"}
+					]
+				});
+				
+				$('#accountModal').jqxValidator({
+					rules: [
+						{ input: '#aFname', message: 'First Name is required', action: 'keyup, blur', rule: 'required' },
+						{ input: '#aMname', message: 'Middle Name is required', action: 'keyup, blur', rule: 'required' },
+						{ input: '#aLname', message: 'Last Name is required', action: 'keyup, blur', rule: 'required' },
+						{ input: '#aPosition', message: 'Position is required', action: 'keyup, blur', rule: 'required' },
+					]
+				});
+				
+				$("#confirmAccount").click(function(){
+					if($('#accountModal').jqxValidator('validate')){
+						$.ajax({
+							url: "functions/addAccount.php",
+							type: "post",
+							data: {edit: toEdit, aFname: $("#aFname").val(), aMname: $("#aMname").val(), 
+									aLname: $("#aLname").val(),	aPosition: $("#aPosition").val(),
+									abranch: $("#abranch").val(), accountId: accountId},
+							success: function(data){
+								console.log(data);
+								accounts.url = "sources/accounts.php";
+								var accountAdapter = new $.jqx.dataAdapter(accounts);
+								
+								$("#accountGrid").jqxGrid({source: accountAdapter});
+								$("#tableForm input").val("");
+								$("#addAcctModal").jqxWindow("close");
+							}
+						})
+					}
+				})
 				
 				$("#ok").jqxButton({theme: "main-theme", width: 100})
 				
@@ -616,10 +768,8 @@ $include = new includes();
 					$("#accountModal").jqxWindow("open");
 				});
 				
-				$('#accountModal').jqxValidator({
-					rules: [
-						{ input: '#fullName', message: 'Name is required', action: 'keyup, blur', rule: 'required' },
-					]
+				$("#signatories").click(function(){
+					$("#signatoryModal").jqxWindow("open")
 				});
 				
 				//jqxwindows
@@ -663,6 +813,18 @@ $include = new includes();
 				
 				$("#accountModal").jqxWindow({
 					maxWidth: 1000, maxHeight: 550, height: 550, width: 1000, cancelButton: $('#cancelAccount'), showCloseButton: true, draggable: false, resizable: false, isModal: true, autoOpen: false, modalOpacity: 0.50,theme:'main-theme'
+				});
+				
+				$("#signatoryModal").jqxWindow({
+					maxWidth: 1000, maxHeight: 550, height: 250, width: 1000, cancelButton: $('#cancelAccount'), showCloseButton: true, draggable: false, resizable: false, isModal: true, autoOpen: false, modalOpacity: 0.50,theme:'main-theme'
+				});
+				
+				$("#signatory").jqxWindow({
+					maxWidth: 1000, maxHeight: 550, height: 350, width: 600, cancelButton: $('#cancelAcct'), showCloseButton: true, draggable: false, resizable: false, isModal: true, autoOpen: false, modalOpacity: 0.50,theme:'main-theme'
+				});
+				
+				$("#addAcctModal").jqxWindow({
+					height: 280, width:  350, cancelButton: $('#cancelAccount'), showCloseButton: true, draggable: false, resizable: false, isModal: true, autoOpen: false, modalOpacity: 0.50,theme:'main-theme'
 				});
 				
 				$("#newConsumerForm").jqxWindow({
@@ -789,7 +951,7 @@ $include = new includes();
 				</div>
 			</div>
 			<div id="processing">
-				<div><img src="../assets/images/icons/icol16/src/accept.png" style="margin-bottom:-5px;"><b><span style="margin-top:-24; margin-left:3px">Processing</span></b></div>
+				<div><img src="../assets/images/icons/icol16/src/accept.png" ><b><span style="margin-top:-24; margin-left:3px">Processing</span></b></div>
 				<div >
 				<div><img src="../assets/images/loader.gif">Please Wait
 				
@@ -797,7 +959,7 @@ $include = new includes();
 				</div>
 			</div>
 			<div id="unable">
-				<div><img src="../assets/images/icons/icol16/src/error.png" style="margin-bottom:-5px;"><b><span style="margin-top:-24; margin-left:3px">Unable to continue</span></b></div>
+				<div><img src="../assets/images/icons/icol16/src/error.png" ><b><span style="margin-top:-24; margin-left:3px">Unable to continue</span></b></div>
 				<div >
 				<div>
 					<h5 class = "text-center" style = "margin-top: 20px;">The application must be approved first.</h5>
@@ -829,7 +991,7 @@ $include = new includes();
 				</div>
 			</div>
 			<div id="carModal">
-				<div><img src="../assets/images/icons/icol16/src/accept.png" style="margin-bottom:-5px;"><b><span style="margin-top:-24; margin-left:3px">Processing</span></b></div>
+				<div><img src="../assets/images/icons/icol16/src/accept.png" ><b><span style="margin-top:-24; margin-left:3px">Processing</span></b></div>
 				<div >
 					<br>
 					<input type = "text" id = "carNo" placeholder = "C.A.R." class = "form-control" maxlength="15">
@@ -843,25 +1005,82 @@ $include = new includes();
 				</div>
 			</div>
 			<div id="accountModal">
-				<div><img src="../assets/images/icons/icol16/src/accept.png" style="margin-bottom:-5px;"><b><span style="margin-top:-24; margin-left:3px">Add Account</span></b></div>
+				<div><img src="../assets/images/icons/icol16/src/user.png" ><b><span style="margin-top:-24; margin-left:3px"> Accounts</span></b></div>
 				<div >
-					<div id = "accountSplitter">
-						<div class="splitter-panel">
-							<h5>Full Name</h5>
-							<input type = "text" id = "fullName" placeholder = "Full Name" class = "form-control" maxlength="15">
-							<h5>Position</h5>
-							<input type = "text" id = "position" placeholder = "Position" class = "form-control">
-							<br>
-							<div class = "col-sm-6">
-								<button id = "confirmAccount" class = "btn btn-success btn-block">Confirm</button>
-							</div>
-							<div class = "col-sm-6">
-								<button id = "cancelAccount" class = "btn btn-danger btn-block">Cancel</button>
-							</div>
-						</div>
-						<div class="splitter-panel">
-							<div id = "accountGrid"></div>
-						</div>
+					<div id = "accountGrid"></div>
+				</div>
+			</div>
+			<div id="addAcctModal">
+				<div><img src="../assets/images/icons/icol16/src/add.png"><b><span style="margin-top:-24; margin-left:3px"> Add Account</span></b></div>
+				<div>
+					<table id = "tableForm">
+						<tr>
+							<td width = "30%"><h5>First Name:<h5></td>
+							<td><input type = "text" id = "aFname" class = "form-control"></td>
+						</tr>
+						<tr>
+							<td><h5>Middle Name:<h5></td>
+							<td><input type = "text" id = "aMname" class = "form-control"></td>
+						</tr>
+						<tr>
+							<td><h5>Last Name:<h5></td>
+							<td><input type = "text" id = "aLname" class = "form-control"></td>
+						</tr>
+						<tr>
+							<td><h5>Position:<h5></td>
+							<td><input type = "text" id = "aPosition" class = "form-control"></td>
+						</tr>
+						<tr>
+							<td><h5>Branch:<h5></td>
+							<td>
+								<select id = "abranch" class = "form-control">
+									<option value = "B1">B1</option>
+									<option value = "B2">B2</option>
+									<option value = "B3">B3</option>
+								</select>
+							</td>
+						</tr>
+					</table><br>
+					<div class = "col-sm-6">
+						<button id = "confirmAccount" class = "btn btn-success btn-block">Confirm</button>
+					</div>
+					<div class = "col-sm-6">
+						<td><button id = "cancelAccount" class = "btn btn-danger btn-block">Cancel</button></td>
+					</div>
+				</div>
+			</div>
+			<div id="signatoryModal">
+				<div><img src="../assets/images/icons/icol16/src/pencil.png"><b><span style="margin-top:-24; margin-left:3px"> Signatories</span></b></div>
+				<div>
+					<div id = "signGrid"></div>
+				</div>
+			</div>
+			<div id="signatory">
+				<div><img src="../assets/images/icons/icol16/src/pencil.png"><b><span style="margin-top:-24; margin-left:3px"> Signatories</span></b></div>
+				<div>
+					<table class = "table table-bordered">
+						<tr>
+							<td width = "40%"><h5>APPROVED BY (C.A.R): </h5></td>
+							<td><div class = "form-control" id = "acct1"></div></td>
+						</tr>
+						<tr>
+							<td><h5>NOTED BY (C.A.R.)</h5></td>
+							<td><div class = "form-control" id = "acct2"></div></td>
+						<tr>
+						</tr>
+							<td><h5>PROCESSED BY (ACCOUNT NUMBER):</h5></td>
+							<td><div class = "form-control" id = "acct3"></div></td>
+						<tr>
+						<tr>
+							<td><h5>APPROVED BY (ACCOUNT NUMBER):</h5></td>
+							<td><div class = "form-control" id = "acct4"></div></td>
+						</tr>
+					</table>
+					<div class = "col-sm-6">
+						<button id = "assignAccount" class = "btn btn-success btn-block">Assign</button>
+					</div>
+					<div class = "col-sm-6">
+						<td><button id = "cancelAcct" class = "btn btn-danger btn-block">Cancel</button></td>
 					</div>
 				</div>
 			</div>

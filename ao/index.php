@@ -121,27 +121,20 @@ $include = new includes();
 					var me = this;
 					var container = $("<div style='margin: 5px;'></div>");
 					var span = $("<span style='float: left; margin-top: 5px; margin-right: 4px;'>Search : </span>");
-					var input = $("<input class='jqx-input jqx-widget-content jqx-rc-all' id='searchField' type='text' placeholder='    Filter options ---- >' style='height: 23px; float: left; width: 223px;' />");
-				   // var refresh = $("<input style="margin-left: 5px;" id="clear" type="button" value="Clear" />");
-					var searchButton = $("<div style='float: left; margin-left: 5px;' id='search'><img style='position: relative; margin-top: 2px;' src='../assets/images/search_lg.png'/><span style='margin-left: 4px; position: relative; top: -3px;'></span></div>");
+					var input = $("<input class='jqx-input jqx-widget-content jqx-rc-all' id='searchField' type='text' placeholder='' style='height: 23px; float: left; width: 223px;' />");
 					var dropdownlist2 = $("<div style='float: left; margin-left: 5px;' id='dropdownlist'></div>");
 					var dropdownlist_conn = $("<div style='float: right; margin-right: 20px;' id='dropdownlist_conn'></div>");
-					// var branch_sep = $("<div style='float: left; margin-left: 5px;' id='branch_sep'></div>");
 					toolbar.append(container);
 					container.append(span);
 					container.append(input);
 					container.append(dropdownlist2);
-					container.append(searchButton);
 					container.append(dropdownlist_conn);
-					// container.append(branch_sep);
-					
-					$("#search").jqxButton({theme:"main-theme",height:18,width:24});
 					
 					$("#dropdownlist").jqxDropDownList({ 
 						autoDropDownHeight: true,
 						selectedIndex: 0,
 						theme:"main-theme", 
-						width: 200, 
+						width: 150, 
 						height: 25, 
 						source: [
 							"Account Number","Aleco Account", "Account Name","Address"
@@ -183,35 +176,6 @@ $include = new includes();
 						}
 					});
 					
-					var sep_source ={
-						datatype: "json",
-						datafields: [
-						{ name: 'area_name'},
-						{ name: 'area_value'},
-						],
-						url: 'sources/branch_source.php',
-						async: false
-					};
-
-					var sepAdapter = new $.jqx.dataAdapter(sep_source);
-
-					$.ajax({
-						url:'sources/check_branch.php',
-						type:'post',
-						datatype:'json',
-						success:function(data){
-						var selected = data;
-						//$("#branch_sep").val(selected);
-						}
-					});
-					
-					// $("#branch_sep").jqxComboBox({ 
-						// autoDropDownHeight: true, 
-						// width: 100, 
-						// height: 22, 
-						// source: sepAdapter,displayMember: 'area_name',valueMember: 'area_value',theme:'main-theme',promptText:"BRANCH"
-					// });
-					
 					if (theme != "") {
 						input.addClass("jqx-widget-content-" + theme);
 						input.addClass("jqx-rc-all-" + theme);
@@ -247,7 +211,7 @@ $include = new includes();
 					});
 					
 					var oldVal = "";
-					input.on('keydown', function (event) {
+					input.on('keyup', function (event) {
 						var key = event.charCode ? event.charCode : event.keyCode ? event.keyCode : 0;
 							
 						if (key == 13 || key == 9) {

@@ -6,15 +6,15 @@
 	
 	if(isset($_POST["mrNum"]) && $_POST["mrNum"] != ""){
 		if(strlen($_POST["mrNum"]) == 1)
-			$mrNo = "MR-M-000".$_POST["mrNum"];
+			$mrNo = "MR-M-".$y."-000".$_POST["mrNum"];
 		else if(strlen($_POST["mrNum"]) == 2)
-			$mrNo = "MR-M-00".$_POST["mrNum"];
+			$mrNo = "MR-M-".$y."-00".$_POST["mrNum"];
 		else if(strlen($_POST["mrNum"]) == 3)
-			$mrNo = "MR-M-0".$_POST["mrNum"];
+			$mrNo = "MR-M-".$y."-0".$_POST["mrNum"];
 		else
-			$mrNo = "MR-M-".$_POST["mrNum"];
+			$mrNo = "MR-M-".$y."-".$_POST["mrNum"];
 	} else{
-		$query = $db->query("SELECT *FROM tbl_mr WHERE mrNo LIKE '%$y%' ORDER BY mrNo DESC LIMIT 1");
+		$query = $db->query("SELECT *FROM tbl_mr WHERE mrNo LIKE '%-$y-%' ORDER BY mrNo DESC LIMIT 1");
 
 		if($query->rowCount() > 0){
 			foreach($query as $row){

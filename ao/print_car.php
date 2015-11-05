@@ -5,14 +5,15 @@ require('../assets/fpdf/fpdf.php');
 $con = new getConnection();
 $db = $con->PDO();
 $branch =  $_SESSION["branch"];
-
+$userId = $_SESSION["userId"];
 $ao = $_SESSION["name"];
 $mun = $_SESSION["mun"];
 $area = $_SESSION["area"];
 $req_date = $consumer = $address = $contact = $type = $so = $acctNo = "";
+$acct1 = $acct2 = $acct3 = $acct4 = "";
+$pos1 = $pos2 = $pos3 = $pos4 = "";
 $appId = $_GET["ref"];
-echo $branch;
-$assignedId = "";
+$serviceArr = $assignedId = "";
 $query = $db->query("SELECT *FROM tbl_applications WHERE appCAR IS NOT NULL ORDER BY appCAR DESC LIMIT 1");
 $query2 = $db->query("SELECT *FROM consumers a 
 					LEFT OUTER JOIN tbl_applications b ON a.Entry_Number = b.Entry_Number
@@ -22,6 +23,8 @@ $query2 = $db->query("SELECT *FROM consumers a
 					LEFT OUTER JOIN tbl_substation f ON e.subId = f.subId
 					LEFT OUTER JOIN tbl_feeder g ON e.feedId = g.feedId
 					WHERE b.appId = '$appId'");
+
+
 if($query->rowCount() > 0){
 	foreach($query as $row){
 		$my = explode("-", $row["appCAR"]);
@@ -48,7 +51,27 @@ else{
 	$assignedId =  date("mY")."-001";
 }
 
+$query4 = $db->query("SELECT *FROM tbl_signatories a
+					  LEFT OUTER JOIN tbl_accounts b ON a.accountId = b.accountId
+					  WHERE a.userId = '$userId' ORDER BY a.aStatus");
+					  
+$row = $query4->fetchAll(PDO::FETCH_ASSOC);
+$acct1 = $row[0]["aFname"]." ".$row[0]["aMname"][0].". ".$row[0]["aLname"];
+$acct2 = $row[1]["aFname"]." ".$row[1]["aMname"][0].". ".$row[1]["aLname"];
+$acct3 = $row[2]["aFname"]." ".$row[2]["aMname"][0].". ".$row[2]["aLname"];
+$acct4 = $row[3]["aFname"]." ".$row[3]["aMname"][0].". ".$row[3]["aLname"];
 
+$pos1 = $row[0]["aPosition"];
+$pos2 = $row[1]["aPosition"];
+$pos3 = $row[2]["aPosition"];
+$pos4 = $row[3]["aPosition"];
+
+$query5 = $db->query("SELECT *FROM tbl_service a 
+			  LEFT OUTER JOIN tbl_app_service b ON a.serviceId = b.serviceId 
+			  WHERE b.appId = '$appId'");
+foreach($query5 as $rowS)
+	$type .= $rowS["serviceDesc"]." ";
+	
 if($query2->rowCount() > 0){
 	foreach($query2 as $row){
 		
@@ -56,26 +79,23 @@ if($query2->rowCount() > 0){
 		$r = $query3->fetch(PDO::FETCH_ASSOC);
 		$contact = $r["contactValue"];
 		
-		$acctNo = $row["sysPro"];
+		$acctNo = $row["AccountNumber"];
 		$d = explode(" ", $row["appDate"]);
 		$date = DateTime::createFromFormat("Y-m-d", $d[0]);
 
 		$req_date = $date->format("F d, Y");
 		$consumer = iconv('UTF-8', 'windows-1252', $row["AccountName"]);
-		$address = $row["Address"];
+		$address = iconv('UTF-8', 'windows-1252', $row["Address"]);
 		$address = str_replace("ñ", "Ñ", $address);
 		$address = iconv('UTF-8', 'windows-1252', $address);
-		$type = $row["serviceId"];
+		// $type = $row["serviceId"];
 		$consumerType = $row["CustomerType"];
 		$so = $row["soNum"];
 		$substation = $row["subDescription"];
 		$feeder = $row["feederName"];
-		if($type == 1)
-			$type = "New Connection";
-		// echo $req_date;
 	}
 }
-// echo $address;
+
 $pdf=new FPDF('P','mm','Letter');
 $pdf->SetFont('Arial','B',10);
 $pdf->AddPage();
@@ -123,7 +143,7 @@ $pdf->Image('../assets/images/logo.jpg',30,15,25);
 	$pdf->Cell(65, 6, $mun, 0, 0, "");
 	$pdf->SetX(10);
 	$pdf->Ln(10);
-	$pdf->Cell(65, 6, "TYPE OF REQUEST: ", 0, 0, "");
+	$pdf->Cell(65, 6, "TYPE OF REQUEST: ", 0, 0, "R");
 	$pdf->Cell(65, 6, $type, 0, 0, "");
 	$pdf->SetX(10);
 	$pdf->Ln(10);
@@ -200,13 +220,13 @@ $pdf->Image('../assets/images/logo.jpg',30,15,25);
 	$pdf->Ln();
 	$pdf->SetX(20);
 	$pdf->Cell(65, 5, $ao, 0, 0, "L");
-	$pdf->Cell(65, 5, "ANALYN G. PALACIOS", 0, 0, "L");
-	$pdf->Cell(35, 5, "MA. AILEEN BALAGON", 0, 0, "L");
+	$pdf->Cell(65, 5, iconv('UTF-8', 'windows-1252', $acct1), 0, 0, "L");
+	$pdf->Cell(35, 5, iconv('UTF-8', 'windows-1252', $acct2), 0, 0, "L");
 	$pdf->Ln();
 	$pdf->SetX(20);
 	$pdf->Cell(65, 5, "Branch ".$branch.$area." Account Officer", 0, 0, "L");
-	$pdf->Cell(65, 5, "Branch Supervisor", 0, 0, "L");
-	$pdf->Cell(65, 5, "URD, Billing & Settlement Head", 0, 0, "L");
+	$pdf->Cell(65, 5, $pos1, 0, 0, "L");
+	$pdf->Cell(65, 5, $pos2, 0, 0, "L");
 	$pdf->Ln();
 	$pdf->SetX(20);
 	$pdf->Cell(65, 6, "Branch", 0, 0, "L");
@@ -217,7 +237,7 @@ $pdf->Image('../assets/images/logo.jpg',30,15,25);
 	$pdf->Ln(1);
 	$pdf->SetX(10);
 	$pdf->SetFont('Arial','I',9);
-	$pdf->Cell(65, 6, "To be filled-up by IT", 0, 0, "L");
+	$pdf->Cell(65, 6, "To be filled-up by DMG", 0, 0, "L");
 	$pdf->SetFont('Arial','',9);
 	$pdf->Ln(7);
 	$pdf->SetX(10);
@@ -235,12 +255,12 @@ $pdf->Image('../assets/images/logo.jpg',30,15,25);
 	$pdf->Cell(65, 6, "__________________________", 0, 0, "L");
 	$pdf->Ln(5);
 	$pdf->SetX(18);
-	$pdf->Cell(100, 6, "DEOFELYN M. GOMEZ", 0, 0, "L");
-	$pdf->Cell(65, 6, iconv('UTF-8', 'windows-1252', "ANDREW CHAMBERLAIN A. ZUÑIGA VII"), 0, 0, "L");
+	$pdf->Cell(100, 6, iconv('UTF-8', 'windows-1252', $acct3), 0, 0, "L");
+	$pdf->Cell(65, 6, iconv('UTF-8', 'windows-1252', $acct4), 0, 0, "L");
 	$pdf->Ln(5);
 	$pdf->SetX(18);
-	$pdf->Cell(100, 6, "DATA ANALYST/URD-DMG", 0, 0, "L");
-	$pdf->Cell(65, 6, "URD-DMG HEAD", 0, 0, "L");
+	$pdf->Cell(100, 6, $pos3, 0, 0, "L");
+	$pdf->Cell(65, 6, $pos4, 0, 0, "L");
 	$pdf->Ln(12);
 	$pdf->SetFont('Arial','I',9);
 	$pdf->Cell(100, 5, "Accomplish in 3 copies for the following:", 0, 0);
