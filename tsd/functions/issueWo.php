@@ -18,7 +18,8 @@
 		if($query->rowCount() > 0){
 			foreach($query as $row)
 				$wo = explode("-", $row["wo"]);
-				$series = intval($wo[3])+1;
+				$series = intval($wo[4])+1;
+				// echo $series;
 				if(strlen($series) == 1){
 					$wom = "APEC-".$ext."-000".$series;
 				} else if(strlen($series) == 2){
@@ -41,7 +42,6 @@
 		else
 			$wom = "APEC-".$ext."-".$_POST["workNo"];
 	}
-
 	if(isset($_POST["appId"])){
 		$appId = $_POST["appId"];
 		$scope = strtoupper($_POST["scope"]);

@@ -452,7 +452,7 @@ $include = new includes();
 				$("#appFormContent").html("Loading form...");
 			});
 			 
-			$('#processing	').jqxWindow({width: 380, height:80, resizable: false,  isModal: true,showCloseButton:false, autoOpen: false, modalOpacity: 0.01,theme:'main-theme'});
+			$('#processing').jqxWindow({width: 380, height:80, resizable: false,  isModal: true,showCloseButton:false, autoOpen: false, modalOpacity: 0.01,theme:'main-theme'});
 			
 			$("#newConsumer").on("click", function(event){
 				$("#newConsumerForm").jqxWindow("open");
@@ -614,7 +614,8 @@ $include = new includes();
 						if(data == 1){
 							$("#processing").jqxWindow("open");
 							setTimeout(function(){
-								location.reload();
+								$("#processing").jqxWindow("close");
+								$("#confirmAction").jqxWindow("close");
 							}, 1000);
 						}
 					}

@@ -128,9 +128,9 @@
 
 		<div id="message">&nbsp;</div>
 		<div style="height: 25px; font-size: 1px;">&nbsp;</div>
-		<div class="footer">
+		<!--div class="footer">
 			Copyright &copy;<a href="javascript:void(0)" target="_blank"> Abo,<a href="javascript:void(0)" target="_blank"> Balana,<a href="javascript:void(0)" target="_blank"> Rafer</a> 2015
-		</div>
+		</div-->
 	</div>
 </body>
 </html>

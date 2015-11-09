@@ -31,16 +31,16 @@ $include = new includes();
 				$("#jqxMenu").jqxMenu({width: window.innerWidth-5, height: "30px", theme: "main-theme", autoOpen:false});
 				// var consumer_inspectionMenu = $("#inspectionMenu").jqxMenu({ width: 226, height: 86, autoOpenPopup: false, mode: "popup",theme: "main-theme"});
 				
-				$("#inspection_list").on("rowclick", function (event) {
-					if (event.args.rightclick) {
-						var selected_account = $("#inspection_list").jqxGrid("selectrow", event.args.rowindex);
-						$("#inspection_list").jqxGrid("focus");
-						var scrollTop = $(window).scrollTop();
-						var scrollLeft = $(window).scrollLeft();
-						consumer_inspectionMenu.jqxMenu("open", parseInt(event.args.originalEvent.clientX) + 5 + scrollLeft, parseInt(event.args.originalEvent.clientY) + 5 + scrollTop);
-						return false;
-					}
-				});
+				// $("#inspection_list").on("rowclick", function (event) {
+					// if (event.args.rightclick) {
+						// var selected_account = $("#inspection_list").jqxGrid("selectrow", event.args.rowindex);
+						// $("#inspection_list").jqxGrid("focus");
+						// var scrollTop = $(window).scrollTop();
+						// var scrollLeft = $(window).scrollLeft();
+						// consumer_inspectionMenu.jqxMenu("open", parseInt(event.args.originalEvent.clientX) + 5 + scrollLeft, parseInt(event.args.originalEvent.clientY) + 5 + scrollTop);
+						// return false;
+					// }
+				// });
 				$("#inspection_list").on("contextmenu", function () {
 					return false;
 				});

@@ -546,11 +546,10 @@ $(document).ready(function(){
 					if(data == 1){
 						$("#confirmInspection").jqxWindow("close");
 						$("#confirm2").jqxWindow("close");
-						$('#processing').jqxWindow('open');
-						setTimeout( function(){
-							$('#processing').jqxWindow('close');
-							location.reload();
-						}, 2000);
+						inspection_list.url = "sources/inspectionList.php";
+						var inspectionData = new $.jqx.dataAdapter(inspection_list);
+						
+						$("#inspection_list").jqxGrid({source: inspectionData});
 					} else{
 						alert(data);
 					}

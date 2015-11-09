@@ -185,12 +185,13 @@ $include = new includes();
 									$("#issue").jqxButton({
 										width: '150'
 									}).unbind("click").bind("click", function(event) {
-										console.log(data);
+										// console.log(data);
 										$.ajax({
 											url: "functions/issueSo.php",
 											async: true,
 											data: $("#frmSO").serialize()+"&trans="+data.trans,
 											success: function(outIssue){
+												console.log(outIssue+"dfbdfbdfbdfbasasdas");
 												$("#soForm").jqxWindow("close");
 												// $('#processing').jqxWindow('open');
 												daily_transactions.url = 'sources/dailyTransactions.php';
@@ -200,7 +201,7 @@ $include = new includes();
 												trans_list.url = "sources/noSOlist.php";
 												var serviceOrders = new $.jqx.dataAdapter(trans_list);
 												$("#noso_list").jqxGrid({source:trans_list});
-
+												$("#soButton").jqxButton({disabled: true});
 												// setTimeout(function(){
 													// $('#processing').jqxWindow('close');
 													// location.reload();
@@ -557,7 +558,7 @@ $include = new includes();
 							}
 						})
 					}
-				})
+				});
 				
 				$("#ok").jqxButton({theme: "main-theme", width: 100})
 				
@@ -755,10 +756,7 @@ $include = new includes();
 						url: "../logout.php",
 						success: function(data){
 							if(data == 1){
-								$("#processing").jqxWindow("open");
-								setTimeout(function(){
-									window.location.href = "../index.php";
-								}, 1000);
+								window.location.href = "../index.php";
 							}
 						}
 					});

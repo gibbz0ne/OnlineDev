@@ -14,7 +14,7 @@
 	}
 	else {
 		$type = $_GET["type"];
-		
+		// echo $type;
 		$res = $db->query("SELECT Entry_Number FROM consumers");
 		$row = $res->fetchAll(PDO::FETCH_ASSOC);
 		$cid = $row[0]["Entry_number"];
@@ -141,21 +141,20 @@
 		$res = $db->query("SELECT * FROM tbl_service WHERE typeId = $type");
 		$rowService = $res->fetchAll(PDO::FETCH_ASSOC);
 		
-		// if(count($rowService) == 1) {
-			// $res = $db->query("SELECT * FROM tbl_app_service ");
-			// $insert = $db->prepare("INSERT INTO tbl_app_service VALUES(?, ?)");
-			// $insert->execute(array($app, $rowService[0]["serviceId"]));
-		// }
-		// else 
 		if(count($rowService) > 1) {
 			$res = $db->query("SELECT * FROM tbl_service WHERE typeId = $type");
 			foreach($res as $rowService) {
 				if($_GET["s-".$rowService["serviceId"]] == "true") {
-					$insert = $db->prepare("INSERT INTO tbl_app_service VALUES(?, ?)");
-					$insert->execute(array($app, $rowService["serviceId"]));
+					$checkQuery = $db->query("SELECT *FROM tbl_app_service WHERE serviceId = '".$rowService["serviceId"]."' AND appId = '$app'");
+					if($checkQuery->rowCount() < 1){
+						$insert = $db->prepare("INSERT INTO tbl_app_service VALUES(?, ?)");
+						$insert->execute(array($app, $rowService["serviceId"]));
+						echo "add";
+					}
 				} else{
 					$delete = $db->prepare("DELETE FROM tbl_app_service WHERE appId = ? AND serviceId = ?");
 					$delete->execute(array($app, $rowService["serviceId"]));
+					echo "delete";
 				}
 			}
 		}
@@ -203,8 +202,6 @@
 							VALUES(?, ?, ?, ?, ?)");
 		$insert->execute(array($app, $cid, $status, $processed, date("Y-m-d H:i:s")));
 
-		// $insert = $db->prepare("update tbl_consumers set hasPendingSO = true WHERE Entry_Number = $cid");
-		// $insert->execute();
 		$db->commit();
 		echo "1";
 	} catch(PDOException $e){

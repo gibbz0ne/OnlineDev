@@ -12,21 +12,35 @@
 	
 	$query = $db->query("SELECT *FROM consumers a 
 						LEFT OUTER JOIN tbl_applications b ON a.Entry_Number = b.Entry_Number 
-						LEFT OUTER JOIN tbl_app_service c ON b.appId = c.appId 
-						LEFT OUTER JOIN tbl_transactions d ON b.appId = d.appId 
-						LEFT OUTER JOIN tbl_status f ON d.status = f.statId 
-						LEFT OUTER JOIN tbl_app_service g ON c.appId = g.appId 
-						LEFT OUTER JOIN tbl_service h ON g.serviceId = h.serviceId 
-						WHERE d.status = 4 AND d.action = 0");
+						LEFT OUTER JOIN tbl_transactions c ON b.appId = c.appId 
+						LEFT OUTER JOIN tbl_status d ON c.status = d.statId 
+						WHERE c.status = 4 AND c.action = 0");
+						
+						// SELECT *FROM consumers a 
+						// LEFT OUTER JOIN tbl_applications b ON a.Entry_Number = b.Entry_Number 
+						// LEFT OUTER JOIN tbl_app_service c ON b.appId = c.appId 
+						// LEFT OUTER JOIN tbl_transactions d ON b.appId = d.appId 
+						// LEFT OUTER JOIN tbl_status f ON d.status = f.statId 
+						// LEFT OUTER JOIN tbl_app_service g ON c.appId = g.appId 
+						// LEFT OUTER JOIN tbl_service h ON g.serviceId = h.serviceId 
+						// WHERE d.status = 4 AND d.action = 0
 	
 	if($query->rowCount() > 0){
 		foreach($query as $row){
+			$appId = $row["appId"];
+			$query2 = $db->query("SELECT *FROM tbl_app_service a
+								  LEFT OUTER JOIN tbl_service b ON a.serviceId = b.serviceId
+								  WHERE a.appId = '$appId'");
+			$appType = "";
+			foreach($query2 as $row2){
+				$appType .= $row2["serviceCode"]." ";
+			}
 			array_push($list, array("consumerName" => str_replace("ñ", "Ñ", $row["AccountName"]),
 								"address" => $row["Address"],
 								// "status" => $status,
 								"so" => $row["appSOnum"],
 								"remarks" => $row["remarks"],
-								"appType" => $row["serviceCode"],
+								"appType" => $appType,
 								"dateApp" => $row["appDate"],
 								"cid" => $row["Entry_Number"],
 								"acctNo" => $row["AccountNumber"],
