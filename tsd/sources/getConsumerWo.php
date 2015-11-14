@@ -11,14 +11,14 @@
 		$ctr = 1;
 		$query = $db->query("SELECT *FROM tbl_mr_wo a
 							 LEFT OUTER JOIN tbl_applications b ON a.appId = b.appId
-							 LEFT OUTER JOIN consumers c ON b.Entry_Number = c.Entry_Number
+							 LEFT OUTER JOIN tbl_temp_consumers c ON b.cid = c.cid
 							 WHERE a.mrNo = '$mr'");
 		
 		foreach($query as $row){
 			// echo $row["munId"];
 			$appId = $row["appId"];
 			$mReading = $mBrand = $mClass = $mSerial = $mERC = $mLabSeal = $mTerminal = $multiplier = "";
-			$meterProfile = $db->query("SELECT *FROM tbl_meter_profile WHERE cid = '".$row["Entry_Number"]."' AND appId = '".$row["appId"]."'");
+			$meterProfile = $db->query("SELECT *FROM tbl_meter_profile WHERE cid = '".$row["cid"]."' AND appId = '".$row["appId"]."'");
 			
 			
 			foreach($db->query("SELECT *FROM tbl_transactions WHERE appId = '$appId' ORDER BY tid DESC LIMIT 1") as $row3){
@@ -40,10 +40,10 @@
 						$list[] = array(
 							"ctr1" => $ctr,
 							"status" => $status,
-							"acctNo" => $row["AccountNumber"],
-							"consumerName" => $row["AccountName"],
-							"address" => $row["Address"],
-							"cid" => $row["Entry_Number"],
+							"acctNo" => $row["AccountNumberT"],
+							"consumerName" => $row["AccountNameT"],
+							"address" => $row["AddressT"],
+							"cid" => $row["cid"],
 							"appId" => $row["appId"],
 							"mReading" => $mReading,
 							"mBrand" => $mBrand,
@@ -66,8 +66,8 @@
 		$cid = $_POST["cid"];
 		$ctr = 1;
 		foreach($db->query("SELECT *FROM tbl_applications a
-							LEFT OUTER JOIN consumers b ON a.Entry_Number = b.Entry_Number 
-							WHERE a.Entry_Number = '$cid'") as $row){
+							LEFT OUTER JOIN tbl_temp_consumers b ON a.cid = b.cid 
+							WHERE a.cid = '$cid'") as $row){
 
 			$mReading = $mBrand = $mClass = $mSerial = $mERC = $mLabSeal = $mTerminal = $multiplier = "";
 			foreach($db->query("SELECT *FROM tbl_meter_profile WHERE cid = '$cid' AND appId = '".$row["appId"]."'") as $r){
@@ -82,10 +82,10 @@
 			}
 			
 			$list = array(
-				"acctNo" => $row["AccountNumber"],
-				"consumerName" => $row["AccountName"],
-				"address" => $row["Address"],
-				"cid" => $row["Entry_Number"],
+				"acctNo" => $row["AccountNumberT"],
+				"consumerName" => $row["AccountNameT"],
+				"address" => $row["AddressT"],
+				"cid" => $row["cid"],
 				"mReading" => $mReading,
 				"mBrand" => $mBrand,
 				"mClass" => $mClass,

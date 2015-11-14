@@ -24,6 +24,7 @@ $include = new includes();
 		<script>
 		$(document).ready(function(){
 			var mr = "";
+			$("#dateInstalled").jqxDateTimeInput({ height: 10, width: '67%',  formatString: 'yyyy-MM-dd'});
 			$("#jqxMenu").jqxMenu({width: window.innerWidth-5, theme: "main-theme"});
 			
 			$("#print_mr").jqxButton({theme: "main-theme", disabled: true});
@@ -159,40 +160,17 @@ $include = new includes();
 				var rowindex = $("#mrList").jqxGrid("getselectedrowindex");
 				var data = $("#mrList").jqxGrid("getrowdata", rowindex);
 				mrNo = data.mrNo;
+				$('#consumerList').jqxGrid("clearselection");
 				consumerList.url = 'sources/getConsumerWo.php?mr='+data.mrNo;
 				// selected_account = data.acctNo;
 				
 				var dataAdapter = new $.jqx.dataAdapter(consumerList);
 				$('#consumerList').jqxGrid({source:dataAdapter});
-				
-				// $.ajax({
-					// url: "sources/checkApproveMr.php",
-					// type: "post",
-					// data: {mrNo: mrNo},
-					// success: function(result){
-						// $("#install").jqxButton({disabled: true});
-						// if(result == "1")
-							// $("#install").jqxButton({disabled: false});
-						// else
-							// $("#install").jqxButton({disabled: true});
-					// }
-				// })
+				$("#install").jqxButton({disabled: true});
+			
 			});
 
-			// $("#consumerList").on("celldoubleclick", function(event){
-				// $.ajax({
-					// url: "sources/checkApproveMr.php",
-					// type: "post",
-					// data: {mrNo: mrNo},
-					// success: function(result){
-						// if(result == "1")
-							// $("#assignMeter").jqxButton({disabled: false});
-						// else
-							// $("#assignMeter").jqxButton({disabled: true});
-					// }
-				// })
-			// });
-			
+						
 			$("#consumerList").on("contextmenu", function(event){
 				return false;
 			});
@@ -219,7 +197,7 @@ $include = new includes();
 				width: "100%",
 				height: "100%",
 				theme: "main-theme",
-				selectionmode: "multiplerows",
+				selectionmode: "singlerow",
 				showtoolbar: true,
 				rendertoolbar: function(toolbar){
 					var container = $("<div style='margin: 5px;'></div>");
@@ -317,7 +295,7 @@ $include = new includes();
 			});
 			
 			$("#confirmModal2").jqxWindow({
-				theme: "main-theme", height: 170, width:  400, cancelButton: $("#cancel4"),showCloseButton: true, draggable: false, resizable: false, isModal: true, autoOpen: false, modalOpacity: 0.50
+				theme: "main-theme", height: 260, width:  400, cancelButton: $("#cancel4"),showCloseButton: true, draggable: false, resizable: false, isModal: true, autoOpen: false, modalOpacity: 0.50
 			});
 			
 			$("#mrListModal").jqxWindow({
@@ -340,22 +318,6 @@ $include = new includes();
 				alert("success");
 			});
 			
-			// $("#approveMeter").on("click", function(){
-				// $("#confirmMr").jqxWindow("open");
-			// });
-			
-			// $("#confirm3").on("click", function(){
-				// $.ajax({
-					// url: "functions/approveMeter.php",
-					// type: "post",
-					// data: {mr: mrNo},
-					// success: function(data){
-						// if(data == "1")
-							// location.reload();
-					// }
-				// });
-			// });
-			
 			$("#install").click(function(){
 				var rows = $("#consumerList").jqxGrid("getselectedrowindexes");
 				console.log(rows.length);
@@ -372,7 +334,7 @@ $include = new includes();
 					$.ajax({
 						url: "sources/checkMeterProfile.php",
 						type: "post",
-						data: {acctNo: data.acctNo},
+						data: {acctNo: data.acctNo, date: $("#dateInstalled").val(), accomplishedBy: $("#accomplishedBy").val()},
 						success: function(result){
 							if(result == 1){
 								consumerList.url = 'sources/getConsumerWo.php?mr='+mrNo;
@@ -381,6 +343,7 @@ $include = new includes();
 								var dataAdapter = new $.jqx.dataAdapter(consumerList);
 								$('#consumerList').jqxGrid({source:dataAdapter});
 								$("#confirmModal2").jqxWindow("close");
+								$("#install").jqxButton({disabled: true});
 							}
 						}
 					});
@@ -470,6 +433,7 @@ $include = new includes();
 							var dataAdapter = new $.jqx.dataAdapter(consumerList);
 							$('#consumerList').jqxGrid({source:dataAdapter});
 							$("#meterForm :input").val("");
+							$("#install").jqxButton({disabled: true});
 						}
 					}
 				});
@@ -524,7 +488,11 @@ $include = new includes();
 		<div id = "confirmModal2">
 			<div><img src = "../assets/images/icons/icol16/src/accept.png">CONFIRM</div>
 			<div class = "text-center">
-				<h4>Confirm Selected Consumers?</h4><br><br>
+				<h4>Confirm Selected Consumers?</h4>
+				<h5>Accomplished By:</h5>
+				<input type = "text" id = "accomplishedBy" class = "form-control">
+				<h5>Date Installed By:</h5>
+				<div id = "dateInstalled" class = "form-control"></div><br>
 				<div class = "col-sm-6"><button class = "btn btn-success btn-block" id = "confirm4">APPROVE</button></div>
 				<div class = "col-sm-6"><button class = "btn btn-danger btn-block" id = "cancel4">CANCEL</button></div>
 			</div>

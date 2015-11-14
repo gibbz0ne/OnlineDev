@@ -278,12 +278,12 @@
 					selectionmode: "singlerow",
 					theme: "main-theme",
 					rendertoolbar: function(toolbar){
-						var container = $("<div style='margin: 5px;'></div>");
+						var container = $("<div style='margin: 4px;'></div>");
 						var span = $("<span style='float: left; margin-top: 5px; margin-right: 4px;'>Search : </span>");
 						var input = $("<input class='jqx-input jqx-widget-content jqx-rc-all' id='searchField1' type='text' style='height: 23px; float: left; width: 223px;' />");
 						toolbar.append(container);
-						container.append(span);
-						container.append(input);
+						// container.append(span);
+						// container.append(input);
 						container.append('<input id="wo" style = "margin-left: 10px;" type="button" value="Work Order" />');
 						
 						$("#wo").jqxButton({theme: "main-theme", disabled: true});
@@ -325,8 +325,8 @@
 						var input = $("<input class='jqx-input jqx-widget-content jqx-rc-all' id='searchField' type='text' style='height: 23px; float: left; width: 223px;' />");
 						var mrButton = $("<button id = 'mr' style='margin-left: 5px;'><img src = '../assets/images/icons/icol16/src/hammer_screwdriver.png'>Material Requisition</button>");
 						toolbar.append(container);
-						container.append(span);
-						container.append(input);
+						// container.append(span);
+						// container.append(input);
 						container.append(mrButton);
 						
 						$("#mr").jqxButton({theme: "custom-button"});				
@@ -397,6 +397,14 @@
 						data: {data2, data3, purpose: $("#purpose").val(), mrNum: $("#mrNum").val()},
 						success: function(data){
 							if(data){
+								woSource.url = "sources/woList.php";
+								var woAdapter = new $.jqx.dataAdapter(woSource);
+								$("#woMasterList").jqxGrid({source: woAdapter});
+								
+								mrSource.url = "sources/mrList.php";
+								var mrAdapter = new $.jqx.dataAdapter(mrSource);
+								$("#mrMasterList").jqxGrid({source: mrAdapter});
+								
 								$("#mrModal").jqxWindow("close");
 								$("#confirmApp").jqxWindow("close");
 								$("#print_window").jqxWindow("open");
@@ -484,11 +492,12 @@
 					  ]
 				});
 				
-				$("#woMasterList").jqxGrid({
+				$("#woMasterList").jqxGrid({ //work order printing
 					width: "100%",
 					height: "100%",
 					theme: "main-theme",
-					showfilterrow: true,
+					// showfilterrow: true,
+					columnsresize: true,
 					filterable: true,
 					source: woAdapter,
 					columns: [
@@ -538,6 +547,10 @@
 								var workOrders = new $.jqx.dataAdapter(workOrder);
 								$("#woList").jqxGrid({source: workOrders});
 								
+								woSource.url = "sources/woList.php";
+								var woAdapter = new $.jqx.dataAdapter(woSource);
+								$("#woMasterList").jqxGrid({source: woAdapter});
+								
 								consumers.url = "sources/consumers.php";
 								var consumersData = new $.jqx.dataAdapter(consumers);
 								$("#consumerList").jqxGrid({source: consumersData});
@@ -550,7 +563,7 @@
 				$('#processing').jqxWindow({width: 380, height:80, resizable: false,  isModal: true,showCloseButton:false, autoOpen: false, modalOpacity: 0.50,theme: "main-theme"});
 				
 				$("#woModal").jqxWindow({
-					theme: "main-theme", height: 300, width:  500, cancelButton: $(".cancelApp"), showCloseButton: true, draggable: false, resizable: false, isModal: true, autoOpen: false, modalOpacity: 0.50
+					theme: "main-theme", height: 310, width:  500, cancelButton: $(".cancelApp"), showCloseButton: true, draggable: false, resizable: false, isModal: true, autoOpen: false, modalOpacity: 0.50
 				});
 				
 				$("#vSelect").jqxWindow({

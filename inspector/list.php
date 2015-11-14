@@ -29,18 +29,6 @@ $include = new includes();
 		<script>
 			$(document).ready(function(){
 				$("#jqxMenu").jqxMenu({width: window.innerWidth-5, height: "30px", theme: "main-theme", autoOpen:false});
-				// var consumer_inspectionMenu = $("#inspectionMenu").jqxMenu({ width: 226, height: 86, autoOpenPopup: false, mode: "popup",theme: "main-theme"});
-				
-				// $("#inspection_list").on("rowclick", function (event) {
-					// if (event.args.rightclick) {
-						// var selected_account = $("#inspection_list").jqxGrid("selectrow", event.args.rowindex);
-						// $("#inspection_list").jqxGrid("focus");
-						// var scrollTop = $(window).scrollTop();
-						// var scrollLeft = $(window).scrollLeft();
-						// consumer_inspectionMenu.jqxMenu("open", parseInt(event.args.originalEvent.clientX) + 5 + scrollLeft, parseInt(event.args.originalEvent.clientY) + 5 + scrollTop);
-						// return false;
-					// }
-				// });
 				$("#inspection_list").on("contextmenu", function () {
 					return false;
 				});
@@ -78,51 +66,11 @@ $include = new includes();
 					width: "99.7%",
 					height: "99.5%",
 					theme: "main-theme",
-					showtoolbar: true,
 					altrows: true,
 					selectionmode: "singlerow",
 					pageable: true,
-					showtoolbar: true,
+					filterable: true,
 					columnsresize: true,
-					rendertoolbar: function(toolbar){
-						var me = this;
-						var container = $("<div style='margin: 5px;'></div>");
-						var span = $("<span style='float: left; margin-top: 5px; margin-right: 4px;'>Search : </span>");
-						var input = $("<input class='jqx-input jqx-widget-content jqx-rc-all' id='searchField' type='text' style='height: 23px; float: left; width: 223px;' />");
-						var dropdownlist = $("<div style='float: left; margin-left: 5px;' id='dropdownlist'></div>");
-						toolbar.append(container);
-						container.append(span);
-						container.append(input);
-						container.append(dropdownlist);
-
-						$("#dropdownlist").jqxDropDownList({
-							autoDropDownHeight: true,
-							selectedIndex: 0,
-							width: 200,
-							height: 23,
-							theme: "main-theme",
-							source: [
-								"Consumer Name",
-								"Address"
-							]
-						});
-						
-						var searchColumnIndex = $("#dropdownlist").jqxDropDownList("selectedIndex");
-						var columnField;
-						
-						switch(searchColumnIndex){
-							case 0:
-								columnField = "consumerName";
-								break;
-							case 1:
-								columnField = "address";
-								break;
-						}
-						
-						// var searchText = $("#searchField").val();
-						// var filtergroup = new $.jqx.filter();
-						// var filter_or_operator = 1;
-					},
 					columns: [
 						{text: "Account Number",pinned: true, dataField: "acctNo", align: "center", width: 150},
 						{text: "Consumer Name", pinned: true, dataField: "consumerName", align: "center", width: 300},

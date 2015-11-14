@@ -42,15 +42,15 @@
 			foreach($query as $row){
 				$appId = $row["appId"];
 				
-				foreach( $db->query("SELECT *FROM tbl_applications JOIN consumers USING(Entry_Number) WHERE appId = '$appId'") as $row2){
+				foreach( $db->query("SELECT *FROM tbl_applications JOIN tbl_temp_consumers USING(cid) WHERE appId = '$appId'") as $row2){
 					
 					foreach($db->query("SELECT * FROM tbl_transactions WHERE appid = '$appId' ORDER BY tid ASC limit 1")as $row3){
 						$processedBy = $row3["processedBy"];
 					}
 					$date = date("Y-m-d H:i:s");
-					$insert = $db->prepare("INSERT INTO tbl_transactions (appId, Entry_Number, status, processedBy, approvedBy, dateApproved, dateProcessed)
+					$insert = $db->prepare("INSERT INTO tbl_transactions (appId, cid, status, processedBy, approvedBy, dateApproved, dateProcessed)
 											VALUES (?, ?, ?, ?, ?, ?, ?)");
-					$insert->execute(array($appId, $row2["Entry_Number"], 7, $processedBy, $userId, $date, $date));
+					$insert->execute(array($appId, $row2["cid"], 7, $processedBy, $userId, $date, $date));
 					
 					$update = $db->prepare("UPDATE tbl_transactions SET action = ?, approvedBy = ?, dateApproved = ? WHERE appId = ? AND status = ? ");
 					$update->execute(array(1, $userId, $date, $appId, 6));

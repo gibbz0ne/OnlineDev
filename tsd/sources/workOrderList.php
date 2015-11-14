@@ -5,8 +5,8 @@
 	$db = $con->PDO();
 	$date = date("Y-m-d");
 	$id = $_SESSION["userId"];
-	$query = $db->query("SELECT *FROM consumers a 
-						 RIGHT OUTER JOIN tbl_applications b ON a.Entry_Number = b.Entry_Number
+	$query = $db->query("SELECT *FROM tbl_temp_consumers a 
+						 RIGHT OUTER JOIN tbl_applications b ON a.cid = b.cid
                          RIGHT OUTER JOIN tbl_work_order c ON b.appId = c.appId
                          RIGHT OUTER JOIN tbl_transactions d ON b.appId = d.appId
                          RIGHT OUTER JOIN tbl_status e ON d.status = e.statId
@@ -25,15 +25,15 @@
 			foreach($query2 as $row2){
 				$appType .= $row2["serviceCode"]." ";
 			}
-			$list[] = array("consumerName" => str_replace("ñ", "Ñ", $row["AccountName"]),
-							"address" => $row["Address"],
+			$list[] = array("consumerName" => str_replace("ñ", "Ñ", $row["AccountNameT"]),
+							"address" => $row["AddressT"],
 							"status" => $status,
 							"so" => $row["appSOnum"],
 							"remarks" => $row["remarks"],
 							"appType" => $appType,
 							"dateApp" => $row["appDate"],
-							"cid" => $row["Entry_Number"],
-							"acctNo" => $row["AccountNumber"],
+							"cid" => $row["cid"],
+							"acctNo" => $row["AccountNumberT"],
 							"appId" => $row["appId"],
 							"wo" => $row["wo"],
 							"tid" => $row["tid"]

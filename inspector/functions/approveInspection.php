@@ -30,7 +30,7 @@
 		$status = 2;
 		
 
-		$res = $db->query("SELECT AccountNumber FROM consumers WHERE Entry_Number = $cid");
+		$res = $db->query("SELECT AccountNumberT FROM tbl_temp_consumers WHERE cid = $cid");
 		$rowT = $res->fetchAll(PDO::FETCH_ASSOC);
 
 		// if($rowT[0]["AccountNumber"]) {
@@ -81,7 +81,7 @@
 			$update->execute($update_data);
 
 			$insert = $db->prepare("INSERT INTO tbl_transactions 
-									(appId, Entry_Number, status, processedBy, dateProcessed)
+									(appId, cid, status, processedBy, dateProcessed)
 									VALUES
 									(?, ?, ?, ?, ?)");
 			$insert->execute($trans_data);
@@ -90,7 +90,7 @@
 			$db->commit();
 		} catch(PDOException $e){
 			$db->rollBack();
-			echo "A problem occurred Please contact the System Admin!".$e;
+			echo $e;
 		}
 	}
 ?>

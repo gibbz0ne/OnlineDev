@@ -5,8 +5,8 @@
 	$con = new getConnection();
 	$db = $con->PDO();
 	$id = $_SESSION["userId"];
-	$query = $db->query("SELECT * FROM consumers a 
-							LEFT OUTER JOIN tbl_applications b ON a.Entry_Number = b.Entry_Number 
+	$query = $db->query("SELECT * FROM tbl_temp_consumers a 
+							LEFT OUTER JOIN tbl_applications b ON a.cid = b.cid 
 							LEFT OUTER JOIN tbl_transactions c ON b.appId = c.appId 
 							LEFT OUTER JOIN tbl_status d ON c.status = d.statId 
 							WHERE appSOnum is NULL AND c.status = 2 AND c.action = 0 AND c.processedBy = $id
@@ -35,18 +35,18 @@
 					$type = $rowT[0]["typeId"];
 				}
 				
-				$list[] = array("consumerName" => str_replace("ñ", "Ñ", $row["AccountName"]),
+				$list[] = array("consumerName" => str_replace("ñ", "Ñ", $row["AccountNameT"]),
 								"mname" => $row["MiddleName"],
-								"address" => $row["Address"],
+								"address" => $row["AddressT"],
 								"status" => $status,
 								"so" => $row["appSOnum"],
 								"car" => $row["appCAR"],
 								"remarks" => $row["remarks"],
 								"dateApp" => $row["appDate"],
 								"dateProcessed" => $row["dateProcessed"],
-								"acctNo" => $row["AccountNumber"],
+								"acctNo" => $row["AccountNumberT"],
 								"appId" => $row["appId"],
-								"cid" => $row["Entry_Number"],
+								"cid" => $row["cid"],
 								"service" => implode($serviceArr, ","),
 								"trans" => $row["tid"]
 				);

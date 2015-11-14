@@ -46,9 +46,9 @@
 		foreach($query as $row)
 			$brgy = $row["brgyName"];
 		
-		$consumer = $db->query("SELECT * FROM consumers ORDER BY Entry_Number DESC LIMIT 1");
+		$consumer = $db->query("SELECT * FROM tbl_temp_consumers ORDER BY cid DESC LIMIT 1");
 		foreach($consumer as $row){
-			$cid = $row["Entry_Number"]+1;
+			$cid = $row["cid"]+1;
 			echo $cid;
 		}
 		
@@ -78,15 +78,15 @@
 		try{
 			$db->beginTransaction();
 			
-			$insertC = $db->prepare("INSERT INTO consumers (Entry_Number, AccountName, MiddleName, Address, Barangay, Branch, Municipality, CustomerType, bapa)
+			$insertC = $db->prepare("INSERT INTO tbl_temp_consumers (cid, AccountNameT, MiddleName, AddressT, BarangayT, BranchT, MunicipalityT, CustomerTypeT, bapaT)
 									 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
 			$insertC->execute(array($cid, $lname." ".$fname.$mname, $middle, $hno." ".$purok." ".$brgy." ".$municipality, $brgy, $branch, $municipality, $customerType, $isBapa));
 			
-			$app = $db->prepare("INSERT INTO tbl_applications (appId, Entry_Number, appDate)
+			$app = $db->prepare("INSERT INTO tbl_applications (appId, cid, appDate)
 								 VALUES (?, ?, ?)");
 			$app->execute(array($appId, $cid, date("Y-m-d H:i:s")));
 				
-			$transactions = $db->prepare("INSERT INTO tbl_transactions(appId, Entry_Number, status, processedBy, dateProcessed)
+			$transactions = $db->prepare("INSERT INTO tbl_transactions(appId, cid, status, processedBy, dateProcessed)
 										VALUES (?, ?, ?, ?, ?)");
 			$transactions->execute(array($appId, $cid, 1, $id, date("Y-m-d")." ".date("H:i:s")));
 			

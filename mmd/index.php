@@ -29,8 +29,72 @@ $include = new includes();
 		<script>
 		$(document).ready(function(){
 			var mr = "";
-			$("#jqxMenu").jqxMenu({width: "100%", theme: "main-theme"});
+			var initGrid = function(){
+				$("#materialsGrid").jqxGrid({
+					width: "100%",
+					height: "100%",
+					theme: "main-theme",
+					selectionmode: "singlecell",
+					editable: true,
+					showtoolbar: true,
+					rendertoolbar: function (toolbar) {
+						var me = this;
+						var container = $("<div style='margin: 5px;'></div>");
+						toolbar.append(container);
+						container.append('<input id="approve" type="button" value="Approve" />');
+						
+						$("#approve").jqxButton({theme: "main-theme", width: 150, disabled: true});
+						$("#approve").click(function(){
+							$("#approveMr").jqxWindow("open");
+						});
+					},
+					ready: function(){
+						$("#materialsGrid").jqxGrid("hidecolumn", "entryId");
+					},
+					columns: [
+						  { text: "#", datafield: "ctr", pinned: true, editable: false, align: "center", cellsalign: "center", width: 50 },
+						  { text: "Material Code", editable: false, pinned: true,datafield: "mCode", align: "center", cellsalign: "center", width: 250 },
+						  { text: "Description", editable: false, pinned: true, datafield: "description", align: "center", cellsalign: "center", width: 450 },
+						  { text: "Unit", editable: false, pinned: true, datafield: "unit", align: "center", cellsalign: "center",width: 150 },
+						  { text: "Quantity", editable: false, pinned: true, datafield: "qty", align: "center", cellsalign: "center",width: 200},
+						  { text: "Issue Quantity", editable: true, datafield: "iQty", align: "center", cellsalign: "center"},
+						  { text: "Entry", editable: true, datafield: "entryId", align: "center", cellsalign: "center"}
+					  ]
+				});
+			};
+			var initGrid2 = function(){
+				$("#woList").jqxGrid({
+					width: "100%",
+					height: "100%",
+					theme: "main-theme",
+					filterable: true,
+					columns: [
+						  { text: "WO#", pinned: true, datafield: "wo", align: "center", cellsalign: "center", width: 200 },
+						  { text: "Consumer",  pinned: true, datafield: "consumer", align: "center", cellsalign: "center", width: 250 },
+						  { text: "Address", datafield: "address", align: "center", cellsalign: "center", width: 350 },
+						  { text: "Primary No", datafield: "acctNo", align: "center", cellsalign: "center",  width: 200},
+						  { text: "Date", datafield: "date", align: "center", cellsalign: "center", width: 200}
+					  ]
+				});
+			};
+			$("#jqxMenu").jqxMenu({width: window.innerWidth-3, theme: "main-theme"});
+			var woSource ={
+				datatype: "json",
+				datafields: [
+					{name: "ctr"},
+					{name: "wo"},
+					{name: "consumer"},
+					{name: "address"},
+					{name: "acctNo"},
+					{name: "date"},
+				],
+				url: "sources/woList.php",
+				async: false
+				
+			}
 
+			var woAdapter = new $.jqx.dataAdapter(woSource);
+			
 			var mrSource = {
 				datatype: "json",
 				datafields: [
@@ -62,8 +126,8 @@ $include = new includes();
 			}
 			
 			$("#mainSplitter").jqxSplitter({
-				width: "100%", 
-				height:window.innerHeight-40,
+				width: window.innerWidth-4, 
+				height:window.innerHeight-80,
 				resizable:true,
 				theme: "main-theme",
 				orientation: "horizontal",
@@ -78,18 +142,32 @@ $include = new includes();
 				var rowindex = $('#mrList').jqxGrid('getselectedrowindex');
 				//alert(data);
 				var data = $('#mrList').jqxGrid('getrowdata', rowindex);
-				
-				console.log(data.mrNo);
+				console.log(data);
 				materials.url = 'sources/getItems.php?mr='+data.mrNo;
-				// selected_account = data.acctNo;
-				
 				var dataAdapter = new $.jqx.dataAdapter(materials);
-				$('#materialsGrid').jqxGrid({source:dataAdapter});
+				$("#materialsGrid").jqxGrid({source: materials});
+				
+				woSource.url = "sources/getWo2.php?mr="+data.mrNo;
+				var dataAdapter = new $.jqx.dataAdapter(woSource);
+				$("#woList").jqxGrid({source: dataAdapter});
 				
 				$("#approve").jqxButton({disabled: false});
 				mr = data.mrNo;
 			});
 			
+			var initWidgets = function (tab) {
+				switch (tab) {
+					case 0:
+						initGrid();
+						break;
+					case 1:
+						initGrid2();
+						break;
+				}
+			}
+			
+			$('#jqxTabs').jqxTabs({ width: "100%", height: "100%", theme: "main-theme", initTabContent: initWidgets });
+				
 			$("#mrList").jqxGrid({
 				width: "100%",
 				height: "100%",
@@ -103,39 +181,6 @@ $include = new includes();
 					  { text: "Purpose", datafield: "purpose", align: "center", cellsalign: "center",width: 200},
 					  { text: "Date", datafield: "date", align: "center", cellsalign: "center"}
 				  ]
-			});
-			
-			$("#materialsGrid").jqxGrid({
-				width: "100%",
-				height: "100%",
-				theme: "main-theme",
-				selectionmode: "singlecell",
-				editable: true,
-				showtoolbar: true,
-				rendertoolbar: function (toolbar) {
-					var me = this;
-					var container = $("<div style='margin: 5px;'></div>");
-					toolbar.append(container);
-					container.append('<input id="approve" type="button" value="Approve" />');
-					
-					$("#approve").jqxButton({theme: "main-theme", width: 150, disabled: true});
-				},
-				ready: function(){
-					$("#materialsGrid").jqxGrid("hidecolumn", "entryId");
-				},
-				columns: [
-					  { text: "#", datafield: "ctr", pinned: true, editable: false, align: "center", cellsalign: "center", width: 50 },
-					  { text: "Material Code", editable: false, pinned: true,datafield: "mCode", align: "center", cellsalign: "center", width: 250 },
-					  { text: "Description", editable: false, pinned: true, datafield: "description", align: "center", cellsalign: "center", width: 450 },
-					  { text: "Unit", editable: false, pinned: true, datafield: "unit", align: "center", cellsalign: "center",width: 150 },
-					  { text: "Quantity", editable: false, pinned: true, datafield: "qty", align: "center", cellsalign: "center",width: 200},
-					  { text: "Issue Quantity", editable: true, datafield: "iQty", align: "center", cellsalign: "center"},
-					  { text: "Entry", editable: true, datafield: "entryId", align: "center", cellsalign: "center"}
-				  ]
-			});
-			
-			$("#approve").click(function(){
-				$("#approveMr").jqxWindow("open");
 			});
 			
 			
@@ -152,9 +197,15 @@ $include = new includes();
 					type: "post",
 					data: {mr: mr, items: items},
 					success: function(result){
-					  if(result == 1){
-						  location.reload();
-					  }
+						if(result == 1){
+							mrSource.url = "sources/mrList.php";
+							var mrAdapter = new $.jqx.dataAdapter(mrSource);
+							$("#mrList").jqxGrid({source: mrAdapter});
+							
+							$("#approve").jqxButton({disabled: true});
+							$("#materialsGrid").jqxGrid("clear");
+							$("#approveMr").jqxWindow("close");
+						}
 					}
 				})
 			});
@@ -195,7 +246,23 @@ $include = new includes();
 				<div id = "mrList"></div>
 			</div>
 			<div class="splitter-panel">
-				<div id = "materialsGrid"></div>
+				<div id='jqxTabs'>
+					<ul>
+						<li style="margin-left: 30px;">
+							Materials
+						</li>
+						<li>
+							Work Order
+						</li>
+					</ul>
+					<div style="overflow: hidden;">
+						<div style="border:none;" id="materialsGrid">
+						</div>
+					</div>
+					<div style="overflow: hidden;">
+						<div style="border:none;" id="woList"></div>
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>

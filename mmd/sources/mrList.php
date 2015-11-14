@@ -14,7 +14,7 @@
             $query3 = $db->query("SELECT *FROM tbl_mr_wo WHERE mrNo = '".$row["mrNo"]."'");
 			
 			
-			if($db->query("SELECT *FROM tbl_transactions WHERE status = '3'")->rowCount() > 0){
+			if($db->query("SELECT *FROM tbl_transactions WHERE status = '6'")->rowCount() > 0){
 				$list[] = array("ctr" => $ctr,
 								"mrNo" => $row["mrNo"],
 								"purpose" => $row["mrPurpose"],

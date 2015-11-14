@@ -39,7 +39,7 @@ $include = new includes();
 				resizable:true,
 				orientation: "horizontal",
 				panels: [{ size:"55%",collapsible:false  }, 
-				{ size: "45%",collapsible: true }] 
+				{ size: "45%", collapsible: true}] 
 			});
 			
 			$.ajax({
@@ -164,6 +164,7 @@ $include = new includes();
 					}).bind('select', function (event) {
 						var args = event.args;
 						var item = $(this).jqxDropDownList('getItem', args.index);
+
 						if(item.value != 0) {
 							if($('#acct-list').jqxGrid('getselectedrowindex') != -1) {
 								$("#txtAction").html(item.label);
@@ -603,9 +604,6 @@ $include = new includes();
 				var item = $("#dropdownlist_conn").jqxDropDownList('getItem', actionIndex);
 				var type = item.value;
 
-				// console.log(type);
-				// return;
-
 				$.ajax({
 					url: "functions/addApplicationExisting.php",
 					type: "post",
@@ -618,6 +616,7 @@ $include = new includes();
 								$("#confirmAction").jqxWindow("close");
 							}, 1000);
 						}
+						console.log(data);
 					}
 				});
 			});

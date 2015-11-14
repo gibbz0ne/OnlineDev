@@ -286,6 +286,8 @@ $include = new includes();
 					$("#noso_list").jqxGrid({source:trans_list});
 					var rowindex = $('#transaction_list').jqxGrid('getselectedrowindex');
 					$('#transaction_list').jqxGrid('unselectrow', rowindex);
+					
+					$("#car").jqxButton({disabled: true});
 				});
 				
 				$("#transaction_list").jqxGrid({

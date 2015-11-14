@@ -83,8 +83,8 @@ if(isset($_GET["ref"])){
 	$pdf->SetFont('Arial','',6);
 	$query2 =$db->query("SELECT * FROM tbl_mr_wo a 
 							LEFT OUTER JOIN tbl_work_order b ON a.wo = b.wo 
-							LEFT OUTER JOIN consumers c ON b.cid = c.Entry_Number 
-							LEFT OUTER JOIN tbl_applications d ON c.Entry_Number = d.Entry_Number
+							LEFT OUTER JOIN tbl_temp_consumers c ON b.cid = c.cid 
+							LEFT OUTER JOIN tbl_applications d ON c.cid = d.cid
 							WHERE a.mrNo = '$mrNo'");
 
 	if($query2->rowCount() > 0){
@@ -95,10 +95,10 @@ if(isset($_GET["ref"])){
 			$pdf->Cell(11, 4, $ctr, 1, 0, "R");
 			$pdf->Cell(0, 4, $pdf->Cell(30, 4, $row["wo"], "B", 0, "C")."
 			".$pdf->Cell(20, 4, "SO#".$row["appSOnum"], "B", 0, "C")."
-			".$pdf->Cell(45, 4, $row["AccountName"], "B", 0, "C")."
-			".$pdf->Cell(50, 4, $row["Address"], "B", 0, "C")."
-			".$pdf->Cell(25, 4, $row["AccountNumber"], "B", 0, "C")."
-			".$pdf->Cell(17, 4, $sumRows, "RB", 0, "C"), 0, 0);
+			".$pdf->Cell(45, 4, $row["AccountNameT"], "B", 0, "C")."
+			".$pdf->Cell(50, 4, $row["AddressT"], "B", 0, "C")."
+			".$pdf->Cell(25, 4, $row["AccountNumberT"], "B", 0, "C")."
+			".$pdf->Cell(17, 4, "", "RB", 0, "C"), 0, 0);
 			$pdf->Ln();
 			$ctr++;
 		}

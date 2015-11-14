@@ -7,20 +7,21 @@
 	$area = $_SESSION["area"];
 	$customers = Array();
 	
-	$res = $db->query("SELECT *FROM consumers WHERE AccountNumber IS NOT NULL");
+	$res = $db->query("SELECT *FROM tbl_temp_consumers a
+						LEFT OUTER JOIN tbl_transactions b ON a.cid = b.cid WHERE a.AccountNumberT IS NOT NULL AND b.status = 3 AND b.action = 1");
 	foreach($res as $row) {
 		$customers[] = array(
-			"acctNo" => $row["AccountNumber"],
-			"acctAleco" => $row["AlecoAccount"],
-			"acctName" => $row["AccountName"],
-			"address" => $row["Address"],
-			"brgy" => $row["Barangay"],
-			"branch" => $row["Branch"],
-			"municipality" => $row["Municipality"],
-			"cType" => $row["CustomerType"],
-			"bapa" => ($row["bapa"] == 0 ? "FALSE" : "TRUE"),
-			"status" => $row["Status"],
-			"meterNo" => $row["MeterNumber"],
+			"acctNo" => $row["AccountNumberT"],
+			// "acctAleco" => $row["AlecoAccountT"],
+			"acctName" => $row["AccountNameT"],
+			"address" => $row["AddressT"],
+			"brgy" => $row["BarangayT"],
+			"branch" => $row["BranchT"],
+			"municipality" => $row["MunicipalityT"],
+			"cType" => $row["CustomerTypeT"],
+			"bapa" => ($row["bapaT"] == 0 ? "FALSE" : "TRUE")
+			// "status" => $row["Status"],
+			// "meterNo" => $row["MeterNumber"],
 		  );
 	}
 	

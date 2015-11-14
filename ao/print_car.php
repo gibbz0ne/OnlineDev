@@ -15,8 +15,8 @@ $pos1 = $pos2 = $pos3 = $pos4 = "";
 $appId = $_GET["ref"];
 $serviceArr = $assignedId = "";
 $query = $db->query("SELECT *FROM tbl_applications WHERE appCAR IS NOT NULL ORDER BY appCAR DESC LIMIT 1");
-$query2 = $db->query("SELECT *FROM consumers a 
-					LEFT OUTER JOIN tbl_applications b ON a.Entry_Number = b.Entry_Number
+$query2 = $db->query("SELECT *FROM tbl_temp_consumers a 
+					LEFT OUTER JOIN tbl_applications b ON a.cid = b.cid
 					LEFT OUTER JOIN tbl_so c ON b.appId = c.appId
 					LEFT OUTER JOIN tbl_inspection d ON b.appId = d.appId
 					LEFT OUTER JOIN tbl_inspection_meter e ON d.inspectionId = e.inspectionId
@@ -75,7 +75,7 @@ foreach($query5 as $rowS)
 if($query2->rowCount() > 0){
 	foreach($query2 as $row){
 		
-		$query3 = $db->query("SELECT *FROM tbl_consumer_contact WHERE cid = '".$row["Entry_Number"]."' AND contactType = '1'");
+		$query3 = $db->query("SELECT *FROM tbl_consumer_contact WHERE cid = '".$row["cid"]."' AND contactType = '1'");
 		$r = $query3->fetch(PDO::FETCH_ASSOC);
 		$contact = $r["contactValue"];
 		
@@ -84,12 +84,12 @@ if($query2->rowCount() > 0){
 		$date = DateTime::createFromFormat("Y-m-d", $d[0]);
 
 		$req_date = $date->format("F d, Y");
-		$consumer = iconv('UTF-8', 'windows-1252', $row["AccountName"]);
-		$address = iconv('UTF-8', 'windows-1252', $row["Address"]);
+		$consumer = iconv('UTF-8', 'windows-1252', $row["AccountNameT"]);
+		$address = iconv('UTF-8', 'windows-1252', $row["AddressT"]);
 		$address = str_replace("ñ", "Ñ", $address);
 		$address = iconv('UTF-8', 'windows-1252', $address);
 		// $type = $row["serviceId"];
-		$consumerType = $row["CustomerType"];
+		$consumerType = $row["CustomerTypeT"];
 		$so = $row["soNum"];
 		$substation = $row["subDescription"];
 		$feeder = $row["feederName"];

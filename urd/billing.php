@@ -31,7 +31,7 @@
 				$("#jqxMenu").jqxMenu({width: window.innerwidth, theme:"main-theme"});
 
 				$("#mainSplitter").jqxSplitter({
-					width:window.innerWidth-7,
+					width:window.innerWidth-8,
 					height:window.innerHeight-40,
 					resizable:true,
 					orientation: "horizontal",
@@ -39,7 +39,7 @@
 						{ size: "50%",collapsible: false }]
 				});
 
-				$('#processing	').jqxWindow({width: 380, height:80, resizable: false,  isModal: true,showCloseButton:false, autoOpen: false, modalOpacity: 0.01,theme:'custom-abo-ao'});
+				$('#processing').jqxWindow({width: 380, height:80, resizable: false,  isModal: true,showCloseButton:false, autoOpen: false, modalOpacity: 0.01,theme:'custom-abo-ao'});
 				
 				var consumers = {
 					datatype: "json",
@@ -50,7 +50,8 @@
 						{name: "address"},
 						{name: "municipality"},
 						{name: "area"},
-						{name: "type"}
+						{name: "type"},
+						{name: "appType"}
 					],
 					url: "sources/consumers2.php",
 					async: false
@@ -59,7 +60,7 @@
 				setInterval(function(){
 					var dataAdapter = new $.jqx.dataAdapter(consumers);
 					$('#consumerList').jqxGrid({source:dataAdapter});
-				},3000);
+				},360000);
 				
 				var consumer_data = new $.jqx.dataAdapter(consumers);
 
@@ -73,16 +74,55 @@
 					width: "100%",
 					theme: "main-theme",
 					pageable: true,
+					showtoolbar: true,
+					rendertoolbar: function(toolbar){
+						var container = $("<div style='margin: 4px;'></div>");
+						toolbar.append(container);
+						container.append('<input id="approve" type="button" value="Approve" />');
+						
+						$("#approve").jqxButton({theme: "main-theme", disabled: true});
+						
+						$("#approve").on("click", function(){
+							$("#approveModal").jqxWindow("open");
+						});
+					},
 					columns: [
 						{text: "Primary Account No.", pinned: true, align: "center", cellsalign: "center", datafield: "acctNo", width: 150},
 						{text: "Consumer Name", pinned: true, align: "center", datafield: "consumerName", width: 300},
 						{text: "Address", align: "center", datafield: "address", width: 350},
 						{text: "Municipality", align: "center", cellsalign: "center", datafield: "municipality", width: 150},
 						{text: "Area", align: "center", cellsalign: "center", datafield: "area", width: 100},
-						{text: "Type", align: "center", datafield: "type"},
+						{text: "Type", align: "center", cellsalign: "center", datafield: "type", width: 100},
+						{text: "Application ", align: "center", cellsalign: "center", datafield: "appType"},
 					]
 				});
-
+				var acctNo;
+				var	appType;
+				$("#consumerList").on("rowselect", function(event){
+					acctNo = event.args.row.acctNo;
+					appType = event.args.row.appType;
+					$("#approve").jqxButton({disabled: false});
+				});
+				
+				$("#approveModal").jqxWindow({
+					height: 150, width: 400, cancelButton: $('#cancel'), showCloseButton: true, draggable: false, resizable: false, isModal: true, autoOpen: false, modalOpacity: 0.50,theme:'main-theme'
+				});
+				
+				$("#confirmApp").click(function(){
+					$.ajax({
+						url: "functions/approveApp.php",
+						type: "post",
+						data: {type: appType.replace(/ /g, ""), acctNo: acctNo},
+						success: function(data){
+							consumers.url = "sources/consumers2.php";
+							var consumerData = new $.jqx.dataAdapter(consumers);
+							$("#consumerList").jqxGrid({source: consumerData});
+							$("#approveModal").jqxWindow("close");
+							console.log(data);
+						}
+					});
+				});
+				
 				$("#logout").click(function(){
 			        $.ajax({
 			            url: "../logout.php",
@@ -120,9 +160,23 @@
         <div id="processing">
 			<div><img src="../assets/images/icons/icol16/src/accept.png" style="margin-bottom:-5px;"><b><span style="margin-top:-24; margin-left:3px">Processing</span></b></div>
 			<div >
-			<div><img src="../assets/images/loader.gif">Please Wait
-			
+				<div><img src="../assets/images/loader.gif">Please Wait
+				
+				</div>
 			</div>
+		</div>
+		<div id="approveModal">
+			<div><img src="../assets/images/icons/icol16/src/accept.png" ><b><span style="margin-top:-24; margin-left:3px">Processing</span></b></div>
+			<div >
+				<div>
+					<h4 class = "text-center">Approve Consumer Application?</h4>
+				</div><br>
+				<div class = "col-sm-6">
+					<button id = "confirmApp" class = "btn btn-success btn-block">Confirm</button>
+				</div>
+				<div class = "col-sm-6">
+					<button id = "cancel" class = "btn btn-danger btn-block">Cancel</button>
+				</div>
 			</div>
 		</div>
 	</body>

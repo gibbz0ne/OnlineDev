@@ -16,7 +16,7 @@ $pdf->AddPage();
 if(isset($_GET["ref"])){
 	foreach($db->query("SELECT *FROM tbl_work_order a
 						LEFT OUTER JOIN tbl_applications b ON a.appId = b.appId
-						LEFT OUTER JOIN consumers c ON b.Entry_Number = c.Entry_Number 
+						LEFT OUTER JOIN tbl_temp_consumers c ON b.cid = c.cid 
 						WHERE a.wo = '$woNo'") as $row)
 		$d = explode(" ", $row["woDate"]);
 		$date = date("M, d Y", strtotime($d[0]));
@@ -47,7 +47,7 @@ if(isset($_GET["ref"])){
 	$pdf->Cell(40, 6, "LOCATION:", 1, 0, "L");
 	$pdf->Cell(100, 6, iconv('UTF-8', 'windows-1252', $row["Address"]), 1, 0, "L");
 	$pdf->Cell(30, 12, "WAREHOUSE NO:", 1, 0, "L");
-	$pdf->Cell(26, 12, "###", 1, 0, "L");
+	$pdf->Cell(26, 12, "", 1, 0, "L");
 	$pdf->Ln(6);
 	$pdf->Cell(40, 6, "ACCOUNT NAME/NO:", 1, 0, "L");
 	$pdf->Cell(100, 6, iconv('UTF-8', 'windows-1252', $row["AccountName"])." / ".$row["AccountNumber"], 1, 0, "L");
@@ -118,7 +118,7 @@ if(isset($_GET["ref"])){
 	$pdf->Cell(40, 6, "LOCATION:", 1, 0, "L");
 	$pdf->Cell(100, 6, iconv('UTF-8', 'windows-1252', $row["Address"]), 1, 0, "L");
 	$pdf->Cell(30, 12, "WAREHOUSE NO:", 1, 0, "L");
-	$pdf->Cell(26, 12, "###", 1, 0, "L");
+	$pdf->Cell(26, 12, "", 1, 0, "L");
 	$pdf->Ln(6);
 	$pdf->Cell(40, 6, "ACCOUNT NAME/NO:", 1, 0, "L");
 	$pdf->Cell(100, 6, iconv('UTF-8', 'windows-1252', $row["AccountName"])." / ".$row["AccountNumber"], 1, 0, "L");

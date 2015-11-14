@@ -66,9 +66,9 @@
 			if($ctr%7 == 0 && $i != 0){
                 array_push($mArray, $data[$i]);
 				// print_r($mArray);
-                foreach($db->query("SELECT *FROM consumers JOIN tbl_applications USING (Entry_Number) WHERE AccountNumber = '".$mArray[5]."'") as $row){
+                foreach($db->query("SELECT *FROM tbl_temp_consumers JOIN tbl_applications USING (cid) WHERE AccountNumberT = '".$mArray[5]."'") as $row){
                 	$appId = $row["appId"];
-					$cid = $row["Entry_Number"];
+					$cid = $row["cid"];
 
 					$trans = $mArray[6];
 					
@@ -81,7 +81,7 @@
 					$update = $db->prepare("UPDATE tbl_transactions SET action = ?, approvedBy = ?, dateApproved = ? WHERE tid = ?");
 					$update->execute(array(1, $userId, date("Y-m-d H:i:s"), $trans));
 
-					$insert = $db->prepare("INSERT INTO tbl_transactions (appId, Entry_Number, status, processedBy, dateProcessed)
+					$insert = $db->prepare("INSERT INTO tbl_transactions (appId, cid, status, processedBy, dateProcessed)
 										VALUES(?, ?, ?, ?, ?)");
 					$insert->execute(array($appId, $cid, 6, $processed, date("Y-m-d H:i:s")));
 					

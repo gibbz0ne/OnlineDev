@@ -10,14 +10,14 @@
 	$list = Array();
 	$i = "";
 	
-	$query = $db->query("SELECT *FROM consumers a 
-						LEFT OUTER JOIN tbl_applications b ON a.Entry_Number = b.Entry_Number 
+	$query = $db->query("SELECT *FROM tbl_temp_consumers a 
+						LEFT OUTER JOIN tbl_applications b ON a.cid = b.cid 
 						LEFT OUTER JOIN tbl_transactions c ON b.appId = c.appId 
 						LEFT OUTER JOIN tbl_status d ON c.status = d.statId 
-						WHERE c.status = 4 AND c.action = 0");
+						WHERE c.status = 4 AND c.action = 0 AND a.BranchT = '$branch'");
 						
 						// SELECT *FROM consumers a 
-						// LEFT OUTER JOIN tbl_applications b ON a.Entry_Number = b.Entry_Number 
+						// LEFT OUTER JOIN tbl_applications b ON a.cid = b.cid 
 						// LEFT OUTER JOIN tbl_app_service c ON b.appId = c.appId 
 						// LEFT OUTER JOIN tbl_transactions d ON b.appId = d.appId 
 						// LEFT OUTER JOIN tbl_status f ON d.status = f.statId 
@@ -35,15 +35,15 @@
 			foreach($query2 as $row2){
 				$appType .= $row2["serviceCode"]." ";
 			}
-			array_push($list, array("consumerName" => str_replace("ñ", "Ñ", $row["AccountName"]),
-								"address" => $row["Address"],
+			array_push($list, array("consumerName" => str_replace("ñ", "Ñ", $row["AccountNameT"]),
+								"address" => $row["AddressT"],
 								// "status" => $status,
 								"so" => $row["appSOnum"],
 								"remarks" => $row["remarks"],
 								"appType" => $appType,
 								"dateApp" => $row["appDate"],
-								"cid" => $row["Entry_Number"],
-								"acctNo" => $row["AccountNumber"],
+								"cid" => $row["cid"],
+								"acctNo" => $row["AccountNumberT"],
 								"appId" => $row["appId"],
 								"tid" => $row["tid"]));
 		}

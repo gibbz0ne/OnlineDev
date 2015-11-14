@@ -7,18 +7,22 @@
 	$uid = $_SESSION["userId"];
 	$branch = $_SESSION["branch"];
 	$y = date("y");
-	$ext = $wom = "";
-	if($branch == "B1")
+	$ext = $wom = $num = "";
+	if($branch == "B1"){
 		$ext = "WOE".date("y")."-T";
-	if($branch == "B2")
+		$num = 3;
+	}
+	if($branch == "B2"){
 		$ext = "WOM-MAIN-".date("y");
+		$num = 4;
+	}
 	
 	if($_POST["workNo"] == ""){
-		$query = $db->query("SELECT *FROM tbl_work_order WHERE wo LIKE '%$y%' ORDER BY wo DESC LIMIT 1");
+		$query = $db->query("SELECT *FROM tbl_work_order WHERE wo LIKE '%$ext%' ORDER BY wo DESC LIMIT 1");
 		if($query->rowCount() > 0){
 			foreach($query as $row)
 				$wo = explode("-", $row["wo"]);
-				$series = intval($wo[4])+1;
+				$series = intval($wo[$num])+1;
 				// echo $series;
 				if(strlen($series) == 1){
 					$wom = "APEC-".$ext."-000".$series;
@@ -63,7 +67,7 @@
 			$update = $db->prepare("UPDATE tbl_transactions SET action = ?, approvedBy = ?, dateApproved = ? WHERE tid = ?");
 			$update->execute(array(1, $uid, date("Y-m-d H:i:s"), $tid));
 
-			$insert = $db->prepare("INSERT INTO tbl_transactions (appId, Entry_Number, status, processedBy, dateProcessed)
+			$insert = $db->prepare("INSERT INTO tbl_transactions (appId, cid, status, processedBy, dateProcessed)
 								VALUES(?, ?, ?, ?, ?)");
 			$insert->execute(array($appId, $cid, 5, $processed, date("Y-m-d H:i:s")));
 			

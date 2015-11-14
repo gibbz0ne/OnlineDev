@@ -3,11 +3,11 @@
 	session_start();
     class getConnection{
      
-        private $host = "localhost";
+        private $host = "apecsystem";
         //private $host = "10.33.187.129";
-        private $username = "root";
-        private $password = "adminy";
-        private $db_name = "debug";
+        private $username = "admin";
+        private $password = "admin#123";
+        private $db_name = "dummy_apec";
         public $conn;
 		
         // get the database connection

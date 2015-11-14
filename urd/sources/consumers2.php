@@ -11,48 +11,34 @@
 		foreach($query as $row){
 			$appId = $row["appId"];
 			
-			$query2 = $db->query("SELECT *FROM tbl_consumers a 
+			$query2 = $db->query("SELECT *FROM tbl_temp_consumers a 
 								   LEFT OUTER JOIN tbl_applications b ON a.cid = b.cid
 								   LEFT OUTER JOIN tbl_transactions c ON b.appId = c.appId
-								   LEFT OUTER JOIN tbl_consumer_address d ON a.cid = d.cid
-								   LEFT OUTER JOIN tbl_barangay e ON d.brgyId = e.brgyId
-								   LEFT OUTER JOIN tbl_municipality f ON e.munId = f.munId
- 								   LEFT OUTER JOIN tbl_consumer_connection g ON a.cid = g.cid
-								   LEFT OUTER JOIN tbl_connection_type h ON g.conId = h.conId
-								   LEFT OUTER JOIN tbl_connection_sub i ON g.subId = i.subId
-								   WHERE b.appId = '$appId' AND c.status = '4' AND c.action = '1'
+								   WHERE b.appId = '$appId' AND c.status = '8' AND c.action = '0'
 								   ORDER BY c.tid ASC LIMIT 1");
 								   
 			foreach($query2 as $row2){
-				$status = "";
-				switch($row2["status"]){
-					case 1:
-						$status = "INSPECTION";
-						break;
-					case 2:
-						$status = "TSD";
-						break;
-					case 3:
-						$status = "MMD";
-						break;
-					case 4:
-						$status = "INSTALLATION";
+				$appId = $row2["appId"];
+				$query3 = $db->query("SELECT *FROM tbl_app_service a 
+										LEFT OUTER JOIN tbl_service b ON a.serviceId = b.serviceId
+										LEFT OUTER JOIN tbl_app_type c on a.appId = c.appId
+										WHERE a.appId = '$appId'");
+				$cType = "";					
+				if($query3->rowCount() > 0){
+					foreach($query3 as $row3){
+						$cType .= $row3["serviceCode"]." ";
+					}
 				}
-				
-				$type = $row2["conCode"]." ".$row2["subDesc"];
-				
-				if($row2["mname"] != "")
-					$row2["mname"] = $row2["mname"][0].".";
-
-				if($row2["status"] == 4 and $row2["action"] == 1){
+				if($row2["status"] == 8 and $row2["action"] == 0){
 					$list[] = array(
-						"status" => $status,
-						"acctNo" => $row2["acctNo"],
-						"consumerName" => $row2["fname"]." ".$row2["lname"]." ".$row2["mname"],
-						"address" => $row2["address"]." ".$row2["purok"]." ".$row2["brgyName"],
-						"municipality" => $row2["munDesc"],
-						"area" => $row2["branch"],
-						"type" => $type
+						"status" => "",
+						"acctNo" => $row2["AccountNumberT"],
+						"consumerName" => $row2["AccountNameT"],
+						"address" => $row2["AddressT"],
+						"municipality" => $row2["MunicipalityT"],
+						"area" => $row2["BranchT"],
+						"type" => $row2["CustomerTypeT"],
+						"appType" => $cType
 					);
 				}
 			}

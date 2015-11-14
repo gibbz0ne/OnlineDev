@@ -15,12 +15,13 @@
 		$tid = $_POST["tid"];
 		
 		$query = $db->query("SELECT *FROM consumers WHERE AccountNumber = $acctNum");
-		if($query->rowCount()>0)
+		$query2 = $db->query("SELECT *FROM tbl_temp_consumers WHERE AccountNumberT = $acctNum");
+		if($query->rowCount()>0 || $query2->rowCount()>0)
 			echo "Account Number Exist";
 		else{
 			try{
 				$db->beginTransaction();
-				$insert = $db->prepare("UPDATE consumers SET AccountNumber = ? WHERE Entry_Number = ?");
+				$insert = $db->prepare("UPDATE tbl_temp_consumers SET AccountNumberT = ? WHERE cid = ?");
 				$insert->execute(array($acctNum, $cid));
 
 				$processed = 0;
@@ -32,7 +33,7 @@
 				$update = $db->prepare("UPDATE tbl_transactions SET action = ?, approvedBy = ?, dateApproved = ?, remarks = ? WHERE tid = ?");
 				$update->execute(array(1, $id, date("Y-m-d H:i:s"), null, $tid));
 
-				$insert = $db->prepare("INSERT INTO tbl_transactions (appId, Entry_Number, status, processedBy, dateProcessed)
+				$insert = $db->prepare("INSERT INTO tbl_transactions (appId, cid, status, processedBy, dateProcessed)
 									VALUES(?, ?, ?, ?, ?)");
 				$insert->execute(array($appId, $cid, 4, $processed, date("Y-m-d H:i:s")));
 				$db->commit();

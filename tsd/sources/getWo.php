@@ -23,11 +23,11 @@
 			foreach($query as $row){
 				$wo = $row["wo"];
 				foreach($db->query("SELECT *FROM tbl_applications a
-									LEFT OUTER JOIN consumers b ON a.Entry_Number = b.Entry_Number
+									LEFT OUTER JOIN tbl_temp_consumers b ON a.cid = b.cid
 									WHERE a.appId = '".$row["appId"]."'") as $row2){
 					
-					$name = $row2["AccountName"];
-					$acctNo = $row2["AccountNumber"];
+					$name = $row2["AccountNameT"];
+					$acctNo = $row2["AccountNumberT"];
 				}
 				$table .= "<tr>
 							<td>$ctr</td>

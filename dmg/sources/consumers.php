@@ -6,12 +6,9 @@
 	
 	$list = array();
 	
-	$query2 = $db->query("SELECT *FROM consumers a 
-							LEFT OUTER JOIN tbl_applications b ON a.Entry_Number = b.Entry_Number 
+	$query2 = $db->query("SELECT *FROM tbl_temp_consumers a 
+							LEFT OUTER JOIN tbl_applications b ON a.cid = b.cid 
 							LEFT OUTER JOIN tbl_transactions c ON b.appId = c.appId 
-							LEFT OUTER JOIN tbl_consumer_connection d ON a.Entry_Number = d.cid 
-							LEFT OUTER JOIN tbl_connection_type e ON d.conId = e.conId 
-							LEFT OUTER JOIN tbl_connection_sub f ON d.subId = f.subId 
 							WHERE c.status = 3 AND c.action = 0 
 							ORDER BY c.tid DESC");
 						   
@@ -20,14 +17,14 @@
 		
 		$list[] = array(
 			"status" => $status,
-			"acctNo" => $row["AccountNumber"],
-			"consumerName" => $row["AccountName"],
+			"acctNo" => $row["AccountNumberT"],
+			"consumerName" => $row["AccountNameT"],
 			"mname" => $row["MiddleName"],
-			"address" => $row["Address"],
-			"municipality" => $row["Municipality"],
-			"area" => $row["Branch"],
-			"type" => $row["CustomerType"],
-			"cid" => $row["Entry_Number"],
+			"address" => $row["AddressT"],
+			"municipality" => $row["MunicipalityT"],
+			"area" => $row["BranchT"],
+			"type" => $row["CustomerTypeT"],
+			"cid" => $row["cid"],
 			"appId" => $row["appId"],
 			"tid" => $row["tid"]
 		);

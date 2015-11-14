@@ -6,7 +6,7 @@
 	$db = $conn->PDO();
 	// echo $date;
 	$id = $_SESSION["userId"];
-	$query = $db->query("SELECT * FROM consumers JOIN tbl_applications USING (Entry_Number) ORDER BY appDate DESC");
+	$query = $db->query("SELECT * FROM tbl_temp_consumers JOIN tbl_applications USING (cid) ORDER BY appDate DESC");
 	$list = Array();
 	if($query->rowCount() > 0){
 		foreach($query as $row){
@@ -28,18 +28,18 @@
 					$d = explode(" ", $row["appDate"]);
 					$d1 = explode(" ", $row2["dateProcessed"]);
 					if($d[0] == $date){
-						$list[] = array("consumerName" => $row["AccountName"],
+						$list[] = array("consumerName" => $row["AccountNameT"],
 									"mname" => $row["MiddleName"],
-									"address" => $row["Address"],
+									"address" => $row["AddressT"],
 									"status" => $status,
 									"so" => $row["appSOnum"],
 									"car" => $row["appCAR"],
 									"remarks" => $row2["remarks"],
 									"dateApp" => $row["appDate"],
 									"dateProcessed" => $row2["dateProcessed"],
-									"acctNo" => $row["AccountNumber"],
+									"acctNo" => $row["AccountNumberT"],
 									"appId" => $row["appId"],
-									"cid" => $row["Entry_Number"],
+									"cid" => $row["cid"],
 									"car" => $row["appCAR"],
 									"service" => implode($serviceArr, ",")
 						);

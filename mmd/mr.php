@@ -23,11 +23,9 @@ $include = new includes();
 		
 		<script>
 		$(document).ready(function(){
-			var mr = "";
+			var mr = appId = "";
 			$("#jqxMenu").jqxMenu({width: window.innerWidth-5, theme: "main-theme"});
 			
-			$("#print_mr").jqxButton({theme: "main-theme", disabled: true});
-			$("#print_wo").jqxButton({theme: "main-theme", disabled: true});
 			$("#mainSplitter").jqxSplitter({
 				width: window.innerWidth-6, 
 				height:window.innerHeight-40,
@@ -121,6 +119,7 @@ $include = new includes();
 				datafields: [
 					{ name: "ctr1"},
 					{ name: "acctNo"},
+					{ name: "appId"},
 					{ name: "consumerName"},
 					{ name: "address"},
 					{ name: "meterNo"},
@@ -157,30 +156,22 @@ $include = new includes();
 				var rowindex = $("#mrList").jqxGrid("getselectedrowindex");
 				var data = $("#mrList").jqxGrid("getrowdata", rowindex);
 				mrNo = data.mrNo;
+				
 				consumerList.url = 'sources/getConsumerWo.php?mr='+data.mrNo;
 				// selected_account = data.acctNo;
-				
 				var dataAdapter = new $.jqx.dataAdapter(consumerList);
 				$('#consumerList').jqxGrid({source:dataAdapter});
-				// $.ajax({
-					// url: "sources/checkApproveMr.php",
-					// type: "post",
-					// data: {mrNo: mrNo},
-					// success: function(result){
-						// $("#assignMeter").jqxButton({disabled: true});
-						// if(result == "1")
-							// $("#approveMeter").jqxButton({disabled: true});
-						// else
-							// $("#approveMeter").jqxButton({disabled: false});
-					// }
-				// })
+				
+				$("#consumerList").jqxGrid('clearselection');
+				$("#assignMeter").jqxButton({disabled: true});
 			});
 
 			$("#consumerList").on("rowselect", function(event){
+				var appId = event.args.row.appId;
 				$.ajax({
 					url: "sources/checkApproveMr.php",
 					type: "post",
-					data: {mrNo: mrNo},
+					data: {mrNo: mrNo, appId: appId},
 					success: function(result){
 						if(result == "1")
 							$("#assignMeter").jqxButton({disabled: true});
@@ -259,9 +250,33 @@ $include = new includes();
 					// container.append('<input id="approveMeter" style = "margin-left: 10px;" type="button" value="Approve Meters" />');
 					$("#assignMeter").jqxButton({theme: "main-theme", width: 150, disabled: true});
 					// $("#approveMeter").jqxButton({theme: "main-theme", width: 150, disabled: true});
+					$("#assignMeter").on("click", function(event){
+						var row = $("#consumerList").jqxGrid("getselectedrowindex");
+						var data = $("#consumerList").jqxGrid("getrowdata", row);
+						$.ajax({
+							url: "sources/getConsumerWo.php",
+							type: "post",
+							dataType: "json",
+							data: {cid: data.cid},
+							success: function(data){
+								$("#meterForm").jqxWindow("open");
+								$("#consumerData").html(
+									"Primary Account No: "+data.acctNo+"<br>Consumer Name: "+data.consumerName+"<br>Addresss: "+data.address);
+								$("#meterForm input")[0].value = data.mReading;
+								$("#meterForm input")[1].value = data.mBrand;
+								$("#meterForm input")[2].value = data.mClass;
+								$("#meterForm input")[3].value = data.mSerial;
+								$("#meterForm input")[4].value = data.mERC;
+								$("#meterForm input")[5].value = data.mLabSeal;
+								$("#meterForm input")[6].value = data.mTerminal;
+								$("#meterForm input")[7].value = data.multiplier;
+							}
+						});
+					});
 				},
 				ready: function(){
 					$("#consumerList").jqxGrid("hidecolumn", "cid");
+					$("#consumerList").jqxGrid("hidecolumn", "appId");
 				},
 				columns: [
 					  { text: "#", datafield: "ctr1", pinned: true, align: "center", cellsalign: "center", width: 50 },
@@ -276,40 +291,8 @@ $include = new includes();
 					  { text: "Meter Lab Seal", datafield: "mLabSeal", align: "center", cellsalign: "center",width: 100},
 					  { text: "Terminal Seal", datafield: "mTerminal", align: "center", cellsalign: "center",width: 100},
 					  { text: "Multiplier", datafield: "multiplier", align: "center", cellsalign: "center",width: 100},
-					  { text: "CID", datafield: "cid", align: "center", cellsalign: "center"}
-				  ]
-			});
-			
-			$("#mrMasterList").jqxGrid({
-				width: "100%",
-				height: "100%",
-				source: mrAdapter,
-				rowdetails: true,
-				rowdetailstemplate: { rowdetails: "<div style='margin: 10px;'><ul style='margin-left: 30px;'><li class='title'></li><li>Work Order Lists</li></ul><div class='information'></div><div class='notes'></div></div>", rowdetailsheight: 200 },
-				initrowdetails: initrowdetails,
-				columns: [
-					  { text: "#", datafield: "ctr", align: "center", cellsalign: "center", width: 20 },
-					  { text: "MR-M No", datafield: "mrNo", align: "center", cellsalign: "center", width: 150 },
-					  { text: "Items", datafield: "items", align: "center", cellsalign: "center", width: 50 },
-					  { text: "WO's", datafield: "wos", align: "center", cellsalign: "center",width: 50 },
-					  { text: "Purpose", datafield: "purpose", align: "center", cellsalign: "center",width: 200},
-					  { text: "Date", datafield: "date", align: "center", cellsalign: "center"}
-				  ]
-			});
-			
-			$("#woMasterList").jqxGrid({
-				width: "100%",
-				height: "100%",
-				theme: "main-theme",
-				showfilterrow: true,
-				filterable: true,
-				source: woAdapter,
-				columns: [
-					  { text: "WO#", pinned: true, datafield: "wo", align: "center", cellsalign: "center", width: 170 },
-					  { text: "Consumer",  pinned: true, datafield: "consumer", align: "center", cellsalign: "center", width: 220 },
-					  { text: "Address", datafield: "address", align: "center", cellsalign: "center", width: 300 },
-					  { text: "Primary No", datafield: "acctNo", align: "center", cellsalign: "center",  width: 150},
-					  { text: "Date", datafield: "date", align: "center", cellsalign: "center", width: 160}
+					  { text: "CID", datafield: "cid", align: "center", cellsalign: "center"},
+					  { text: "AppId", datafield: "appId", align: "center", cellsalign: "center"}
 				  ]
 			});
 			
@@ -325,109 +308,15 @@ $include = new includes();
 			$("#confirmMr").jqxWindow({
 				theme: "main-theme", height: 170, width:  400, cancelButton: $("#cancel3"),showCloseButton: true, draggable: false, resizable: false, isModal: true, autoOpen: false, modalOpacity: 0.50
 			});
-			
-			$("#mrListModal").jqxWindow({
-				theme: "main-theme", height: 500, maxHeight: 500, maxWidth: 800, width: "100%", showCloseButton: true, draggable: false, resizable: false, isModal: true, autoOpen: false, modalOpacity: 0.50
-			});
 				
-			$("#woListModal").jqxWindow({
-				theme: "main-theme", height: 500, maxHeight: 500, maxWidth: 800, width: "100%", showCloseButton: true, draggable: false, resizable: false, isModal: true, autoOpen: false, modalOpacity: 0.50
-			});
-			
 			$("#confirm").click(function(){
 				$("#confirmModal").jqxWindow("open")
-			});
-			
-			$("#print_window").jqxWindow({
-				theme: "main-theme", height: 800, width:  600, showCloseButton: true, draggable: false, resizable: false, isModal: true, autoOpen: false, modalOpacity: 0.50
 			});
 			
 			$("#materials").on("click", function(){
 				alert("success");
 			});
-			
-			// $("#approveMeter").on("click", function(){
-				// $("#confirmMr").jqxWindow("open");
-			// });
-			
-			// $("#confirm3").on("click", function(){
-				// $.ajax({
-					// url: "functions/approveMeter.php",
-					// type: "post",
-					// data: {mr: mrNo},
-					// success: function(data){
-						// if(data == "1")
-							// location.reload();
-					// }
-				// });
-			// });
-			
-			$("#mrReports").click(function(){
-				$("#mrListModal").jqxWindow("open");
-			});
-			
-			$("#woReports").click(function(){
-				$("#woListModal").jqxWindow("open");
-			});
-			
-			$("#print_window").on("close", function(){
-				location.reload();
-			});
-			
-			$("#mrMasterList").on("rowselect", function(event){
-				$("#print_mr").jqxButton({disabled: false});
-			});
-			
-			$("#mrMasterList").on("rowunselect", function(event){
-				$("#print_mr").jqxButton({disabled: false});
-			});
-			
-			$("#woMasterList").on("rowselect", function(event){
-				$("#print_wo").jqxButton({disabled: false});
-			});
-			
-			$("#woMasterList").on("rowunselect", function(event){
-				$("#print_wo").jqxButton({disabled: false});
-			});
-				
-			$("#print_mr").click(function(){
-				var rowindex = $("#mrMasterList").jqxGrid("getselectedrowindex");
-				var data = $("#mrMasterList").jqxGrid("getrowdata", rowindex);
-				$("#print_window").jqxWindow('open');
-				$("#print_window").jqxWindow('setContent', '<iframe src="print_mr.php?ref='+data.mrNo+'" width="99%" height="98%"></iframe>');
-			});
-			
-			$("#print_wo").click(function(){
-				var rowindex = $("#woMasterList").jqxGrid("getselectedrowindex");
-				var data = $("#woMasterList").jqxGrid("getrowdata", rowindex);
-				$("#print_window").jqxWindow('open');
-				$("#print_window").jqxWindow('setContent', '<iframe src="print_wo.php?ref='+data.wo+'" width="99%" height="98%"></iframe>');
-			});
-			
-			$("#assignMeter").on("click", function(event){
-				var row = $("#consumerList").jqxGrid("getselectedrowindex");
-				var data = $("#consumerList").jqxGrid("getrowdata", row);
-				$.ajax({
-					url: "sources/getConsumerWo.php",
-					type: "post",
-					dataType: "json",
-					data: {cid: data.cid},
-					success: function(data){
-						$("#meterForm").jqxWindow("open");
-						$("#consumerData").html(
-							"Primary Account No: "+data.acctNo+"<br>Consumer Name: "+data.consumerName+"<br>Addresss: "+data.address);
-						$("#meterForm input")[0].value = data.mReading;
-						$("#meterForm input")[1].value = data.mBrand;
-						$("#meterForm input")[2].value = data.mClass;
-						$("#meterForm input")[3].value = data.mSerial;
-						$("#meterForm input")[4].value = data.mERC;
-						$("#meterForm input")[5].value = data.mLabSeal;
-						$("#meterForm input")[6].value = data.mTerminal;
-						$("#meterForm input")[7].value = data.multiplier;
-					}
-				});
-			});
-			
+		
 			$("#confirm2").click(function(){
 				var row = $("#consumerList").jqxGrid("getselectedrowindex");
 				var data = $("#consumerList").jqxGrid("getrowdata", row);
@@ -444,6 +333,7 @@ $include = new includes();
 							var dataAdapter = new $.jqx.dataAdapter(consumerList);
 							$('#consumerList').jqxGrid({source:dataAdapter});
 							$("#meterForm :input").val("");
+							$("#assignMeter").jqxButton({disabled: true});
 						}
 					}
 				});
@@ -454,10 +344,7 @@ $include = new includes();
 					url: "../logout.php",
 					success: function(data){
 						if(data == 1){
-							// $("#processing").jqxWindow("open");
-							// setTimeout(function(){
 							window.location.href = "../index.php";
-							// }, 1000);
 						}
 					}
 				});
@@ -535,37 +422,12 @@ $include = new includes();
 				<div class = "col-sm-6"><button class = "btn btn-danger btn-block" id = "cancel">CANCEL</button></div>
 			</div>
 		</div>
-		<div id="mrListModal">
-			<div><img src="../assets/images/icons/icol16/src/report.png"> MR LIST</div>
-			<div  class = "text-center">
-				<div id = "panel">
-					<div id = "mrMasterList"></div>
-				</div><br>
-				<button class = "text-center" id = "print_mr"><img src = "../assets/images/icons/icol16/src/printer.png" /> PRINT SELECTED MR</button>
-			</div>
-		</div>
 		<div id="confirmMr">
 			<div><img src="../assets/images/icons/icol16/src/accept.png"> Confirm</div>
 			<div  class = "text-center">
 				<h4>Confirm Meter/s?<br></h4><br>
 				<div class = "col-sm-6"><button  class = "btn btn-success btn-block" id = "confirm3">CONFIRM</button></div>
 				<div class = "col-sm-6"><button class = "btn btn-danger btn-block" id = "cancel3">CANCEL</button></div>
-			</div>
-		</div>
-		<div id="woListModal">
-			<div><img src="../assets/images/icons/icol16/src/page_white_text.png"> WORK ORDER LIST</div>
-			<div class = "text-center">
-				<div id = "panel1">
-					<div id = "woMasterList"></div>
-				</div>
-				<br>
-				<button class = "text-center" id = "print_wo"><img src = "../assets/images/icons/icol16/src/printer.png" alt = "" /> PRINT SELECTED WO</button>
-			</div>
-		</div>
-		<div id="print_window">
-			<div><img width="14" height="14" src="../assets/images/icons/icol16/src/printer.png" alt="" /> Print Document</div>
-			<div id="print_window">
-				PRINTING........................
 			</div>
 		</div>
 	</body>

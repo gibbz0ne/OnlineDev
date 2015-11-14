@@ -3,17 +3,18 @@
 	
 	$con = new getConnection();
 	$db = $con->PDO();
+	$branch = $_SESSION["branch"];
 	
-	$query = $db->query("SELECT *FROM consumers a RIGHT OUTER JOIN tbl_work_order b ON a.Entry_Number = b.cid");
+	$query = $db->query("SELECT *FROM tbl_temp_consumers a RIGHT OUTER JOIN tbl_work_order b ON a.cid = b.cid WHERE a.BranchT = '$branch'");
 	$list = array();
 	
 	if($query->rowCount() > 0){
 		$ctr = 1;
 		foreach($query as $row){
-			$name = $row["AccountName"];
-			$address = $row["Address"];
+			$name = $row["AccountNameT"];
+			$address = $row["AddressT"];
 			$wo = $row["wo"];
-			$acctNo = $row["AccountNumber"];
+			$acctNo = $row["AccountNumberT"];
 			$woDate = $row["woDate"];
 			
 			$list[] = array("ctr" => $ctr,

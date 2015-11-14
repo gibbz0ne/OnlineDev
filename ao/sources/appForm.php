@@ -4,8 +4,8 @@
 	$conn = new getConnection();
 	$db = $conn->PDO();
 	
-	$res = $db->query("select * from tbl_connection_type");
-	$rowCT = $res->fetchAll(PDO::FETCH_ASSOC);
+	// $res = $db->query("select * from tbl_connection_type");
+	// $rowCT = $res->fetchAll(PDO::FETCH_ASSOC);
 ?>
 <form id="testForm" action="">
     <div id = "info" align="center" style="overflow-y: scroll; border: thin solid; height: 510px;">

@@ -8,14 +8,13 @@
 		$res = $db->query("SELECT *FROM tbl_transactions a 
 							LEFT OUTER JOIN tbl_applications b ON a.appId = b.appId 
 							LEFT OUTER JOIN tbl_app_type c ON b.appId = c.appId 
-							LEFT OUTER JOIN consumers d ON b.Entry_Number = d.Entry_Number 
-							LEFT OUTER JOIN tbl_consumer_connection h ON d.Entry_Number = h.cid
+							LEFT OUTER JOIN tbl_temp_consumers d ON b.cid = d.cid 
 							WHERE a.tid = $trans");
 		$row = $res->fetchAll(PDO::FETCH_ASSOC);
 		
 		$type = $row[0]["typeId"];
-		$acct = $row[0]["AccountNumber"];
-		$cid = $row[0]["Entry_Number"];
+		$acct = $row[0]["AccountNumberT"];
+		$cid = $row[0]["cid"];
 		
 	}
 	else {
@@ -23,13 +22,13 @@
 		$acct = $_POST["acct"];
 
 		
-		$res = $db->query("SELECT *FROM consumers WHERE AccountNumber = $acct");
+		$res = $db->query("SELECT *FROM tbl_temp_consumers WHERE AccountNumberT = $acct");
 		$row = $res->fetchAll(PDO::FETCH_ASSOC);
 	}
 	
-	$name = $row[0]["AccountName"];
-	$address = $row[0]["Address"];
-	$accountNum = $row[0]['AccountNumber'];
+	$name = $row[0]["AccountNameT"];
+	$address = $row[0]["AddressT"];
+	$accountNum = $row[0]['AccountNumberT'];
 	
 	$res = $db->query("SELECT *FROM tbl_type WHERE typeId = $type");
 	$rowT = $res->fetchAll(PDO::FETCH_ASSOC);
@@ -53,10 +52,10 @@
 	$rowR = $res->fetchAll(PDO::FETCH_ASSOC);
 	
 	// $res = $db->query("select c.conDesc, d.subDesc from consumers a
-						// LEFT OUTER JOIN tbl_consumer_connection b ON a.Entry_Number = b.cid
+						// LEFT OUTER JOIN tbl_consumer_connection b ON a.cid = b.cid
 						// LEFT OUTER JOIN tbl_connection_type c ON b.conId = c.conId
 						// LEFT OUTER JOIN tbl_connection_sub d ON b.subId = d.subId
-						// WHERE a.Entry_Number = $cid");
+						// WHERE a.cid = $cid");
 						// WHERE a.AccountNumber = $acct");
 	// $rowCT = $res->fetchAll(PDO::FETCH_ASSOC);
 ?>
@@ -95,7 +94,7 @@
 					</tr>
 					<tr>
 						<td>Type:</td>
-						<td colspan="3"><div style="width:100%; border-bottom:thin solid;"><strong><?PHP echo $row[0]["CustomerType"]; ?></strong></div></td>
+						<td colspan="3"><div style="width:100%; border-bottom:thin solid;"><strong><?PHP echo $row[0]["CustomerTypeT"]; ?></strong></div></td>
 						<!--td colspan="3"><div style="width:100%; border-bottom:thin solid;"><strong><!?PHP echo $rowCT[0]["conDesc"].($rowCT[0]["subDesc"] ? " - ".$rowCT[0]["subDesc"] : ""); ?></strong></div></td-->
 					</tr>
 				</tbody>

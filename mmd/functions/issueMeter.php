@@ -14,24 +14,23 @@
 		$mLabSeal = $_POST["mLabSeal"];
 		$mTerminal = $_POST["mTerminal"];
 		$multiplier = $_POST["multiplier"];
-		
-		foreach($db->query("SELECT *FROM tbl_applications WHERE Entry_Number = '$cid'") as $row)
+		$appId = $acctNo = "";
+		foreach($db->query("SELECT *FROM tbl_applications a
+							LEFT OUTER JOIN tbl_temp_consumers b ON a.cid = b.cid
+							WHERE a.cid = '$cid'") as $row){
 			$appId = $row["appId"];
+			$acctNo = $row["AccountNumberT"];
+		}
 		
-		$query = $db->query("SELECT *FROM tbl_meter_profile WHERE cid = '$cid' AND appId = '$appId'");
+		$query = $db->query("SELECT *FROM tbl_meter_temp WHERE cid = '$cid' AND appId = '$appId'");
 		
 		if($query->rowCount() > 0){
-			$update = $db->prepare("UPDATE tbl_meter_profile SET mReading = ?, mBrand = ?, mClass = ?, mSerial = ?, mERC = ?, mLabSeal = ?, mTerminal = ?, multiplier = ? WHERE cid = ? AND appId = ?");
+			$update = $db->prepare("UPDATE tbl_meter_temp SET mReading = ?, mBrand = ?, mClass = ?, mSerial = ?, mERC = ?, mLabSeal = ?, mTerminal = ?, multiplier = ? WHERE cid = ? AND appId = ?");
 			$update->execute(array($mReading, $mBrand, $mClass, $mSerial, $mERC, $mLabSeal, $mTerminal, $multiplier, $cid, $appId));
 			echo "1";
 		}
 		else{
-			$insert = $db->prepare("INSERT INTO tbl_meter (entry_id) VALUES (?)");
-			$insert->execute(array(""));
-			
-			$mid = $db->lastInsertId();
-			
-			$profile = $db->prepare("INSERT INTO tbl_meter_profile (mid, appId, cid, mReading, mBrand, mClass, mSerial, mERC, mLabSeal, mTerminal, multiplier)
+			$profile = $db->prepare("INSERT INTO tbl_meter_temp (mid, appId, cid, mReading, mBrand, mClass, mSerial, mERC, mLabSeal, mTerminal, multiplier)
 									VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 			$profile->execute(array($mid, $appId, $cid, $mReading, $mBrand, $mClass, $mSerial, $mERC, $mLabSeal, $mTerminal, $multiplier));
 			echo "1";

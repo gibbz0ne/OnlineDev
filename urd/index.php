@@ -59,7 +59,7 @@
 				setInterval(function(){
 					var dataAdapter = new $.jqx.dataAdapter(consumers);
 					$('#consumerList').jqxGrid({source:dataAdapter});
-				},60000);
+				},360000);
 				
 				var consumer_data = new $.jqx.dataAdapter(consumers);
 

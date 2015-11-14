@@ -33,23 +33,40 @@
 		}
 	} 
 	
-	$app = $db->prepare("INSERT INTO tbl_applications (appId, Entry_Number, appDate)
-						 VALUES (?, ?, ?)");
-	$app->execute(array($appId, $cid, date("Y-m-d H:i:s")));
-
-	//insert app_type
-	$insert = $db->prepare("INSERT INTO tbl_app_type (appId, typeId) 
-							VALUES(?, ?)");
-	$insert->execute(array($appId, $type));
+	$query = $db->query("SELECT *FROM consumers WHERE Entry_Number = '$cid'");
 	
-	//insert app_service
-	$insert = $db->prepare("INSERT INTO tbl_app_service (appId, serviceId) 
-							VALUES(?, ?)");
-	$insert->execute(array($appId, $type));
+	if($query->rowCount() > 0){
+		foreach($query as $row){
+			try{
+				$db->beginTransaction();
+				$insert = $db->prepare("INSERT INTO tbl_temp_consumers (AccountNumberT, AccountNameT, AddressT, BarangayT, BranchT, MunicipalityT, CustomerTypeT, bapaT) 
+										VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+				$insert->execute(array($row["AccountNumber"], $row["AccountName"], $row["Address"], $row["Barangay"], $row["Branch"], $row["Municipality"], $row["CustomerType"], $row["bapa"]));
+				
+				$cid = $db->lastInsertId();
+				$app = $db->prepare("INSERT INTO tbl_applications (appId, cid, appDate)
+									 VALUES (?, ?, ?)");
+				$app->execute(array($appId, $cid, date("Y-m-d H:i:s")));
 
-	$transactions = $db->prepare("INSERT INTO tbl_transactions(appId, Entry_Number, status, processedBy, dateProcessed)
-								VALUES (?, ?, ?, ?, ?)");
-	$transactions->execute(array($appId, $cid, 1, $id, date("Y-m-d")." ".date("H:i:s")));
+				//insert app_type
+				$insert = $db->prepare("INSERT INTO tbl_app_type (appId, typeId) 
+										VALUES(?, ?)");
+				$insert->execute(array($appId, $type));
+				
+				//insert app_service
+				$insert = $db->prepare("INSERT INTO tbl_app_service (appId, serviceId) 
+										VALUES(?, ?)");
+				$insert->execute(array($appId, $type));
 
-	echo 1;
+				$transactions = $db->prepare("INSERT INTO tbl_transactions(appId, cid, status, processedBy, dateProcessed)
+											VALUES (?, ?, ?, ?, ?)");
+				$transactions->execute(array($appId, $cid, 1, $id, date("Y-m-d")." ".date("H:i:s")));
+				$db->commit();
+				echo "1";
+			} catch(PDOException $e){
+				echo $e;
+				$db->rollBack();
+			}
+		}
+	}
 ?>
