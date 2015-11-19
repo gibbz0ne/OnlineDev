@@ -16,7 +16,7 @@
 		$primary = (isset($_POST["primary"]) ? $_POST["primary"] : "");
 		$email = $_POST["email"];
 		$phone = $_POST["phone"];
-		$count = ($_POST["count"] != "" ? $_POST["count"] : 1);
+		// $count = ($_POST["count"] != "" ? $_POST["count"] : 1);
 		$bname = (isset($_POST["bname"]) ? str_replace("ñ", "Ñ", strtoupper($_POST["bname"])) : NULL);
 		$fname = str_replace("ñ", "Ñ", strtoupper($_POST["fname"]));
 		$mname = str_replace("ñ", "Ñ", strtoupper($_POST["mname"]));
@@ -30,6 +30,7 @@
 		$municipality = $_POST["municipality"];
 		$customerType = $_POST["customerType"];
 		$isBapa = ($_POST["isBapa"] == "BAPA" ? 1 : 0);
+		$book = $_POST["bookNo"];
 		$appId = date("Ymd")."001";
 		$cid = 1;
 		$brgy = $_POST["brgy"];
@@ -78,9 +79,9 @@
 		try{
 			$db->beginTransaction();
 			
-			$insertC = $db->prepare("INSERT INTO tbl_temp_consumers (cid, AccountNameT, MiddleName, AddressT, BarangayT, BranchT, MunicipalityT, CustomerTypeT, bapaT)
-									 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
-			$insertC->execute(array($cid, $lname." ".$fname.$mname, $middle, $hno." ".$purok." ".$brgy." ".$municipality, $brgy, $branch, $municipality, $customerType, $isBapa));
+			$insertC = $db->prepare("INSERT INTO tbl_temp_consumers (cid, AccountNameT, MiddleName, AddressT, BarangayT, BranchT, MunicipalityT, CustomerTypeT, bapaT, bookT)
+									 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+			$insertC->execute(array($cid, $lname." ".$fname.$mname, $middle, $hno." ".$purok." ".$brgy." ".$municipality, $brgy, $branch, $municipality, $customerType, $isBapa, $book));
 			
 			$app = $db->prepare("INSERT INTO tbl_applications (appId, cid, appDate)
 								 VALUES (?, ?, ?)");
@@ -90,6 +91,8 @@
 										VALUES (?, ?, ?, ?, ?)");
 			$transactions->execute(array($appId, $cid, 1, $id, date("Y-m-d")." ".date("H:i:s")));
 			
+			$insertR = $db->prepare("INSERT INTO tbl_consumer_relation (cid, relationName, relationStatus) VALUES (?, ?, ?)");
+			$insertR->execute(array($cid, $spouseName, $civilStatus));
 			//insert app_type
 			$insert = $db->prepare("INSERT INTO tbl_app_type (appId, typeId) 
 											 VALUES(?, ?)");

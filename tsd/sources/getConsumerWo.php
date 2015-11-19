@@ -18,7 +18,7 @@
 			// echo $row["munId"];
 			$appId = $row["appId"];
 			$mReading = $mBrand = $mClass = $mSerial = $mERC = $mLabSeal = $mTerminal = $multiplier = "";
-			$meterProfile = $db->query("SELECT *FROM tbl_meter_profile WHERE cid = '".$row["cid"]."' AND appId = '".$row["appId"]."'");
+			$meterProfile = $db->query("SELECT *FROM tbl_meter_temp WHERE cid = '".$row["cid"]."' AND appId = '".$row["appId"]."'");
 			
 			
 			foreach($db->query("SELECT *FROM tbl_transactions WHERE appId = '$appId' ORDER BY tid DESC LIMIT 1") as $row3){
@@ -70,7 +70,7 @@
 							WHERE a.cid = '$cid'") as $row){
 
 			$mReading = $mBrand = $mClass = $mSerial = $mERC = $mLabSeal = $mTerminal = $multiplier = "";
-			foreach($db->query("SELECT *FROM tbl_meter_profile WHERE cid = '$cid' AND appId = '".$row["appId"]."'") as $r){
+			foreach($db->query("SELECT *FROM tbl_meter_temp WHERE cid = '$cid' AND appId = '".$row["appId"]."'") as $r){
 				$mReading = $r["mReading"];
 				$mBrand = $r["mBrand"];
 				$mClass = $r["mClass"];

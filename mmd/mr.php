@@ -333,7 +333,7 @@ $include = new includes();
 							var dataAdapter = new $.jqx.dataAdapter(consumerList);
 							$('#consumerList').jqxGrid({source:dataAdapter});
 							$("#meterForm :input").val("");
-							$("#assignMeter").jqxButton({disabled: true});
+							// $("#assignMeter").jqxButton({disabled: true});
 						}
 					}
 				});

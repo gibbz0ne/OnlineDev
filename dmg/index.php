@@ -185,10 +185,11 @@
 							if(data == 1){
 								consumers.url = "sources/consumers.php"
 								var consumer_data = new $.jqx.dataAdapter(consumers);
-								
+								$("#assign").jqxButton({disabled: true});
 								$("#consumerList").jqxGrid({source:consumer_data});
 								$("#confirm input").val("");
 								$("#confirm").jqxWindow("close");
+								$("#consumerList").jqxGrid("clearselection");
 							} else{
 								alert(data);
 							}

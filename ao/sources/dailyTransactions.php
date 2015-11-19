@@ -41,6 +41,7 @@
 									"appId" => $row["appId"],
 									"cid" => $row["cid"],
 									"car" => $row["appCAR"],
+									"book" => $row["bookT"],
 									"service" => implode($serviceArr, ",")
 						);
 					}

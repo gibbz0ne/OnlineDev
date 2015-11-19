@@ -150,11 +150,11 @@
 		<div style="min-height:110px;">
 			<table width="100%">
 				<tr>
-					<td width="100px">
-						<strong>S.O.A. No:</strong>
+					<td>
+						<strong>O.R. No:</strong>
 					</td>
 					<td>
-						<input class="jqx-input jqx-widget-content jqx-rc-all" type="text"></input>
+						<input id="txtOR" name="txtOR" class="jqx-input jqx-widget-content jqx-rc-all" type="text"></input>
 					</td>
 					<td valign="top" id="tdFee" rowspan="4" width="50%">
 						<p>
@@ -167,14 +167,6 @@
 							}
 						?>
 						</p>
-					</td>
-				</tr>
-				<tr>
-					<td>
-						<strong>O.R. No:</strong>
-					</td>
-					<td>
-						<input id="txtOR" name="txtOR" class="jqx-input jqx-widget-content jqx-rc-all" type="text"></input>
 					</td>
 				</tr>
 				<tr>

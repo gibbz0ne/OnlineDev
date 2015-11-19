@@ -37,7 +37,7 @@
                 <input type = "text" id = "ename" name = "ename" class = "form-control input-sm" placeholder = "Extension Name">
             </div>
             <div style="margin-bottom: 5px;" class = "col-sm-6">
-                <input type = "text" id = "count" name = "count" class = "form-control input-sm" placeholder = "#">
+                <input type = "text" id = "bookNo" name = "bookNo" class = "form-control input-sm" placeholder = "Book">
             </div>
             <div style="margin-bottom: 5px;" class = "col-sm-6">
                 <div id = "civilStatus" name = "civilStatus" class = "form-control input-sm">

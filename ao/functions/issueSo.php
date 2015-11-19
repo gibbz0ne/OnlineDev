@@ -128,8 +128,8 @@
 		$insert = $db->prepare("INSERT INTO tbl_so (sonum, soRemarks, datePaid, cId, appId) VALUES(?, ?, ?, ?, ?)");
 		$insert->execute(array($sonumber, ($_GET["taRemarks"] ? $_GET["taRemarks"] : null), $_GET["txtDatePaid"], $cid, $app));
 		
-		$update = $db->prepare("UPDATE tbl_applications SET appSOnum = ? WHERE cid = ? AND appId = ?");
-		$update->execute(array($sonumber, $cid, $app));
+		$update = $db->prepare("UPDATE tbl_applications SET appSOnum = ?, appOR = ? WHERE cid = ? AND appId = ?");
+		$update->execute(array($sonumber, $_GET["txtOR"], $cid, $app));
 		
 		$res = $db->query("SELECT * FROM tbl_so WHERE sonum = '$sonumber'");
 		$row = $res->fetchAll(PDO::FETCH_ASSOC);

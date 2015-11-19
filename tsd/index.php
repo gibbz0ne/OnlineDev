@@ -348,7 +348,8 @@
 					if(rows.length > 0)
 						$("#mrModal").jqxWindow("open");
 					else
-						$("#vSelect").jqxWindow("open");
+						alert("No Selected Work Order/s");
+						// $("#vSelect").jqxWindow("open");
 				});
 
 				
@@ -554,6 +555,11 @@
 								consumers.url = "sources/consumers.php";
 								var consumersData = new $.jqx.dataAdapter(consumers);
 								$("#consumerList").jqxGrid({source: consumersData});
+								$("#consumerList").jqxGrid("clearselection");
+								
+								$("#woModal input").val("");
+								$("#wo").jqxButton({disabled: true});
+								
 								$("#woModal").jqxWindow("close");
 							}
 						}

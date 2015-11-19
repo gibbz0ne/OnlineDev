@@ -94,7 +94,8 @@ $include = new includes();
 						{ name: "acctNo"},
 						{ name: "cid"},
 						{ name: "appId"},
-						{ name: "service"}
+						{ name: "service"},
+						{ name: "book"}
 						
 					],
 					url: "sources/dailyTransactions.php"
@@ -153,18 +154,17 @@ $include = new includes();
 					rendertoolbar: function(toolbar){
 						var me = this;
 						var container = $("<div style='margin: 5px;'></div>");
-						var span = $("<span style='float: left; margin-top: 5px; margin-right: 4px;'>Search : </span>");
-						var input = $("<input class='jqx-input jqx-widget-content jqx-rc-all' id='searchField' type='text' style='height: 23px; float: left; width: 223px;' />");
-						var searchButton = $("<div style='float: left; margin-left: 5px;' id='search'><img style='position: relative; margin-top: 2px;' src='../assets/images/search_lg.png'/><span style='margin-left: 4px; position: relative; top: -3px;'></span></div>");
-						container.append(span);
+						container.append("<button id = 'soButton' >Service Order</button>");
+						container.append("<button id = 'submitApp' >Submit</button>");
 						toolbar.append(container);
-						container.append(span);
-						container.append(input);
-						container.append(searchButton);
-						container.append("<button id = 'soButton' style = 'margin-left: 10px;'>Service Order</button>");
 						
-						$("#soButton").jqxButton({theme: "main-theme", disabled: true});
+						$("#soButton").jqxButton({theme: "main-theme", disabled: true, width: 130});
+						$("#submitApp").jqxButton({theme: "main-theme", disabled: true, width: 130});
 
+						$("#submitApp").on("click", function(){
+							$("#submitModal").jqxWindow("open");
+						});
+						
 						$("#soButton").click(function(){
 							$("#soForm").jqxWindow("open");
 
@@ -192,8 +192,6 @@ $include = new includes();
 											data: $("#frmSO").serialize()+"&trans="+data.trans,
 											success: function(outIssue){
 												console.log(outIssue+"dfbdfbdfbdfbasasdas");
-												$("#soForm").jqxWindow("close");
-												// $('#processing').jqxWindow('open');
 												daily_transactions.url = 'sources/dailyTransactions.php';
 												var allTransactions = new $.jqx.dataAdapter(daily_transactions);
 												$('#transaction_list').jqxGrid({source:allTransactions});
@@ -202,10 +200,7 @@ $include = new includes();
 												var serviceOrders = new $.jqx.dataAdapter(trans_list);
 												$("#noso_list").jqxGrid({source:trans_list});
 												$("#soButton").jqxButton({disabled: true});
-												// setTimeout(function(){
-													// $('#processing').jqxWindow('close');
-													// location.reload();
-												// },3000);
+												$("#noso_list").jqxGrid("clearselection");
 											}
 										});
 									});
@@ -220,46 +215,6 @@ $include = new includes();
 								}
 							});
 						});
-
-						$("#search").jqxButton({theme:"main-theme",height:18,width:24});
-						$("#search").click(function(){
-							$("#noso_list").jqxGrid('clearfilters');
-							var datafield = "consumerName";
-
-							var searchText = $("#searchField").val();
-							var filtergroup = new $.jqx.filter();
-							var filter_or_operator = 1;
-							var filtervalue = searchText;
-							var filtercondition = 'contains';
-							var filter = filtergroup.createfilter('stringfilter', filtervalue, filtercondition);
-							filtergroup.addfilter(filter_or_operator, filter);
-							$("#noso_list").jqxGrid('addfilter', datafield, filtergroup);
-							$("#noso_list").jqxGrid('applyfilters');
-						});
-						
-						var oldVal = "";
-						input.on('keydown', function (event) {
-							var key = event.charCode ? event.charCode : event.keyCode ? event.keyCode : 0;
-								
-							if (key == 13 || key == 9) {
-								$("#noso_list").jqxGrid('clearfilters');
-								var datafield = "consumerName";
-								var searchText = $("#searchField").val();
-								var filtergroup = new $.jqx.filter();
-								var filter_or_operator = 1;
-								var filtervalue = searchText;
-								var filtercondition = 'contains';
-								var filter = filtergroup.createfilter('stringfilter', filtervalue, filtercondition);
-								filtergroup.addfilter(filter_or_operator, filter);
-								$("#noso_list").jqxGrid('addfilter', datafield, filtergroup);
-								$("#noso_list").jqxGrid('applyfilters');
-							}
-						   
-							if(key == 27){
-								$("#noso_list").jqxGrid('clearfilters');
-								return true;
-							}
-						});
 					},
 					columns: [
 						{text: "Account Number", pinned: true, dataField: "acctNo", cellsalign: "center", align: "center", width: 150},
@@ -273,6 +228,17 @@ $include = new includes();
 						{text: "Status", dataField: "status", cellsalign: "center", align: "center", width: 150},
 						{text: "Remarks", dataField: "remarks", align: "center", width: 150}
 					]
+				});
+				
+				$("#confirmApp").click(function(){
+					$.ajax({
+						url: "functions/confirmApp.php",
+						type: "post",
+						data: {appId: appId},
+						success: function(result){
+							console.log(result);
+						}						
+					})
 				});
 				
 				$("#print_car").on("close", function(event){
@@ -304,16 +270,10 @@ $include = new includes();
 					rendertoolbar: function(toolbar){
 						var me = this;
 						var container = $("<div style='margin: 5px;'></div>");
-						var span = $("<span style='float: left; margin-top: 5px; margin-right: 4px;'>Search : </span>");
-						var input = $("<input class='jqx-input jqx-widget-content jqx-rc-all' id='searchField1' type='text' style='height: 23px; float: left; width: 223px;' />");
-						var searchButton = $("<div style='float: left; margin-left: 5px;' id='search'><img style='position: relative; margin-top: 2px;' src='../assets/images/search_lg.png'/><span style='margin-left: 4px; position: relative; top: -3px;'></span></div>");
 						container.append('<input id="dailyT" type="button" value="Daily Transactions" />');
 						container.append('<input id="allT" type="button" value="All Transactions" />');
 						container.append('<input id="car" type="button" value="C.A.R." />');
 						toolbar.append(container);
-						container.append(span);
-						container.append(input);
-						container.append(searchButton);
 						
 						$("#dailyT").jqxButton({theme: "main-theme", width: 130});
 						$("#allT").jqxButton({theme: "main-theme", width: 130});
@@ -341,79 +301,22 @@ $include = new includes();
 							var allTransactions = new $.jqx.dataAdapter(daily_transactions);
 							$('#transaction_list').jqxGrid({source:allTransactions});
 						});
-						$("#search").jqxButton({theme:"main-theme",height:18,width:24});
 
 						if (theme != "") {
 							input.addClass("jqx-widget-content-" + theme);
 							input.addClass("jqx-rc-all-" + theme);
 						}
-						$("#search").click(function(){
-							$("#transaction_list").jqxGrid('clearfilters');
-							var searchColumnIndex = $("#dropdownlist").jqxDropDownList('selectedIndex');
-							var datafield = "";
-							switch (searchColumnIndex) {
-								case 0:
-									datafield = "consumerName";
-									break;
-								case 1:
-									datafield = "address";
-									break;
-								
-							}
-
-							var searchText = $("#searchField1").val();
-							var filtergroup = new $.jqx.filter();
-							var filter_or_operator = 1;
-							var filtervalue = searchText;
-							var filtercondition = 'contains';
-							var filter = filtergroup.createfilter('stringfilter', filtervalue, filtercondition);
-							filtergroup.addfilter(filter_or_operator, filter);
-							$("#transaction_list").jqxGrid('addfilter', datafield, filtergroup);
-							$("#transaction_list").jqxGrid('applyfilters');
-						});
-						
-						var oldVal = "";
-						input.on('keydown', function (event) {
-							var key = event.charCode ? event.charCode : event.keyCode ? event.keyCode : 0;
-								
-							if (key == 13 || key == 9) {
-								$("#transaction_list").jqxGrid('clearfilters');
-								var searchColumnIndex = $("#dropdownlist").jqxDropDownList('selectedIndex');
-								var datafield = "";
-								switch (searchColumnIndex) {
-									case 0:
-										datafield = "consumerName";
-										break;
-									case 1:
-										datafield = "address";
-										break;
-								}
-								var searchText = $("#searchField1").val();
-								var filtergroup = new $.jqx.filter();
-								var filter_or_operator = 1;
-								var filtervalue = searchText;
-								var filtercondition = 'contains';
-								var filter = filtergroup.createfilter('stringfilter', filtervalue, filtercondition);
-								filtergroup.addfilter(filter_or_operator, filter);
-								$("#transaction_list").jqxGrid('addfilter', datafield, filtergroup);
-								$("#transaction_list").jqxGrid('applyfilters');
-							}
-						   
-							if(key == 27){
-								$("#transaction_list").jqxGrid('clearfilters');
-								return true;
-							}
-						});
 					},
 					columns: [
 						{text: "Account Number", dataField: "acctNo", cellsalign: "center", align: "center", pinned: true, width: 150},
 						{text: "Consumer Name", dataField: "consumerName", align: "center", pinned: true, width: 250},
-						{text: "Middle Name", dataField: "mname", align: "center", pinned: true, width: 250},
+						{text: "Middle Name", dataField: "mname", align: "center", pinned: true, width: 130},
 						{text: "Address", dataField: "address", align: "center", width: 290},
 						{text: "Application Date", dataField: "dateApp", cellsalign: "center", align: "center", width: 150},
 						{text: "S.O.", dataField: "so", cellsalign: "center", align: "center", width: 100},
 						{text: "C.A.R.", dataField: "car", cellsalign: "center", align: "center", width: 150},
-						{text: "Application", dataField: "service", cellsalign: "center", align: "center", width: 150},
+						{text: "Application", dataField: "service", cellsalign: "center", align: "center", width: 100},
+						{text: "Book", dataField: "book", cellsalign: "center", align: "center", width: 150},
 						{text: "Status", dataField: "status", cellsalign: "center", align: "center", width: 150},
 						{text: "Processed Date", dataField: "dateProcessed", cellsalign: "center", align: "center", width: 150},
 						{text: "Remarks", dataField: "remarks", align: "center", width: 150}
@@ -610,7 +513,14 @@ $include = new includes();
 					var rowBoundIndex = args.rowindex;
 					// row's data. The row's data object or null(when all rows are being selected or unselected with a single action). If you have a datafield called "firstName", to access the row's firstName, use var firstName = rowData.firstName;
 					data = args.row;
-					$("#soButton").jqxButton({disabled: false});
+					appId = data.appId;
+					if(data.so == null){
+						$("#soButton").jqxButton({disabled: false});
+						$("#submitApp").jqxButton({disabled: true});
+					} else{
+						$("#soButton").jqxButton({disabled: true});
+						$("#submitApp").jqxButton({disabled: false});
+					}
 				});
 				
 				$("#bd").on("keyup", function(event){
@@ -772,9 +682,105 @@ $include = new includes();
 					$("#signatoryModal").jqxWindow("open")
 				});
 				
+				$("#reports").click(function(){
+					$("#reportModal").jqxWindow("open");
+				});
+				
+				var daily_report = {
+					datatype: "json",
+					dataFields: [
+						{ name: "date" },
+						{ name: "so" },
+						{ name: "cType" },
+						{ name: "remarks" },
+						{ name: "acctNo" },
+						{ name: "acctName" },
+						{ name: "mName" },
+						{ name: "sName" },
+						{ name: "cStatus" },
+						{ name: "address" },
+						{ name: "municipality" },
+						{ name: "feeder" },
+						{ name: "bookNo" }
+					],
+					url: "sources/dailyReports.php",
+					async: false
+				};
+				
+				var dailyAdapter = new $.jqx.dataAdapter(daily_report);
+				
+				$("#reportGrid").jqxGrid({
+					width: "100%",
+					height: "99%",
+					source: dailyAdapter,
+					showtoolbar: true,
+					theme: "main-theme",
+					rendertoolbar: function(toolbar){
+						var container = $("<div style='margin: 5px;'></div>");
+						container.append("<button id = 'dailyR' >Daily</button>");
+						container.append("<button id = 'monthlyR' >Monthly</button>");
+						toolbar.append(container);
+						
+						$("#dailyR").jqxButton({theme: "main-theme", width: 100});
+						$("#monthlyR").jqxButton({theme: "main-theme", width: 100});
+						
+						$("#dailyR").on("click", function(){
+							daily_report.url = "sources/dailyReports.php";
+							var dataAdapter = new $.jqx.dataAdapter(daily_report);
+							$("#reportGrid").jqxGrid({source: dataAdapter});
+						});
+						
+						$("#monthlyR").on("click", function(){
+							daily_report.url = "sources/monthlyReport.php";
+							var dataAdapter = new $.jqx.dataAdapter(daily_report);
+							$("#reportGrid").jqxGrid({source: dataAdapter});
+						});
+					},
+					columns: [
+						{text: "Date", dataField: "date", align: "center", cellsalign: "center", width: 150},
+						{text: "SO#", dataField: "so", align: "center", cellsalign: "center", width: 90},
+						{text: "Customer Type", dataField: "cType", align: "center", cellsalign: "center", width: 110},
+						{text: "Remarks", dataField: "remarks", align: "center", cellsalign: "center", width: 150},
+						{text: "Account Number", dataField: "acctNo", align: "center", cellsalign: "center", width: 140},
+						{text: "Account Name", dataField: "acctName", align: "center", width: 250},
+						{text: "Middle Name", dataField: "mName", align: "center", width: 150},
+						{text: "Address", dataField: "address", align: "center", width: 300},
+						{text: "Municipality", dataField: "municipality", align: "center", cellsalign: "center", width: 150},
+						{text: "Spouse Name", dataField: "sName", align: "center", cellsalign: "center", width: 150},
+						{text: "Type", dataField: "cStatus", align: "center", cellsalign: "center", width: 50},
+						{text: "Feeder", dataField: "feeder", align: "center", cellsalign: "center", width: 150},
+						{text: "Book No", dataField: "bookNo", align: "center", cellsalign: "center", width: 150},
+					]
+				});
+				
+				var req = {
+					datatype: "json",
+					dataFields: [
+						{name: "rDesc"},
+					],
+					url: "sources/requirements.php"
+				}
+				
+				$("#rGrid").jqxGrid({
+					width: "100%",
+					height: "99%",
+					showtoolbar: true,
+					columns: [
+						{text: "Requirement Description", dataField: "name", align: "center", cellsalign: "center", width: "100%"},
+					]
+				});
+				
 				//jqxwindows
 				$("#unable").jqxWindow({
 					height: 150, width:  300, cancelButton: $('#ok'), showCloseButton: true, draggable: false, resizable: false, isModal: true, autoOpen: false, modalOpacity: 0.50,theme:'main-theme'
+				});
+				
+				$("#submitModal").jqxWindow({
+					height: 150, width:  300, cancelButton: $('#cancelA'), showCloseButton: true, draggable: false, resizable: false, isModal: true, autoOpen: false, modalOpacity: 0.50,theme:'main-theme'
+				});
+				
+				$("#rWindow").jqxWindow({
+					height: 300, width:  600, cancelButton: $('#rcancel'), showCloseButton: true, draggable: false, resizable: false, isModal: true, autoOpen: false, modalOpacity: 0.50,theme:'main-theme'
 				});
 				
 				$("#print_car").jqxWindow({
@@ -821,6 +827,10 @@ $include = new includes();
 				
 				$("#signatory").jqxWindow({
 					maxWidth: 1000, maxHeight: 550, height: 350, width: 600, cancelButton: $('#cancelAcct'), showCloseButton: true, draggable: false, resizable: false, isModal: true, autoOpen: false, modalOpacity: 0.50,theme:'main-theme'
+				});
+				
+				$("#reportModal").jqxWindow({
+					maxWidth: 1200, maxHeight: 550, height: 500, width: 1200, showCloseButton: true, draggable: false, resizable: false, isModal: true, autoOpen: false, modalOpacity: 0.50,theme:'main-theme'
 				});
 				
 				$("#addAcctModal").jqxWindow({
@@ -871,6 +881,7 @@ $include = new includes();
 					<li><img  src="../assets/images/icons/icol16/src/house.png" alt=""/><a href = "index.php"> Home</a></li>
 					<li><img  src="../assets/images/icons/icol16/src/zone_money.png" alt="" /><a href = "javascript:location.reload()"> Transactions</a></li>
 					<li id = "newConsumer"><img  src="../assets/images/icons/icol16/src/group.png" alt=""/>New Consumer</li>
+					<li id = "reports"><img  src="../assets/images/icons/icol16/src/report.png" alt=""/>Reports</li>
 					<li><img src = "../assets/images/icons/icol16/src/user.png">
 						Accounts
 						<ul>
@@ -1004,6 +1015,18 @@ $include = new includes();
 					</div>
 				</div>
 			</div>
+			<div id="rWindow">
+				<div><img src="../assets/images/icons/icol16/src/accept.png" ><b><span style="margin-top:-24; margin-left:3px">Processing</span></b></div>
+				<div >
+					<div id = "rGrid"></div>
+				</div>
+			</div>
+			<div id="reportModal">
+				<div><img src="../assets/images/icons/icol16/src/report.png" ><b><span style="margin-top:-24; margin-left:3px">Reports</span></b></div>
+				<div >
+					<div id = "reportGrid"></div>
+				</div>
+			</div>
 			<div id="accountModal">
 				<div><img src="../assets/images/icons/icol16/src/user.png" ><b><span style="margin-top:-24; margin-left:3px"> Accounts</span></b></div>
 				<div >
@@ -1053,6 +1076,18 @@ $include = new includes();
 				<div><img src="../assets/images/icons/icol16/src/pencil.png"><b><span style="margin-top:-24; margin-left:3px"> Signatories</span></b></div>
 				<div>
 					<div id = "signGrid"></div>
+				</div>
+			</div>
+			<div id="submitModal">
+				<div><img src="../assets/images/icons/icol16/src/accept.png"><b><span style="margin-top:-24; margin-left:3px"> Submit</span></b></div>
+				<div>
+					<h4 class = "text-center">Approve application</h4><br>
+					<div class = "col-sm-6">
+						<button id = "confirmApp" class = "btn btn-success btn-block">Confirm</button>
+					</div>
+					<div class = "col-sm-6">
+						<td><button id = "cancelA" class = "btn btn-danger btn-block">Cancel</button></td>
+					</div>
 				</div>
 			</div>
 			<div id="signatory">
